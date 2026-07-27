@@ -1,0 +1,1280 @@
+     1→'use client';
+     2→
+     3→// ═══════════════════════════════════════════════════════════════════════════════
+     4→//  Jardin Sage — Quiet Luxury Sage & Cream (matches inviteness.com reference)
+     5→// ═══════════════════════════════════════════════════════════════════════════════
+     6→//  Design language (directly inspired by inviteness.com t-a2b01004ee626a0c):
+     7→//    • Palette: sage green #BACFAF + warm cream #F7F5F2 + terracotta #B3774D
+     8→//    • Mood: romantic garden wedding, quiet luxury, soft & airy, 2025 modern botanical
+     9→//    • Typography: Great Vibes script for EVERY heading + Playfair Display serif + Amiri for Arabic
+    10→//    • Layout: card-based sections with thin borders + SQUARE corners (no rounding)
+    11→//    • Sections (in order, mirroring the reference):
+    12→//        hero (with wax seal ornament) → Quranic verse → about celebration
+    13→//      → family lineage → countdown → pre-wedding gallery → your presence / event details
+    14→//      → the venue (with map) → events / schedule → day program → activities
+    15→//      → accommodation → dress code → menu → gift registry → about / FAQ
+    16→//      → transport & parking → photo upload ("Let's share moments")
+    17→//      → contact collector → RSVP → special notes → please note → thank you / footer
+    18→//    • Signature: bilingual verse, structured parents (groom + bride), generous whitespace
+    19→// ═══════════════════════════════════════════════════════════════════════════════
+    20→
+    21→import { useState } from 'react';
+    22→import { motion } from 'framer-motion';
+    23→import {
+    24→  MapPin,
+    25→  Clock,
+    26→  X,
+    27→  Check,
+    28→  Calendar,
+    29→  Camera,
+    30→  Heart,
+    31→  HelpCircle,
+    32→  Car,
+    33→  Sparkles,
+    34→  ChevronDown,
+    35→  Gift,
+    36→  Utensils,
+    37→  Shirt,
+    38→  BedDouble,
+    39→  Ticket,
+    40→  Phone,
+    41→  Mail,
+    42→  Info,
+    43→} from 'lucide-react';
+    44→import { Button } from '@/components/ui/button';
+    45→import { Input } from '@/components/ui/input';
+    46→import { Textarea } from '@/components/ui/textarea';
+    47→import {
+    48→  SpecializedTemplateProps,
+    49→  useCountdown,
+    50→  useRsvpForm,
+    51→  fadeInUp,
+    52→  fadeIn,
+    53→  stagger,
+    54→} from './_shared';
+    55→import { useT } from '@/lib/i18n/use-t';
+    56→
+    57→// ─── Sage leaf ornament (the signature botanical motif) ────────────────────
+    58→function SageLeaf({ color, className = '' }: { color: string; className?: string }) {
+    59→  return (
+    60→    <svg viewBox="0 0 60 80" className={className} aria-hidden xmlns="http://www.w3.org/2000/svg">
+    61→      {/* Central stem */}
+    62→      <path d="M 30 78 L 30 10" fill="none" stroke={color} strokeWidth="0.8" opacity="0.4" />
+    63→      {/* Paired leaves */}
+    64→      <path d="M 30 20 Q 12 18 8 28 Q 18 32 30 24 Z" fill={color} opacity="0.35" />
+    65→      <path d="M 30 20 Q 48 18 52 28 Q 42 32 30 24 Z" fill={color} opacity="0.35" />
+    66→      <path d="M 30 35 Q 14 33 10 44 Q 20 48 30 38 Z" fill={color} opacity="0.28" />
+    67→      <path d="M 30 35 Q 46 33 50 44 Q 40 48 30 38 Z" fill={color} opacity="0.28" />
+    68→      <path d="M 30 50 Q 16 48 12 58 Q 22 62 30 54 Z" fill={color} opacity="0.22" />
+    69→      <path d="M 30 50 Q 44 48 48 58 Q 38 62 30 54 Z" fill={color} opacity="0.22" />
+    70→      {/* Top leaf */}
+    71→      <path d="M 30 10 Q 22 6 26 14 Q 30 16 30 10 Z" fill={color} opacity="0.45" />
+    72→      <path d="M 30 10 Q 38 6 34 14 Q 30 16 30 10 Z" fill={color} opacity="0.45" />
+    73→    </svg>
+    74→  );
+    75→}
+    76→
+    77→// ─── Small botanical sprig (for section dividers) ──────────────────────────
+    78→function Sprig({ color, className = '' }: { color: string; className?: string }) {
+    79→  return (
+    80→    <svg viewBox="0 0 80 24" className={className} aria-hidden xmlns="http://www.w3.org/2000/svg">
+    81→      <line x1="10" y1="12" x2="70" y2="12" stroke={color} strokeWidth="0.5" opacity="0.4" />
+    82→      <path d="M 40 12 Q 36 6 32 8 Q 34 12 40 12 Z" fill={color} opacity="0.5" />
+    83→      <path d="M 40 12 Q 44 6 48 8 Q 46 12 40 12 Z" fill={color} opacity="0.5" />
+    84→      <path d="M 40 12 Q 36 18 32 16 Q 34 12 40 12 Z" fill={color} opacity="0.5" />
+    85→      <path d="M 40 12 Q 44 18 48 16 Q 46 12 40 12 Z" fill={color} opacity="0.5" />
+    86→      <circle cx="40" cy="12" r="1.2" fill={color} opacity="0.7" />
+    87→      <circle cx="20" cy="12" r="0.8" fill={color} opacity="0.4" />
+    88→      <circle cx="60" cy="12" r="0.8" fill={color} opacity="0.4" />
+    89→    </svg>
+    90→  );
+    91→}
+    92→
+    93→// ─── Wax seal ornament (the signature visual of the reference) ─────────────
+    94→// A circular bas-relief with a peony + sage leaves + baby's breath, in the
+    95→// reference's "tactile luxury" style. SVG-only — no images.
+    96→function WaxSeal({ className = '' }: { className?: string }) {
+    97→  const sage = '#BACFAF';
+    98→  const sageDark = '#9DB18E';
+    99→  const sageDeep = '#7C8F6E';
+   100→  const cream = '#F7F5F2';
+   101→  const peonyBase = '#F0E6DF';
+   102→  const peonyShadow = '#E2D2C8';
+   103→  const terracotta = '#B3774D';
+   104→
+   105→  return (
+   106→    <svg viewBox="0 0 200 200" className={className} aria-hidden xmlns="http://www.w3.org/2000/svg">
+   107→      <defs>
+   108→        {/* Glossy rim highlight */}
+   109→        <linearGradient id="waxRim" x1="0%" y1="0%" x2="0%" y2="100%">
+   110→          <stop offset="0%" stopColor={sage} stopOpacity="1" />
+   111→          <stop offset="40%" stopColor={sageDark} stopOpacity="1" />
+   112→          <stop offset="100%" stopColor={sageDeep} stopOpacity="1" />
+   113→        </linearGradient>
+   114→        {/* Matte inner well */}
+   115→        <radialGradient id="waxWell" cx="50%" cy="45%" r="55%">
+   116→          <stop offset="0%" stopColor={sage} stopOpacity="1" />
+   117→          <stop offset="80%" stopColor={sageDark} stopOpacity="1" />
+   118→          <stop offset="100%" stopColor={sageDeep} stopOpacity="1" />
+   119→        </radialGradient>
+   120→        {/* Peony petal gradient */}
+   121→        <radialGradient id="peonyPetal" cx="50%" cy="40%" r="60%">
+   122→          <stop offset="0%" stopColor={peonyBase} stopOpacity="1" />
+   123→          <stop offset="100%" stopColor={peonyShadow} stopOpacity="1" />
+   124→        </radialGradient>
+   125→      </defs>
+   126→
+   127→      {/* Outer rim (glossy) */}
+   128→      <circle cx="100" cy="100" r="96" fill="url(#waxRim)" />
+   129→      {/* Top crescent highlight */}
+   130→      <path d="M 14 80 A 96 96 0 0 1 186 80" fill="none" stroke={cream} strokeWidth="2" opacity="0.4" />
+   131→      {/* Inner well (matte) */}
+   132→      <circle cx="100" cy="100" r="80" fill="url(#waxWell)" />
+   133→      {/* Inner shadow ring (gives depth) */}
+   134→      <circle cx="100" cy="100" r="80" fill="none" stroke={sageDeep} strokeWidth="1.2" opacity="0.5" />
+   135→
+   136→      {/* ─── Bas-relief floral: peony + sage leaves + baby's breath ─── */}
+   137→      <g transform="translate(100 105)">
+   138→        {/* Sage leaves behind peony (asymmetrical spray) */}
+   139→        <g opacity="0.85">
+   140→          <path d="M -40 -20 Q -60 -10 -55 5 Q -42 8 -36 -8 Z" fill={sageDeep} opacity="0.55" />
+   141→          <path d="M 36 -25 Q 56 -15 52 5 Q 40 8 32 -10 Z" fill={sageDeep} opacity="0.55" />
+   142→          <path d="M -30 25 Q -50 35 -45 50 Q -32 50 -26 32 Z" fill={sageDeep} opacity="0.5" />
+   143→          <path d="M 28 30 Q 48 40 44 55 Q 32 55 24 38 Z" fill={sageDeep} opacity="0.5" />
+   144→          <path d="M -8 38 Q -18 55 -2 60 Q 6 50 0 40 Z" fill={sageDeep} opacity="0.45" />
+   145→        </g>
+   146→
+   147→        {/* Central peony — layered ruffled petals */}
+   148→        {/* Outer petal ring */}
+   149→        <g>
+   150→          <path d="M 0 -45 Q -28 -42 -38 -22 Q -28 -12 -10 -22 Z" fill="url(#peonyPetal)" opacity="0.85" />
+   151→          <path d="M 0 -45 Q 28 -42 38 -22 Q 28 -12 10 -22 Z" fill="url(#peonyPetal)" opacity="0.85" />
+   152→          <path d="M -38 -22 Q -48 0 -38 22 Q -22 18 -18 0 Z" fill="url(#peonyPetal)" opacity="0.85" />
+   153→          <path d="M 38 -22 Q 48 0 38 22 Q 22 18 18 0 Z" fill="url(#peonyPetal)" opacity="0.85" />
+   154→          <path d="M -38 22 Q -28 42 0 45 Q 10 35 0 18 Z" fill="url(#peonyPetal)" opacity="0.85" />
+   155→          <path d="M 38 22 Q 28 42 0 45 Q -10 35 0 18 Z" fill="url(#peonyPetal)" opacity="0.85" />
+   156→        </g>
+   157→        {/* Middle petal ring */}
+   158→        <g>
+   159→          <path d="M 0 -30 Q -18 -28 -24 -14 Q -14 -8 -6 -16 Z" fill={peonyBase} />
+   160→          <path d="M 0 -30 Q 18 -28 24 -14 Q 14 -8 6 -16 Z" fill={peonyBase} />
+   161→          <path d="M -24 -14 Q -30 0 -24 14 Q -12 10 -10 0 Z" fill={peonyBase} />
+   162→          <path d="M 24 -14 Q 30 0 24 14 Q 12 10 10 0 Z" fill={peonyBase} />
+   163→          <path d="M -24 14 Q -18 28 0 30 Q 6 22 0 12 Z" fill={peonyBase} />
+   164→          <path d="M 24 14 Q 18 28 0 30 Q -6 22 0 12 Z" fill={peonyBase} />
+   165→        </g>
+   166→        {/* Inner petal cluster */}
+   167→        <g>
+   168→          <path d="M 0 -18 Q -10 -16 -14 -8 Q -6 -4 -2 -10 Z" fill={peonyBase} opacity="0.95" />
+   169→          <path d="M 0 -18 Q 10 -16 14 -8 Q 6 -4 2 -10 Z" fill={peonyBase} opacity="0.95" />
+   170→          <path d="M -14 -8 Q -18 0 -14 8 Q -6 6 -4 0 Z" fill={peonyBase} opacity="0.95" />
+   171→          <path d="M 14 -8 Q 18 0 14 8 Q 6 6 4 0 Z" fill={peonyBase} opacity="0.95" />
+   172→          <path d="M -14 8 Q -10 16 0 18 Q 4 12 0 6 Z" fill={peonyBase} opacity="0.95" />
+   173→          <path d="M 14 8 Q 10 16 0 18 Q -4 12 0 6 Z" fill={peonyBase} opacity="0.95" />
+   174→        </g>
+   175→        {/* Center stamens */}
+   176→        <circle cx="0" cy="0" r="5" fill={terracotta} opacity="0.6" />
+   177→        <circle cx="-2" cy="-2" r="1.2" fill={peonyShadow} />
+   178→        <circle cx="2" cy="-1" r="1.0" fill={peonyShadow} />
+   179→        <circle cx="0" cy="3" r="0.8" fill={peonyShadow} />
+   180→
+   181→        {/* Baby's breath — tiny 5-petal star flowers scattered */}
+   182→        <g fill={cream}>
+   183→          <g transform="translate(-50 -35)">
+   184→            <circle r="1.5" /><circle cx="-1.2" cy="-1" r="0.8" /><circle cx="1.2" cy="-1" r="0.8" /><circle cx="-1" cy="1.2" r="0.8" /><circle cx="1" cy="1.2" r="0.8" />
+   185→          </g>
+   186→          <g transform="translate(48 -28)">
+   187→            <circle r="1.3" /><circle cx="-1" cy="-0.8" r="0.7" /><circle cx="1" cy="-0.8" r="0.7" /><circle cx="-0.8" cy="1" r="0.7" /><circle cx="0.8" cy="1" r="0.7" />
+   188→          </g>
+   189→          <g transform="translate(-44 42)">
+   190→            <circle r="1.4" /><circle cx="-1.1" cy="-0.9" r="0.75" /><circle cx="1.1" cy="-0.9" r="0.75" /><circle cx="-0.9" cy="1.1" r="0.75" /><circle cx="0.9" cy="1.1" r="0.75" />
+   191→          </g>
+   192→          <g transform="translate(52 38)">
+   193→            <circle r="1.2" /><circle cx="-1" cy="-0.8" r="0.65" /><circle cx="1" cy="-0.8" r="0.65" /><circle cx="-0.8" cy="1" r="0.65" /><circle cx="0.8" cy="1" r="0.65" />
+   194→          </g>
+   195→        </g>
+   196→      </g>
+   197→    </svg>
+   198→  );
+   199→}
+   200→
+   201→// ─── Card section wrapper (the signature look: thin border, square corners) ─
+   202→function SageCard({
+   203→  children,
+   204→  className = '',
+   205→  bg = 'transparent',
+   206→}: {
+   207→  children: React.ReactNode;
+   208→  className?: string;
+   209→  bg?: string;
+   210→}) {
+   211→  return (
+   212→    <div
+   213→      className={`w-full border px-5 sm:px-8 md:px-10 py-10 sm:py-12 ${className}`}
+   214→      style={{
+   215→        borderColor: 'var(--color-border, #e5e7eb)',
+   216→        backgroundColor: bg,
+   217→        borderWidth: '1px',
+   218→      }}
+   219→    >
+   220→      {children}
+   221→    </div>
+   222→  );
+   223→}
+   224→
+   225→// ─── Section heading (Great Vibes script — the signature) ──────────────────
+   226→function SageHeading({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+   227→  return (
+   228→    <motion.h2
+   229→      variants={fadeInUp}
+   230→      className={`mb-3 text-center font-script text-3xl font-normal tracking-tight sm:text-4xl md:text-5xl ${className}`}
+   231→      style={{ color: '#BACFAF', fontFamily: '"Great Vibes", cursive' }}
+   232→    >
+   233→      {children}
+   234→    </motion.h2>
+   235→  );
+   236→}
+   237→
+   238→// ─── Section wrapper (consistent vertical rhythm + entrance animation) ─────
+   239→function SageSection({
+   240→  children,
+   241→  className = '',
+   242→}: {
+   243→  children: React.ReactNode;
+   244→  className?: string;
+   245→}) {
+   246→  return (
+   247→    <motion.section
+   248→      variants={stagger}
+   249→      initial="hidden"
+   250→      whileInView="visible"
+   251→      viewport={{ once: true, amount: 0.15 }}
+   252→      className={`px-4 py-16 sm:px-5 sm:py-20 ${className}`}
+   253→    >
+   254→      <div className="mx-auto max-w-2xl">{children}</div>
+   255→    </motion.section>
+   256→  );
+   257→}
+   258→
+   259→// ─── Sprig divider with optional icon in the middle ────────────────────────
+   260→function IconSprig({ color, icon }: { color: string; icon?: React.ReactNode }) {
+   261→  return (
+   262→    <motion.div variants={fadeInUp} className="mb-8 flex items-center justify-center gap-3">
+   263→      <span className="block h-px w-12" style={{ background: color, opacity: 0.4 }} />
+   264→      {icon ?? <span className="block h-1 w-1 rotate-45" style={{ background: color, opacity: 0.7 }} />}
+   265→      <span className="block h-px w-12" style={{ background: color, opacity: 0.4 }} />
+   266→    </motion.div>
+   267→  );
+   268→}
+   269→
+   270→export function JardinSageTemplate({
+   271→  template: tpl,
+   272→  data,
+   273→  mode = 'preview',
+   274→  onClose,
+   275→  eventSlug,
+   276→}: SpecializedTemplateProps) {
+   277→  const { t, formatDate } = useT();
+   278→  const countdown = useCountdown(data.eventDate);
+   279→  const rsvp = useRsvpForm(mode, eventSlug);
+   280→
+   281→  // Local state for the auxiliary forms (photo upload + contact collector)
+   282→  const [photoName, setPhotoName] = useState<string>('');
+   283→  const [contactName, setContactName] = useState('');
+   284→  const [contactPhone, setContactPhone] = useState('');
+   285→  const [contactEmail, setContactEmail] = useState('');
+   286→  const [contactSent, setContactSent] = useState(false);
+   287→
+   288→  // Colors pulled from the inviteness.com reference CSS variables
+   289→  const sage = '#BACFAF'; // --color-primary
+   290→  const cream = '#F7F5F2'; // --color-bg
+   291→  const terracotta = '#B3774D'; // --color-primary-mid
+   292→  const coffee = '#674832'; // --color-text
+   293→  const muted = '#6b7280'; // --color-text-muted
+   294→  const border = '#e5e7eb'; // --color-border
+   295→
+   296→  const countdownUnits = [
+   297→    { value: countdown.jours, label: t('countdown.days') },
+   298→    { value: countdown.heures, label: t('countdown.hours') },
+   299→    { value: countdown.minutes, label: t('countdown.minutes') },
+   300→    { value: countdown.secondes, label: t('countdown.seconds') },
+   301→  ];
+   302→
+   303→  // Default Quranic verse if none provided (the reference uses Ar-Rum 30:21)
+   304→  const verse = data.quranicVerse ?? {
+   305→    arabic: 'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً',
+   306→    translation: '"And of His signs is that He created for you from yourselves mates that you may find tranquility in them; and He placed between you affection and mercy."',
+   307→  };
+   308→
+   309→  return (
+   310→    <div
+   311→      className="min-h-screen font-body relative"
+   312→      style={{ backgroundColor: cream, color: coffee, ['--color-border' as string]: border }}
+   313→    >
+   314→      {mode === 'preview' && onClose && (
+   315→        <button
+   316→          onClick={onClose}
+   317→          className="fixed top-4 right-4 z-50 flex h-9 w-9 items-center justify-center rounded-full border bg-white/70 backdrop-blur-md transition hover:bg-white/90"
+   318→          style={{ borderColor: border }}
+   319→          aria-label="Fermer"
+   320→        >
+   321→          <X className="h-4 w-4" style={{ color: coffee }} />
+   322→        </button>
+   323→      )}
+   324→
+   325→      {/* ═══════════════════════════════════════════════════════════════════
+   326→          HERO — full-bleed gradient + wax seal ornament + centered names
+   327→          ═══════════════════════════════════════════════════════════════════ */}
+   328→      <motion.section
+   329→        variants={stagger}
+   330→        initial="hidden"
+   331→        animate="visible"
+   332→        className="relative grid min-h-[92svh] w-full place-items-center overflow-hidden text-center"
+   333→        style={{ background: tpl.coverBg }}
+   334→      >
+   335→        {/* Envelope flap diagonal hints (the reference's subtle paper fold) */}
+   336→        <div
+   337→          className="pointer-events-none absolute inset-0 opacity-[0.04]"
+   338→          style={{
+   339→            backgroundImage: `repeating-linear-gradient(45deg, ${coffee} 0 1px, transparent 1px 80px), repeating-linear-gradient(-45deg, ${coffee} 0 1px, transparent 1px 80px)`,
+   340→          }}
+   341→        />
+   342→
+   343→        {/* Decorative sage leaves in corners */}
+   344→        <motion.div variants={fadeIn} className="absolute top-8 left-4 sm:left-12 opacity-50">
+   345→          <SageLeaf color={sage} className="w-16 h-20" />
+   346→        </motion.div>
+   347→        <motion.div variants={fadeIn} className="absolute top-8 right-4 sm:right-12 opacity-50 scale-x-[-1]">
+   348→          <SageLeaf color={sage} className="w-16 h-20" />
+   349→        </motion.div>
+   350→        <motion.div variants={fadeIn} className="absolute bottom-8 left-4 sm:left-12 opacity-40 scale-y-[-1]">
+   351→          <SageLeaf color={sage} className="w-16 h-20" />
+   352→        </motion.div>
+   353→        <motion.div variants={fadeIn} className="absolute bottom-8 right-4 sm:right-12 opacity-40 scale-x-[-1] scale-y-[-1]">
+   354→          <SageLeaf color={sage} className="w-16 h-20" />
+   355→        </motion.div>
+   356→
+   357→        <div className="relative z-10 mx-auto max-w-3xl px-6 py-16">
+   358→          {/* Wax seal ornament — the signature centerpiece */}
+   359→          <motion.div
+   360→            variants={fadeInUp}
+   361→            className="mx-auto mb-8 flex justify-center"
+   362→            initial={{ scale: 0.85, opacity: 0, rotate: -8 }}
+   363→            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+   364→            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+   365→          >
+   366→            <motion.div
+   367→              animate={{ y: [0, -4, 0] }}
+   368→              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+   369→            >
+   370→              <WaxSeal className="w-28 h-28 sm:w-32 sm:h-32 drop-shadow-[0_8px_18px_rgba(103,72,50,0.18)]" />
+   371→            </motion.div>
+   372→          </motion.div>
+   373→
+   374→          <motion.div variants={fadeInUp} className="mb-6 flex justify-center">
+   375→            <Sprig color={terracotta} className="w-20 h-6" />
+   376→          </motion.div>
+   377→
+   378→          {/* "Save the Date" label */}
+   379→          <motion.p
+   380→            variants={fadeInUp}
+   381→            className="mb-6 text-[10px] font-medium uppercase tracking-[0.4em] sm:text-xs"
+   382→            style={{ color: terracotta }}
+   383→          >
+   384→            {t('hero.save')}
+   385→          </motion.p>
+   386→
+   387→          {/* Names in Great Vibes script — the signature */}
+   388→          <motion.h1
+   389→            variants={fadeInUp}
+   390→            className="text-center font-script text-5xl font-normal leading-tight sm:text-6xl md:text-7xl"
+   391→            style={{ color: coffee, fontFamily: '"Great Vibes", cursive' }}
+   392→          >
+   393→            {data.partner1Name}
+   394→            <br />
+   395→            <span style={{ color: sage, fontSize: '0.7em' }}>&amp;</span>
+   396→            <br />
+   397→            {data.partner2Name}
+   398→          </motion.h1>
+   399→
+   400→          <motion.div variants={fadeInUp} className="mt-8 flex justify-center">
+   401→            <Sprig color={terracotta} className="w-20 h-6" />
+   402→          </motion.div>
+   403→
+   404→          <motion.p
+   405→            variants={fadeInUp}
+   406→            className="mt-4 font-serif text-sm italic sm:text-base"
+   407→            style={{ color: muted, fontFamily: '"Playfair Display", serif' }}
+   408→          >
+   409→            {formatDate(data.eventDate)}
+   410→          </motion.p>
+   411→
+   412→          {/* Scroll cue */}
+   413→          <motion.div
+   414→            variants={fadeInUp}
+   415→            className="mt-16 flex justify-center"
+   416→            animate={{ y: [0, 6, 0] }}
+   417→            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+   418→          >
+   419→            <ChevronDown className="h-5 w-5" style={{ color: terracotta, opacity: 0.6 }} />
+   420→          </motion.div>
+   421→        </div>
+   422→      </motion.section>
+   423→
+   424→      {/* ═══════════════════════════════════════════════════════════════════
+   425→          QURANIC VERSE — bilingual, in a bordered card
+   426→          ═══════════════════════════════════════════════════════════════════ */}
+   427→      <SageSection>
+   428→        <SageCard bg="transparent">
+   429→          <motion.div variants={fadeInUp} className="mb-6 flex justify-center">
+   430→            <Sprig color={sage} className="w-16 h-5" />
+   431→          </motion.div>
+   432→
+   433→          {/* Bismillah */}
+   434→          <motion.p
+   435→            variants={fadeInUp}
+   436→            dir="rtl"
+   437→            className="mb-8 text-center font-serif text-2xl sm:text-3xl"
+   438→            style={{ color: coffee, fontFamily: '"Amiri", serif' }}
+   439→          >
+   440→            ﷽
+   441→          </motion.p>
+   442→
+   443→          {/* Arabic verse */}
+   444→          <motion.p
+   445→            variants={fadeInUp}
+   446→            dir="rtl"
+   447→            className="mb-8 text-center font-serif text-lg leading-loose sm:text-xl"
+   448→            style={{ color: coffee, fontFamily: '"Amiri", serif' }}
+   449→          >
+   450→            {verse.arabic}
+   451→          </motion.p>
+   452→
+   453→          {/* English translation */}
+   454→          <motion.p
+   455→            variants={fadeInUp}
+   456→            className="text-center font-serif text-sm italic leading-relaxed sm:text-base"
+   457→            style={{ color: muted, fontFamily: '"Playfair Display", serif' }}
+   458→          >
+   459→            {verse.translation}
+   460→          </motion.p>
+   461→
+   462→          <motion.div variants={fadeInUp} className="mt-6 flex justify-center">
+   463→            <Sprig color={sage} className="w-16 h-5" />
+   464→          </motion.div>
+   465→        </SageCard>
+   466→      </SageSection>
+   467→
+   468→      {/* ═══════════════════════════════════════════════════════════════════
+   469→          ABOUT THE CELEBRATION — longer-form intro
+   470→          ═══════════════════════════════════════════════════════════════════ */}
+   471→      {data.aboutCelebration && (
+   472→        <SageSection>
+   473→          <SageHeading>About the Celebration</SageHeading>
+   474→          <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   475→            <Sprig color={sage} className="w-16 h-5" />
+   476→          </motion.div>
+   477→          <motion.p
+   478→            variants={fadeInUp}
+   479→            className="mx-auto max-w-xl text-center font-serif text-base leading-loose sm:text-lg"
+   480→            style={{ color: coffee, fontFamily: '"Playfair Display", serif' }}
+   481→          >
+   482→            {data.aboutCelebration}
+   483→          </motion.p>
+   484→        </SageSection>
+   485→      )}
+   486→
+   487→      {/* ═══════════════════════════════════════════════════════════════════
+   488→          FAMILY LINEAGE — both sets of parents
+   489→          ═══════════════════════════════════════════════════════════════════ */}
+   490→      {(data.groomParents || data.brideParents) && (
+   491→        <SageSection>
+   492→          <div className="text-center">
+   493→            <motion.p variants={fadeInUp} className="mb-2 font-serif text-sm italic sm:text-base" style={{ color: muted }}>
+   494→              With great joy and happiness, the families
+   495→            </motion.p>
+   496→          </div>
+   497→
+   498→          <div className="mt-8 grid gap-10 sm:grid-cols-2">
+   499→            {data.groomParents && (
+   500→              <motion.div variants={fadeInUp} className="text-center">
+   501→                <motion.p variants={fadeInUp} className="mb-3 text-[9px] font-medium uppercase tracking-[0.3em]" style={{ color: terracotta }}>
+   502→                  Groom&apos;s Family
+   503→                </motion.p>
+   504→                <p className="whitespace-pre-line font-serif text-base leading-relaxed sm:text-lg" style={{ color: coffee, fontFamily: '"Playfair Display", serif' }}>
+   505→                  {data.groomParents}
+   506→                </p>
+   507→              </motion.div>
+   508→            )}
+   509→            {data.brideParents && (
+   510→              <motion.div variants={fadeInUp} className="text-center">
+   511→                <motion.p variants={fadeInUp} className="mb-3 text-[9px] font-medium uppercase tracking-[0.3em]" style={{ color: terracotta }}>
+   512→                  Bride&apos;s Family
+   513→                </motion.p>
+   514→                <p className="whitespace-pre-line font-serif text-base leading-relaxed sm:text-lg" style={{ color: coffee, fontFamily: '"Playfair Display", serif' }}>
+   515→                  {data.brideParents}
+   516→                </p>
+   517→              </motion.div>
+   518→            )}
+   519→          </div>
+   520→
+   521→          <motion.p variants={fadeInUp} className="mt-10 text-center font-serif text-sm italic sm:text-base" style={{ color: muted }}>
+   522→            Are honored to invite you to attend the wedding of their beloved son and daughter
+   523→          </motion.p>
+   524→
+   525→          <motion.div variants={fadeInUp} className="mt-6 flex justify-center">
+   526→            <Sprig color={sage} className="w-16 h-5" />
+   527→          </motion.div>
+   528→        </SageSection>
+   529→      )}
+   530→
+   531→      {/* ═══════════════════════════════════════════════════════════════════
+   532→          COUNTDOWN — card-based with thin borders
+   533→          ═══════════════════════════════════════════════════════════════════ */}
+   534→      <SageSection>
+   535→        <div className="text-center">
+   536→          <SageHeading>Countdown</SageHeading>
+   537→          <motion.p variants={fadeInUp} className="mb-10 font-serif text-sm italic" style={{ color: muted }}>
+   538→            Until our wedding
+   539→          </motion.p>
+   540→
+   541→          <motion.div variants={fadeInUp} className="grid grid-cols-4 gap-2 sm:gap-4">
+   542→            {countdownUnits.map((unit) => (
+   543→              <div
+   544→                key={unit.label}
+   545→                className="flex flex-col items-center border py-4 sm:py-6"
+   546→                style={{ borderColor: border, backgroundColor: 'transparent' }}
+   547→              >
+   548→                <span
+   549→                  className="font-script text-3xl font-normal tabular-nums sm:text-4xl md:text-5xl"
+   550→                  style={{ color: sage, fontFamily: '"Great Vibes", cursive' }}
+   551→                >
+   552→                  {String(unit.value).padStart(2, '0')}
+   553→                </span>
+   554→                <span className="mt-1 text-[8px] font-medium uppercase tracking-[0.2em] sm:text-[9px]" style={{ color: muted }}>
+   555→                  {unit.label}
+   556→                </span>
+   557→              </div>
+   558→            ))}
+   559→          </motion.div>
+   560→        </div>
+   561→      </SageSection>
+   562→
+   563→      {/* ═══════════════════════════════════════════════════════════════════
+   564→          PRE-WEDDING GALLERY
+   565→          ═══════════════════════════════════════════════════════════════════ */}
+   566→      {data.galleryImages && data.galleryImages.length > 0 && (
+   567→        <SageSection>
+   568→          <div className="text-center">
+   569→            <SageHeading>
+   570→              <span className="inline-flex items-center gap-2">
+   571→                <Camera className="h-5 w-5" style={{ color: terracotta }} />
+   572→                Pre Wedding Shooting
+   573→              </span>
+   574→            </SageHeading>
+   575→            <motion.p variants={fadeInUp} className="mb-10 font-serif text-sm italic" style={{ color: muted }}>
+   576→              Before the beautiful journey of life begins
+   577→            </motion.p>
+   578→
+   579→            <motion.div variants={fadeInUp} className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+   580→              {data.galleryImages.slice(0, 6).map((img, i) => (
+   581→                <div
+   582→                  key={i}
+   583→                  className="aspect-square overflow-hidden border"
+   584→                  style={{ borderColor: border }}
+   585→                >
+   586→                  <img src={img} alt={`Pre-wedding ${i + 1}`} className="h-full w-full object-cover" />
+   587→                </div>
+   588→              ))}
+   589→            </motion.div>
+   590→          </div>
+   591→        </SageSection>
+   592→      )}
+   593→
+   594→      {/* ═══════════════════════════════════════════════════════════════════
+   595→          YOUR PRESENCE / EVENT DETAILS
+   596→          ═══════════════════════════════════════════════════════════════════ */}
+   597→      <SageSection>
+   598→        <div className="text-center">
+   599→          <SageHeading>Your presence</SageHeading>
+   600→          <motion.p variants={fadeInUp} className="mb-10 max-w-md mx-auto font-serif text-sm leading-relaxed sm:text-base" style={{ color: muted }}>
+   601→            Your presence and attendance are a great honor for us, and we hope you will add joy and happiness to this day by sharing with us its most beautiful moments.
+   602→          </motion.p>
+   603→
+   604→          <motion.div variants={fadeInUp} className="mx-auto max-w-sm space-y-6">
+   605→            <div className="flex items-center justify-center gap-3">
+   606→              <Calendar className="h-4 w-4" style={{ color: terracotta }} />
+   607→              <p className="font-serif text-base" style={{ color: coffee }}>{formatDate(data.eventDate)}</p>
+   608→            </div>
+   609→            {data.venueName && (
+   610→              <div className="flex items-start justify-center gap-3">
+   611→                <MapPin className="mt-1 h-4 w-4" style={{ color: terracotta }} />
+   612→                <div>
+   613→                  <p className="font-serif text-base" style={{ color: coffee }}>{data.venueName}</p>
+   614→                  {data.venueAddress && <p className="text-sm font-serif italic" style={{ color: muted }}>{data.venueAddress}</p>}
+   615→                </div>
+   616→              </div>
+   617→            )}
+   618→            {data.eventTime && (
+   619→              <div className="flex items-center justify-center gap-3">
+   620→                <Clock className="h-4 w-4" style={{ color: terracotta }} />
+   621→                <p className="font-serif text-base" style={{ color: coffee }}>{data.eventTime}</p>
+   622→              </div>
+   623→            )}
+   624→          </motion.div>
+   625→        </div>
+   626→      </SageSection>
+   627→
+   628→      {/* ═══════════════════════════════════════════════════════════════════
+   629→          THE VENUE — with map embed
+   630→          ═══════════════════════════════════════════════════════════════════ */}
+   631→      {data.venueName && (
+   632→        <SageSection>
+   633→          <div className="text-center">
+   634→            <SageHeading>The Venue</SageHeading>
+   635→            <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   636→              <Sprig color={sage} className="w-16 h-5" />
+   637→            </motion.div>
+   638→            <motion.p variants={fadeInUp} className="mb-2 font-script text-3xl" style={{ color: coffee, fontFamily: '"Great Vibes", cursive' }}>
+   639→              {data.venueName}
+   640→            </motion.p>
+   641→            {data.venueAddress && (
+   642→              <motion.p variants={fadeInUp} className="mb-8 font-serif text-sm italic" style={{ color: muted }}>
+   643→                {data.venueAddress}
+   644→              </motion.p>
+   645→            )}
+   646→
+   647→            {data.venueMapEmbed && (
+   648→              <motion.div
+   649→                variants={fadeInUp}
+   650→                className="mx-auto mt-6 max-w-lg overflow-hidden border"
+   651→                style={{ borderColor: border }}
+   652→              >
+   653→                <iframe
+   654→                  src={data.venueMapEmbed}
+   655→                  title="Carte du lieu"
+   656→                  className="h-64 w-full"
+   657→                  style={{ border: 0, filter: 'saturate(0.85) sepia(0.08)' }}
+   658→                  loading="lazy"
+   659→                  referrerPolicy="no-referrer-when-downgrade"
+   660→                />
+   661→              </motion.div>
+   662→            )}
+   663→
+   664→            {!data.venueMapEmbed && (
+   665→              <motion.div
+   666→                variants={fadeInUp}
+   667→                className="mx-auto mt-6 flex max-w-lg items-center justify-center border"
+   668→                style={{ borderColor: border, backgroundColor: cream }}
+   669→              >
+   670→                {/* Stylized SVG map placeholder — always renders, no network needed */}
+   671→                <svg viewBox="0 0 400 256" className="h-64 w-full" xmlns="http://www.w3.org/2000/svg" aria-label="Map placeholder">
+   672→                  <rect width="400" height="256" fill={cream} />
+   673→                  {/* Abstract street grid */}
+   674→                  <g stroke={sage} strokeWidth="0.6" opacity="0.35">
+   675→                    <line x1="0" y1="40" x2="400" y2="40" />
+   676→                    <line x1="0" y1="90" x2="400" y2="90" />
+   677→                    <line x1="0" y1="160" x2="400" y2="160" />
+   678→                    <line x1="0" y1="210" x2="400" y2="210" />
+   679→                    <line x1="60" y1="0" x2="60" y2="256" />
+   680→                    <line x1="160" y1="0" x2="160" y2="256" />
+   681→                    <line x1="260" y1="0" x2="260" y2="256" />
+   682→                    <line x1="340" y1="0" x2="340" y2="256" />
+   683→                  </g>
+   684→                  {/* Water feature */}
+   685→                  <path d="M 0 180 Q 100 175 200 185 Q 300 195 400 180 L 400 256 L 0 256 Z" fill={sage} opacity="0.12" />
+   686→                  {/* Park */}
+   687→                  <circle cx="320" cy="65" r="22" fill={sage} opacity="0.18" />
+   688→                  {/* Roads (thicker) */}
+   689→                  <g stroke={terracotta} strokeWidth="1.4" opacity="0.45">
+   690→                    <line x1="0" y1="125" x2="400" y2="125" />
+   691→                    <line x1="200" y1="0" x2="200" y2="256" />
+   692→                  </g>
+   693→                  {/* Venue marker */}
+   694→                  <g transform="translate(200 125)">
+   695→                    <circle r="22" fill={terracotta} opacity="0.15" />
+   696→                    <circle r="14" fill={terracotta} opacity="0.25" />
+   697→                    <path d="M 0 -10 C -7 -10 -10 -5 -10 0 C -10 6 0 14 0 14 C 0 14 10 6 10 0 C 10 -5 7 -10 0 -10 Z" fill={terracotta} />
+   698→                    <circle cy="-2" r="3" fill={cream} />
+   699→                  </g>
+   700→                  {/* Compass rose hint */}
+   701→                  <g transform="translate(360 30)" opacity="0.4">
+   702→                    <circle r="10" fill="none" stroke={coffee} strokeWidth="0.5" />
+   703→                    <path d="M 0 -8 L 2 0 L 0 8 L -2 0 Z" fill={coffee} />
+   704→                  </g>
+   705→                </svg>
+   706→              </motion.div>
+   707→            )}
+   708→          </div>
+   709→        </SageSection>
+   710→      )}
+   711→
+   712→      {/* ═══════════════════════════════════════════════════════════════════
+   713→          EVENTS / TIMELINE
+   714→          ═══════════════════════════════════════════════════════════════════ */}
+   715→      {data.schedule && data.schedule.length > 0 && (
+   716→        <SageSection>
+   717→          <div className="text-center">
+   718→            <SageHeading>Events</SageHeading>
+   719→            <motion.div variants={fadeInUp} className="mb-10 flex justify-center">
+   720→              <Sprig color={sage} className="w-16 h-5" />
+   721→            </motion.div>
+   722→
+   723→            <motion.div variants={fadeInUp} className="mx-auto max-w-md space-y-4">
+   724→              {data.schedule.map((item, i) => (
+   725→                <div
+   726→                  key={i}
+   727→                  className="flex items-center gap-4 border px-5 py-4"
+   728→                  style={{ borderColor: border }}
+   729→                >
+   730→                  <span className="font-script text-xl font-normal" style={{ color: terracotta, fontFamily: '"Great Vibes", cursive' }}>
+   731→                    {item.time}
+   732→                  </span>
+   733→                  <div className="h-px flex-1" style={{ background: border }} />
+   734→                  <span className="font-serif text-sm italic" style={{ color: coffee }}>{item.label}</span>
+   735→                </div>
+   736→              ))}
+   737→            </motion.div>
+   738→          </div>
+   739→        </SageSection>
+   740→      )}
+   741→
+   742→      {/* ═══════════════════════════════════════════════════════════════════
+   743→          DAY PROGRAM
+   744→          ═══════════════════════════════════════════════════════════════════ */}
+   745→      {data.dayProgram && data.dayProgram.length > 0 && (
+   746→        <SageSection>
+   747→          <div className="text-center">
+   748→            <SageHeading>Day Program</SageHeading>
+   749→            <motion.div variants={fadeInUp} className="mb-10 flex justify-center">
+   750→              <Sprig color={sage} className="w-16 h-5" />
+   751→            </motion.div>
+   752→
+   753→            <motion.div variants={fadeInUp} className="mx-auto max-w-md space-y-3">
+   754→              {data.dayProgram.map((item, i) => (
+   755→                <div key={i} className="flex items-baseline gap-4">
+   756→                  <span className="shrink-0 font-script text-lg" style={{ color: terracotta, fontFamily: '"Great Vibes", cursive' }}>
+   757→                    {item.time}
+   758→                  </span>
+   759→                  <div className="h-px flex-1 self-center" style={{ background: border }} />
+   760→                  <span className="font-serif text-sm" style={{ color: coffee }}>{item.activity}</span>
+   761→                </div>
+   762→              ))}
+   763→            </motion.div>
+   764→          </div>
+   765→        </SageSection>
+   766→      )}
+   767→
+   768→      {/* ═══════════════════════════════════════════════════════════════════
+   769→          ACTIVITIES
+   770→          ═══════════════════════════════════════════════════════════════════ */}
+   771→      {data.activities && data.activities.length > 0 && (
+   772→        <SageSection>
+   773→          <div className="text-center">
+   774→            <SageHeading>Activities</SageHeading>
+   775→            <motion.div variants={fadeInUp} className="mb-10 flex justify-center">
+   776→              <Sprig color={sage} className="w-16 h-5" />
+   777→            </motion.div>
+   778→
+   779→            <motion.div variants={fadeInUp} className="mx-auto max-w-lg space-y-4">
+   780→              {data.activities.map((act, i) => (
+   781→                <div
+   782→                  key={i}
+   783→                  className="flex items-start gap-4 border px-5 py-4 text-left"
+   784→                  style={{ borderColor: border }}
+   785→                >
+   786→                  <Ticket className="mt-1 h-4 w-4 shrink-0" style={{ color: terracotta }} />
+   787→                  <div className="flex-1">
+   788→                    <div className="flex items-baseline justify-between gap-3">
+   789→                      <p className="font-serif text-base font-medium" style={{ color: coffee }}>{act.title}</p>
+   790→                      {act.time && (
+   791→                        <span className="shrink-0 font-script text-base" style={{ color: terracotta, fontFamily: '"Great Vibes", cursive' }}>
+   792→                          {act.time}
+   793→                        </span>
+   794→                      )}
+   795→                    </div>
+   796→                    <p className="mt-1 font-serif text-sm italic" style={{ color: muted }}>{act.description}</p>
+   797→                  </div>
+   798→                </div>
+   799→              ))}
+   800→            </motion.div>
+   801→          </div>
+   802→        </SageSection>
+   803→      )}
+   804→
+   805→      {/* ═══════════════════════════════════════════════════════════════════
+   806→          ACCOMMODATION
+   807→          ═══════════════════════════════════════════════════════════════════ */}
+   808→      {data.accommodation && (
+   809→        <SageSection>
+   810→          <div className="text-center">
+   811→            <SageHeading>Accommodation</SageHeading>
+   812→            <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   813→              <Sprig color={sage} className="w-16 h-5" />
+   814→            </motion.div>
+   815→            <motion.p variants={fadeInUp} className="mx-auto mb-10 max-w-md font-serif text-sm leading-relaxed" style={{ color: coffee }}>
+   816→              {data.accommodation.description}
+   817→            </motion.p>
+   818→
+   819→            <motion.div variants={fadeInUp} className="mx-auto max-w-lg space-y-4">
+   820→              {data.accommodation.recommendations.map((rec, i) => (
+   821→                <div
+   822→                  key={i}
+   823→                  className="flex items-start gap-4 border px-5 py-4 text-left"
+   824→                  style={{ borderColor: border }}
+   825→                >
+   826→                  <BedDouble className="mt-1 h-4 w-4 shrink-0" style={{ color: terracotta }} />
+   827→                  <div className="flex-1">
+   828→                    <div className="flex items-baseline justify-between gap-3">
+   829→                      <p className="font-serif text-base font-medium" style={{ color: coffee }}>{rec.name}</p>
+   830→                      {rec.rate && (
+   831→                        <span className="shrink-0 text-[10px] font-medium uppercase tracking-[0.2em]" style={{ color: terracotta }}>
+   832→                          {rec.rate}
+   833→                        </span>
+   834→                      )}
+   835→                    </div>
+   836→                    <p className="mt-1 font-serif text-sm italic" style={{ color: muted }}>{rec.address}</p>
+   837→                  </div>
+   838→                </div>
+   839→              ))}
+   840→            </motion.div>
+   841→          </div>
+   842→        </SageSection>
+   843→      )}
+   844→
+   845→      {/* ═══════════════════════════════════════════════════════════════════
+   846→          DRESS CODE
+   847→          ═══════════════════════════════════════════════════════════════════ */}
+   848→      {data.dressCode && (
+   849→        <SageSection>
+   850→          <div className="text-center">
+   851→            <SageHeading>Dress Code</SageHeading>
+   852→            <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   853→              <Sprig color={sage} className="w-16 h-5" />
+   854→            </motion.div>
+   855→            <motion.div variants={fadeInUp} className="mx-auto flex max-w-md items-center justify-center gap-4 border px-5 py-6" style={{ borderColor: border }}>
+   856→              <Shirt className="h-6 w-6 shrink-0" style={{ color: terracotta }} />
+   857→              <p className="font-serif text-base italic" style={{ color: coffee }}>
+   858→                {data.dressCode}
+   859→              </p>
+   860→            </motion.div>
+   861→          </div>
+   862→        </SageSection>
+   863→      )}
+   864→
+   865→      {/* ═══════════════════════════════════════════════════════════════════
+   866→          MENU
+   867→          ═══════════════════════════════════════════════════════════════════ */}
+   868→      {data.menu && data.menu.length > 0 && (
+   869→        <SageSection>
+   870→          <div className="text-center">
+   871→            <SageHeading>Menu</SageHeading>
+   872→            <motion.div variants={fadeInUp} className="mb-10 flex justify-center">
+   873→              <Sprig color={sage} className="w-16 h-5" />
+   874→            </motion.div>
+   875→
+   876→            <motion.div variants={fadeInUp} className="mx-auto max-w-md space-y-6">
+   877→              {data.menu.map((m, i) => (
+   878→                <div key={i} className="text-center">
+   879→                  <p className="mb-1 font-script text-xl" style={{ color: sage, fontFamily: '"Great Vibes", cursive' }}>
+   880→                    {m.course}
+   881→                  </p>
+   882→                  <p className="mx-auto max-w-sm font-serif text-sm italic leading-relaxed" style={{ color: coffee }}>
+   883→                    {m.description}
+   884→                  </p>
+   885→                  {i < data.menu!.length - 1 && (
+   886→                    <div className="mt-6 flex justify-center">
+   887→                      <span className="block h-px w-12" style={{ background: border }} />
+   888→                    </div>
+   889→                  )}
+   890→                </div>
+   891→              ))}
+   892→            </motion.div>
+   893→          </div>
+   894→        </SageSection>
+   895→      )}
+   896→
+   897→      {/* ═══════════════════════════════════════════════════════════════════
+   898→          GIFT REGISTRY
+   899→          ═══════════════════════════════════════════════════════════════════ */}
+   900→      {data.giftRegistry && (
+   901→        <SageSection>
+   902→          <div className="text-center">
+   903→            <SageHeading>Gift Registry</SageHeading>
+   904→            <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   905→              <Sprig color={sage} className="w-16 h-5" />
+   906→            </motion.div>
+   907→            <motion.div variants={fadeInUp} className="mx-auto flex max-w-md items-start justify-center gap-4 border px-6 py-6 text-left" style={{ borderColor: border }}>
+   908→              <Gift className="mt-1 h-5 w-5 shrink-0" style={{ color: terracotta }} />
+   909→              <div>
+   910→                <p className="font-serif text-sm leading-relaxed" style={{ color: coffee }}>
+   911→                  {data.giftRegistry.description}
+   912→                </p>
+   913→                {data.giftRegistry.link && (
+   914→                  <a
+   915→                    href={data.giftRegistry.link}
+   916→                    target="_blank"
+   917→                    rel="noopener noreferrer"
+   918→                    className="mt-3 inline-block text-[10px] font-medium uppercase tracking-[0.25em] underline"
+   919→                    style={{ color: terracotta }}
+   920→                  >
+   921→                    Contribute →
+   922→                  </a>
+   923→                )}
+   924→              </div>
+   925→            </motion.div>
+   926→          </div>
+   927→        </SageSection>
+   928→      )}
+   929→
+   930→      {/* ═══════════════════════════════════════════════════════════════════
+   931→          ABOUT / FAQ
+   932→          ═══════════════════════════════════════════════════════════════════ */}
+   933→      {data.faq && data.faq.length > 0 && (
+   934→        <SageSection>
+   935→          <div className="text-center">
+   936→            <SageHeading>
+   937→              <span className="inline-flex items-center gap-2">
+   938→                <HelpCircle className="h-5 w-5" style={{ color: terracotta }} />
+   939→                About the Celebration
+   940→              </span>
+   941→            </SageHeading>
+   942→            <motion.div variants={fadeInUp} className="mb-10 flex justify-center">
+   943→              <Sprig color={sage} className="w-16 h-5" />
+   944→            </motion.div>
+   945→
+   946→            <motion.div variants={fadeInUp} className="mx-auto max-w-md space-y-4 text-left">
+   947→              {data.faq.map((item, i) => (
+   948→                <div key={i} className="border px-5 py-4" style={{ borderColor: border }}>
+   949→                  <p className="mb-1 font-serif text-sm font-medium" style={{ color: coffee }}>{item.question}</p>
+   950→                  <p className="font-serif text-sm italic" style={{ color: muted }}>{item.answer}</p>
+   951→                </div>
+   952→              ))}
+   953→            </motion.div>
+   954→          </div>
+   955→        </SageSection>
+   956→      )}
+   957→
+   958→      {/* ═══════════════════════════════════════════════════════════════════
+   959→          TRANSPORT & PARKING
+   960→          ═══════════════════════════════════════════════════════════════════ */}
+   961→      {data.transportInfo && (
+   962→        <SageSection>
+   963→          <div className="text-center">
+   964→            <SageHeading>
+   965→              <span className="inline-flex items-center gap-2">
+   966→                <Car className="h-5 w-5" style={{ color: terracotta }} />
+   967→                Transport &amp; Parking
+   968→              </span>
+   969→            </SageHeading>
+   970→            <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   971→              <Sprig color={sage} className="w-16 h-5" />
+   972→            </motion.div>
+   973→            <motion.p variants={fadeInUp} className="mx-auto max-w-md font-serif text-sm leading-relaxed" style={{ color: coffee }}>
+   974→              {data.transportInfo}
+   975→            </motion.p>
+   976→          </div>
+   977→        </SageSection>
+   978→      )}
+   979→
+   980→      {/* ═══════════════════════════════════════════════════════════════════
+   981→          LET'S SHARE MOMENTS — guest photo upload (UI only — no real upload)
+   982→          ═══════════════════════════════════════════════════════════════════ */}
+   983→      {data.photoUploadEnabled && (
+   984→        <SageSection>
+   985→          <div className="text-center">
+   986→            <SageHeading>
+   987→              <span className="inline-flex items-center gap-2">
+   988→                <Camera className="h-5 w-5" style={{ color: terracotta }} />
+   989→                Let&apos;s share moments together
+   990→              </span>
+   991→            </SageHeading>
+   992→            <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   993→              <Sprig color={sage} className="w-16 h-5" />
+   994→            </motion.div>
+   995→            <motion.p variants={fadeInUp} className="mx-auto mb-8 max-w-md font-serif text-sm leading-relaxed" style={{ color: coffee }}>
+   996→              We would love to see the celebration through your eyes. Upload your favorite photos from the day — we&apos;ll share the gallery with everyone after the wedding.
+   997→            </motion.p>
+   998→
+   999→            <motion.label
+  1000→              variants={fadeInUp}
+  1001→              className="mx-auto flex max-w-md cursor-pointer flex-col items-center justify-center gap-2 border border-dashed px-6 py-10 transition"
+  1002→              style={{ borderColor: border, backgroundColor: 'transparent' }}
+  1003→            >
+  1004→              <Camera className="h-8 w-8" style={{ color: sage, opacity: 0.7 }} />
+  1005→              <span className="font-serif text-sm" style={{ color: coffee }}>
+  1006→                {photoName || 'Choose photos to upload'}
+  1007→              </span>
+  1008→              <span className="text-[10px] font-medium uppercase tracking-[0.25em]" style={{ color: muted }}>
+  1009→                JPG · PNG · max 10MB
+  1010→              </span>
+  1011→              <input
+  1012→                type="file"
+  1013→                accept="image/*"
+  1014→                multiple
+  1015→                className="hidden"
+  1016→                onChange={(e) => {
+  1017→                  const files = e.target.files;
+  1018→                  if (files && files.length > 0) {
+  1019→                    setPhotoName(files.length === 1 ? files[0].name : `${files.length} photos selected`);
+  1020→                  }
+  1021→                }}
+  1022→              />
+  1023→            </motion.label>
+  1024→          </div>
+  1025→        </SageSection>
+  1026→      )}
+  1027→
+  1028→      {/* ═══════════════════════════════════════════════════════════════════
+  1029→          CONTACT COLLECTOR — collect guest phone/email (UI only)
+  1030→          ═══════════════════════════════════════════════════════════════════ */}
+  1031→      {data.contactCollectorEnabled && (
+  1032→        <SageSection>
+  1033→          <div className="text-center">
+  1034→            <SageHeading>Contact Collector</SageHeading>
+  1035→            <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+  1036→              <Sprig color={sage} className="w-16 h-5" />
+  1037→            </motion.div>
+  1038→            <motion.p variants={fadeInUp} className="mx-auto mb-8 max-w-md font-serif text-sm leading-relaxed" style={{ color: coffee }}>
+  1039→              Please share your contact details so we can keep you informed of any last-minute changes and send you the photo gallery after the celebration.
+  1040→            </motion.p>
+  1041→
+  1042→            {contactSent ? (
+  1043→              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="mx-auto max-w-sm border py-8" style={{ borderColor: border }}>
+  1044→                <Check className="mx-auto mb-3 h-8 w-8" style={{ color: sage }} />
+  1045→                <p className="font-script text-2xl" style={{ color: coffee, fontFamily: '"Great Vibes", cursive' }}>
+  1046→                  Thank you!
+  1047→                </p>
+  1048→                <p className="mt-2 font-serif text-sm italic" style={{ color: muted }}>
+  1049→                  Your contact details have been received.
+  1050→                </p>
+  1051→              </motion.div>
+  1052→            ) : (
+  1053→              <motion.form
+  1054→                variants={fadeInUp}
+  1055→                onSubmit={(e) => {
+  1056→                  e.preventDefault();
+  1057→                  setContactSent(true);
+  1058→                }}
+  1059→                className="mx-auto max-w-sm space-y-3"
+  1060→              >
+  1061→                <div className="relative">
+  1062→                  <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: terracotta, opacity: 0.6 }} />
+  1063→                  <Input
+  1064→                    value={contactName}
+  1065→                    onChange={(e) => setContactName(e.target.value)}
+  1066→                    placeholder="Your name"
+  1067→                    required
+  1068→                    className="border bg-transparent pl-10 font-serif"
+  1069→                    style={{ borderColor: border, color: coffee, borderRadius: 0 }}
+  1070→                  />
+  1071→                </div>
+  1072→                <div className="relative">
+  1073→                  <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: terracotta, opacity: 0.6 }} />
+  1074→                  <Input
+  1075→                    type="tel"
+  1076→                    value={contactPhone}
+  1077→                    onChange={(e) => setContactPhone(e.target.value)}
+  1078→                    placeholder="Phone number"
+  1079→                    className="border bg-transparent pl-10 font-serif"
+  1080→                    style={{ borderColor: border, color: coffee, borderRadius: 0 }}
+  1081→                  />
+  1082→                </div>
+  1083→                <div className="relative">
+  1084→                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: terracotta, opacity: 0.6 }} />
+  1085→                  <Input
+  1086→                    type="email"
+  1087→                    value={contactEmail}
+  1088→                    onChange={(e) => setContactEmail(e.target.value)}
+  1089→                    placeholder="Email address"
+  1090→                    className="border bg-transparent pl-10 font-serif"
+  1091→                    style={{ borderColor: border, color: coffee, borderRadius: 0 }}
+  1092→                  />
+  1093→                </div>
+  1094→                <Button
+  1095→                  type="submit"
+  1096→                  className="w-full font-serif text-xs uppercase tracking-[0.2em]"
+  1097→                  style={{ backgroundColor: sage, color: coffee, borderRadius: 0 }}
+  1098→                >
+  1099→                  Share my contact
+  1100→                </Button>
+  1101→              </motion.form>
+  1102→            )}
+  1103→          </div>
+  1104→        </SageSection>
+  1105→      )}
+  1106→
+  1107→      {/* ═══════════════════════════════════════════════════════════════════
+  1108→          RSVP — Confirm Attendance
+  1109→          ═══════════════════════════════════════════════════════════════════ */}
+  1110→      <SageSection>
+  1111→        <SageCard bg="transparent">
+  1112→          <div className="text-center">
+  1113→            <SageHeading>Confirm Attendance</SageHeading>
+  1114→            <motion.div variants={fadeInUp} className="mb-6 flex justify-center">
+  1115→              <Sprig color={sage} className="w-16 h-5" />
+  1116→            </motion.div>
+  1117→            <motion.p variants={fadeInUp} className="mb-8 font-serif text-sm italic" style={{ color: muted }}>
+  1118→              We can&apos;t wait to celebrate with you
+  1119→            </motion.p>
+  1120→          </div>
+  1121→
+  1122→          {rsvp.status === 'success' ? (
+  1123→            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="py-8 text-center">
+  1124→              <Heart className="mx-auto mb-3 h-10 w-10" style={{ color: sage }} fill={sage} />
+  1125→              <p className="font-script text-2xl" style={{ color: coffee, fontFamily: '"Great Vibes", cursive' }}>
+  1126→                Thank you!
+  1127→              </p>
+  1128→              <p className="mt-2 font-serif text-sm italic" style={{ color: muted }}>
+  1129→                We can&apos;t wait to see you there.
+  1130→              </p>
+  1131→            </motion.div>
+  1132→          ) : (
+  1133→            <form onSubmit={rsvp.submit} className="mx-auto max-w-sm space-y-3">
+  1134→              <Input
+  1135→                value={rsvp.name}
+  1136→                onChange={(e) => rsvp.setName(e.target.value)}
+  1137→                placeholder={t('rsvp.namePlaceholder')}
+  1138→                required
+  1139→                className="border bg-transparent font-serif"
+  1140→                style={{ borderColor: border, color: coffee, borderRadius: 0 }}
+  1141→              />
+  1142→              <Input
+  1143→                type="number"
+  1144→                min="1"
+  1145→                max="10"
+  1146→                value={rsvp.guests}
+  1147→                onChange={(e) => rsvp.setGuests(e.target.value)}
+  1148→                placeholder={t('rsvp.guestsPlaceholder')}
+  1149→                className="border bg-transparent font-serif"
+  1150→                style={{ borderColor: border, color: coffee, borderRadius: 0 }}
+  1151→              />
+  1152→              <Textarea
+  1153→                value={rsvp.note}
+  1154→                onChange={(e) => rsvp.setNote(e.target.value)}
+  1155→                placeholder={t('rsvp.notePlaceholder')}
+  1156→                rows={3}
+  1157→                className="border bg-transparent font-serif resize-none"
+  1158→                style={{ borderColor: border, color: coffee, borderRadius: 0 }}
+  1159→              />
+  1160→              {rsvp.error && <p className="text-center text-xs text-red-700">{rsvp.error}</p>}
+  1161→              <Button
+  1162→                type="submit"
+  1163→                disabled={rsvp.status === 'loading'}
+  1164→                className="w-full font-serif text-xs uppercase tracking-[0.2em]"
+  1165→                style={{ backgroundColor: sage, color: coffee, borderRadius: 0 }}
+  1166→              >
+  1167→                {rsvp.status === 'loading' ? '...' : t('rsvp.submit')}
+  1168→              </Button>
+  1169→            </form>
+  1170→          )}
+  1171→        </SageCard>
+  1172→      </SageSection>
+  1173→
+  1174→      {/* ═══════════════════════════════════════════════════════════════════
+  1175→          SPECIAL NOTES
+  1176→          ═══════════════════════════════════════════════════════════════════ */}
+  1177→      {data.specialNotes && data.specialNotes.length > 0 && (
+  1178→        <SageSection>
+  1179→          <div className="text-center">
+  1180→            <SageHeading>Special Notes</SageHeading>
+  1181→            <motion.div variants={fadeInUp} className="mb-10 flex justify-center">
+  1182→              <Sprig color={sage} className="w-16 h-5" />
+  1183→            </motion.div>
+  1184→
+  1185→            <motion.div variants={fadeInUp} className="mx-auto max-w-md space-y-4 text-left">
+  1186→              {data.specialNotes.map((n, i) => (
+  1187→                <div key={i} className="flex items-start gap-4 border px-5 py-4" style={{ borderColor: border }}>
+  1188→                  <Info className="mt-1 h-4 w-4 shrink-0" style={{ color: terracotta }} />
+  1189→                  <div>
+  1190→                    <p className="mb-1 font-serif text-sm font-medium" style={{ color: coffee }}>{n.title}</p>
+  1191→                    <p className="font-serif text-sm italic leading-relaxed" style={{ color: muted }}>{n.note}</p>
+  1192→                  </div>
+  1193→                </div>
+  1194→              ))}
+  1195→            </motion.div>
+  1196→          </div>
+  1197→        </SageSection>
+  1198→      )}
+  1199→
+  1200→      {/* ═══════════════════════════════════════════════════════════════════
+  1201→          PLEASE NOTE — disclaimer card
+  1202→          ═══════════════════════════════════════════════════════════════════ */}
+  1203→      <SageSection>
+  1204→        <SageCard bg="transparent">
+  1205→          <div className="text-center">
+  1206→            <SageHeading>Please note</SageHeading>
+  1207→            <motion.div variants={fadeInUp} className="mb-6 flex justify-center">
+  1208→              <Sprig color={sage} className="w-16 h-5" />
+  1209→            </motion.div>
+  1210→            <motion.p variants={fadeInUp} className="mx-auto max-w-md font-serif text-xs italic leading-relaxed" style={{ color: muted }}>
+  1211→              This digital invitation is personal and non-transferable. Please confirm your attendance before the date indicated on the RSVP. We kindly request that phones be set to silent during the ceremony — a professional photographer will capture every moment, and the gallery will be shared with all guests.
+  1212→            </motion.p>
+  1213→          </div>
+  1214→        </SageCard>
+  1215→      </SageSection>
+  1216→
+  1217→      {/* ═══════════════════════════════════════════════════════════════════
+  1218→          THANK YOU / FOOTER
+  1219→          ═══════════════════════════════════════════════════════════════════ */}
+  1220→      <footer className="px-4 py-20 text-center">
+  1221→        <motion.div
+  1222→          initial={{ opacity: 0, y: 20 }}
+  1223→          whileInView={{ opacity: 1, y: 0 }}
+  1224→          viewport={{ once: true }}
+  1225→          className="mx-auto max-w-2xl"
+  1226→        >
+  1227→          <div className="mb-6 flex justify-center">
+  1228→            <Sparkles className="h-4 w-4" style={{ color: terracotta, opacity: 0.6 }} />
+  1229→          </div>
+  1230→
+  1231→          <SageHeading>Thank you</SageHeading>
+  1232→
+  1233→          <motion.p
+  1234→            variants={fadeInUp}
+  1235→            initial="hidden"
+  1236→            whileInView="visible"
+  1237→            viewport={{ once: true }}
+  1238→            className="mx-auto mt-6 max-w-md font-serif text-sm italic leading-relaxed sm:text-base"
+  1239→            style={{ color: muted, fontFamily: '"Playfair Display", serif' }}
+  1240→          >
+  1241→            {data.thankYouMessage ?? 'With all our love and gratitude, thank you for being here. This day would not be the same without you.'}
+  1242→          </motion.p>
+  1243→
+  1244→          <motion.div
+  1245→            variants={fadeInUp}
+  1246→            initial="hidden"
+  1247→            whileInView="visible"
+  1248→            viewport={{ once: true }}
+  1249→            className="mt-10 flex justify-center"
+  1250→          >
+  1251→            <Sprig color={terracotta} className="w-20 h-6" />
+  1252→          </motion.div>
+  1253→
+  1254→          <motion.h2
+  1255→            variants={fadeInUp}
+  1256→            initial="hidden"
+  1257→            whileInView="visible"
+  1258→            viewport={{ once: true }}
+  1259→            className="mt-6 font-script text-3xl sm:text-4xl"
+  1260→            style={{ color: sage, fontFamily: '"Great Vibes", cursive' }}
+  1261→          >
+  1262→            {data.partner1Name} &amp; {data.partner2Name}
+  1263→          </motion.h2>
+  1264→
+  1265→          <motion.p
+  1266→            variants={fadeInUp}
+  1267→            initial="hidden"
+  1268→            whileInView="visible"
+  1269→            viewport={{ once: true }}
+  1270→            className="mt-4 text-[10px] uppercase tracking-[0.3em]"
+  1271→            style={{ color: muted }}
+  1272→          >
+  1273→            {formatDate(data.eventDate)}
+  1274→          </motion.p>
+  1275→        </motion.div>
+  1276→      </footer>
+  1277→    </div>
+  1278→  );
+  1279→}
+  1280→

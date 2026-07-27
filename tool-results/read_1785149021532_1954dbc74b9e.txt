@@ -1,0 +1,912 @@
+     1→// ═══════════════════════════════════════════════════════════════════════════════
+     2→//  Daawa Template Registry — 27 Phenomenal Invitation Designs
+     3→// ═══════════════════════════════════════════════════════════════════════════════
+     4→
+     5→export type Category =
+     6→  | 'Classique' | 'Moderne' | 'Traditionnel' | 'Romantique'
+     7→  | 'Islamique' | 'Bohème' | 'Minimaliste' | 'Art Déco'
+     8→  | 'Céleste' | 'Botanique' | 'Méditerranéen';
+     9→
+    10→export type OrnamentStyle =
+    11→  | 'arabesque' | 'floral' | 'geometric' | 'art-deco' | 'botanical'
+    12→  | 'celestial' | 'waves' | 'mosaic' | 'minimal' | 'tropical'
+    13→  | 'mandala' | 'filigree';
+    14→
+    15→export type BorderStyle =
+    16→  | 'ornate' | 'double-line' | 'art-deco' | 'none'
+    17→  | 'dashed' | 'dotted' | 'corner-ornaments' | 'arch-frame';
+    18→
+    19→export type LayoutStyle =
+    20→  | 'centered-classic' | 'full-bleed' | 'split' | 'asymmetric'
+    21→  | 'card-based' | 'timeline';
+    22→
+    23→export type HeroLayout =
+    24→  | 'names-centered' | 'names-stacked' | 'names-side-by-side'
+    25→  | 'names-monogram' | 'names-circular';
+    26→
+    27→export type CountdownStyle = 'cards' | 'circles' | 'minimal' | 'elegant' | 'gold-frames';
+    28→export type RsvpStyle = 'card' | 'minimal' | 'ornate' | 'modern' | 'full-width';
+    29→export type Tier = 'Classique' | 'Premium' | 'Luxe';
+    30→
+    31→export interface TemplateStyle {
+    32→  id: string;
+    33→  name: string;
+    34→  nameAr: string;
+    35→  category: Category;
+    36→  tier: Tier;
+    37→  price: number;
+    38→  tagline: string;
+    39→  isDark: boolean;
+    40→  coverBg: string;
+    41→  bodyBg: string;
+    42→  accentColor: string;
+    43→  accentLight: string;
+    44→  textPrimary: string;
+    45→  textSecondary: string;
+    46→  goldColor: string;
+    47→  ornamentStyle: OrnamentStyle;
+    48→  borderStyle: BorderStyle;
+    49→  layoutStyle: LayoutStyle;
+    50→  heroLayout: HeroLayout;
+    51→  countdownStyle: CountdownStyle;
+    52→  rsvpStyle: RsvpStyle;
+    53→  patternSvg: string;
+    54→  previewGradient: string;
+    55→  /**
+    56→   * Optional specialized layout component. When set, InvitationTemplate
+    57→   * dispatches to the named component (under templates/specialized/) instead
+    58→   * of the generic renderer. Each handcrafted component renders its own
+    59→   * cover + countdown + details + RSVP with a distinct visual identity.
+    60→   *
+    61→   * 18 of 28 templates currently have a handcrafted layout:
+    62→   *   • la-brise-nautique   — Mediterranean flagship (waves + anchor)
+    63→   *   • jardins-de-carthage — Roman arch + arabesque corners
+    64→   *   • le-grand-palais     — Bordeaux ballroom + Art Deco gold
+    65→   *   • chateau-de-rose     — Fairy-tale blush + floral garland
+    66→   *   • le-beldi            — Beylical palace + mosaic stars
+    67→   *   • cafe-des-delices    — Sidi Bou Said blue + waves
+    68→   *   • blanc-pur           — Editorial minimalist (extreme whitespace)
+    69→   *   • gatsby              — 1920s jet black + champagne gold
+    70→   *   • an-noor             — Islamic crescent + scattered stars
+    71→   *   • les-oliviers        — Mediterranean olive grove
+    72→   *   • sahara-dore         — Tataouine dunes at sunset
+    73→   *   • editorial           — Magazine-style editorial (Great Vibes script + warm earthy palette + bilingual Arabic verses)
+    74→   *   • sidi-bou-said       — Blue arched doors + cascading bougainvillea
+    75→   *   • kairouan-sacre      — Khatim 8-pointed stars + sacred geometry mandala
+    76→   *   • nuits-de-ramadan    — Crescent moon + hanging fanoos lanterns
+    77→   *   • limperiale          — Imperial midnight + Art Deco gold fans
+    78→   *   • etoiles-de-sousse   — Mediterranean constellation + orbital rings
+    79→   *   • jardin-sage         — Sage garden romantic (Great Vibes script + card sections + bilingual verse)
+    80→   */
+    81→  layoutComponent?:
+    82→    | 'la-brise-nautique'
+    83→    | 'jardins-de-carthage'
+    84→    | 'le-grand-palais'
+    85→    | 'chateau-de-rose'
+    86→    | 'le-beldi'
+    87→    | 'cafe-des-delices'
+    88→    | 'blanc-pur'
+    89→    | 'gatsby'
+    90→    | 'an-noor'
+    91→    | 'les-oliviers'
+    92→    | 'sahara-dore'
+    93→    | 'editorial'
+    94→    | 'sidi-bou-said'
+    95→    | 'kairouan-sacre'
+    96→    | 'nuits-de-ramadan'
+    97→    | 'limperiale'
+    98→    | 'etoiles-de-sousse'
+    99→    | 'jardin-sage';
+   100→}
+   101→
+   102→// ─── SVG Pattern helpers ─────────────────────────────────────────────────────
+   103→const svgUri = (svg: string) => `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+   104→
+   105→// ═══════════════════════════════════════════════════════════════════════════════
+   106→//  14 TEMPLATES
+   107→// ═══════════════════════════════════════════════════════════════════════════════
+   108→
+   109→export const TEMPLATES: TemplateStyle[] = [
+   110→  // ─── 1. JARDINS DE CARTHAGE ──────────────────────────────────────────────────
+   111→  {
+   112→    id: 'jardins-de-carthage',
+   113→    name: 'Jardins de Carthage',
+   114→    nameAr: 'حدائق قرطاج',
+   115→    category: 'Classique',
+   116→    tier: 'Classique',
+   117→    price: 89,
+   118→    tagline: "L'\u00e9l\u00e9gance intemporelle des jardins romains",
+   119→    isDark: false,
+   120→    coverBg: 'linear-gradient(160deg, #F0EBE3 0%, #E5D9C5 40%, #F0EBE3 70%, #D4C5A9 100%)',
+   121→    bodyBg: '#FBF8F3',
+   122→    accentColor: '#7B2D3B',
+   123→    accentLight: '#F5E6E8',
+   124→    textPrimary: '#2C1810',
+   125→    textSecondary: '#2C181066',
+   126→    goldColor: '#C9A84C',
+   127→    ornamentStyle: 'arabesque',
+   128→    borderStyle: 'ornate',
+   129→    layoutStyle: 'centered-classic',
+   130→    heroLayout: 'names-centered',
+   131→    countdownStyle: 'elegant',
+   132→    rsvpStyle: 'card',
+   133→    patternSvg: svgUri('<svg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'><ellipse cx=\'18\' cy=\'22\' rx=\'3.5\' ry=\'8\' fill=\'%23000\' transform=\'rotate(25 18 22)\' opacity=\'0.35\'/><ellipse cx=\'44\' cy=\'14\' rx=\'3\' ry=\'7\' fill=\'%23000\' transform=\'rotate(-20 44 14)\' opacity=\'0.3\'/><path d=\'M30 5 Q28 15 30 25 Q32 15 30 5\' fill=\'%23000\' opacity=\'0.15\'/><path d=\'M30 25 Q22 30 18 42\' fill=\'none\' stroke=\'%23000\' stroke-width=\'0.5\' opacity=\'0.15\'/><path d=\'M30 25 Q38 30 42 42\' fill=\'none\' stroke=\'%23000\' stroke-width=\'0.5\' opacity=\'0.15\'/></svg>'),
+   134→    previewGradient: 'from-[#F0EBE3] to-[#D4C5A9]',
+   135→    layoutComponent: 'jardins-de-carthage',
+   136→  },
+   137→
+   138→  // ─── 2. LE GRAND PALAIS ─────────────────────────────────────────────────────
+   139→  {
+   140→    id: 'le-grand-palais',
+   141→    name: 'Le Grand Palais',
+   142→    nameAr: 'القصر الكبير',
+   143→    category: 'Classique',
+   144→    tier: 'Premium',
+   145→    price: 149,
+   146→    tagline: "L'atmosph\u00e8re d'une grande salle de r\u00e9ception",
+   147→    isDark: true,
+   148→    coverBg: 'linear-gradient(160deg, #3D0C11 0%, #5C1A24 30%, #7B2D3B 60%, #3D0C11 100%)',
+   149→    bodyBg: '#FBF8F3',
+   150→    accentColor: '#7B2D3B',
+   151→    accentLight: '#F5E6E8',
+   152→    textPrimary: '#F5EDE7',
+   153→    textSecondary: '#F5EDE780',
+   154→    goldColor: '#C9A84C',
+   155→    ornamentStyle: 'filigree',
+   156→    borderStyle: 'ornate',
+   157→    layoutStyle: 'centered-classic',
+   158→    heroLayout: 'names-centered',
+   159→    countdownStyle: 'gold-frames',
+   160→    rsvpStyle: 'ornate',
+   161→    patternSvg: svgUri('<svg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M20 2 L38 20 L20 38 L2 20Z\' fill=\'none\' stroke=\'%23fff\' stroke-width=\'0.5\' opacity=\'0.25\'/><path d=\'M20 12 L28 20 L20 28 L12 20Z\' fill=\'%23fff\' opacity=\'0.06\'/><circle cx=\'20\' cy=\'20\' r=\'2\' fill=\'%23fff\' opacity=\'0.1\'/></svg>'),
+   162→    previewGradient: 'from-[#3D0C11] to-[#7B2D3B]',
+   163→    layoutComponent: 'le-grand-palais',
+   164→  },
+   165→
+   166→  // ─── 3. CHÂTEAU DE ROSE ─────────────────────────────────────────────────────
+   167→  {
+   168→    id: 'chateau-de-rose',
+   169→    name: 'Ch\u00e2teau de Rose',
+   170→    nameAr: 'قلعة الورد',
+   171→    category: 'Classique',
+   172→    tier: 'Luxe',
+   173→    price: 249,
+   174→    tagline: 'Un conte de f\u00e9es en rose p\u00e2le et ivoire',
+   175→    isDark: false,
+   176→    coverBg: 'linear-gradient(160deg, #FFF5F5 0%, #FDE8E8 30%, #FFF0F0 60%, #F9D4D4 100%)',
+   177→    bodyBg: '#FFFAFA',
+   178→    accentColor: '#B85C6F',
+   179→    accentLight: '#FDE8E8',
+   180→    textPrimary: '#3D1F28',
+   181→    textSecondary: '#3D1F2866',
+   182→    goldColor: '#D4A0A0',
+   183→    ornamentStyle: 'floral',
+   184→    borderStyle: 'double-line',
+   185→    layoutStyle: 'centered-classic',
+   186→    heroLayout: 'names-stacked',
+   187→    countdownStyle: 'elegant',
+   188→    rsvpStyle: 'card',
+   189→    patternSvg: svgUri('<svg width=\'50\' height=\'50\' viewBox=\'0 0 50 50\' xmlns=\'http://www.w3.org/2000/svg\'><ellipse cx=\'25\' cy=\'15\' rx=\'8\' ry=\'10\' fill=\'none\' stroke=\'%23B85C6F\' stroke-width=\'0.4\' opacity=\'0.15\'/><ellipse cx=\'18\' cy=\'14\' rx=\'5\' ry=\'7\' fill=\'%23B85C6F\' opacity=\'0.04\' transform=\'rotate(-15 18 14)\'/><ellipse cx=\'32\' cy=\'14\' rx=\'5\' ry=\'7\' fill=\'%23B85C6F\' opacity=\'0.04\' transform=\'rotate(15 32 14)\'/><path d=\'M25 25 L25 45\' stroke=\'%23B85C6F\' stroke-width=\'0.3\' opacity=\'0.08\'/><circle cx=\'25\' cy=\'15\' r=\'2\' fill=\'%23B85C6F\' opacity=\'0.06\'/></svg>'),
+   190→    previewGradient: 'from-[#FFF5F5] to-[#F9D4D4]',
+   191→    layoutComponent: 'chateau-de-rose',
+   192→  },
+   193→
+   194→  // ─── 4. LE BELDI ────────────────────────────────────────────────────────────
+   195→  {
+   196→    id: 'le-beldi',
+   197→    name: 'Le Beldi',
+   198→    nameAr: 'البلدي',
+   199→    category: 'Traditionnel',
+   200→    tier: 'Premium',
+   201→    price: 149,
+   202→    tagline: "L'opulence des palais beylicaux",
+   203→    isDark: true,
+   204→    coverBg: 'linear-gradient(160deg, #1A0E08 0%, #3D2518 30%, #5C3A28 60%, #2C1810 100%)',
+   205→    bodyBg: '#FBF8F3',
+   206→    accentColor: '#C9A84C',
+   207→    accentLight: '#E8D9A0',
+   208→    textPrimary: '#F5EDE7',
+   209→    textSecondary: '#F5EDE770',
+   210→    goldColor: '#D4B04C',
+   211→    ornamentStyle: 'arabesque',
+   212→    borderStyle: 'arch-frame',
+   213→    layoutStyle: 'centered-classic',
+   214→    heroLayout: 'names-centered',
+   215→    countdownStyle: 'gold-frames',
+   216→    rsvpStyle: 'ornate',
+   217→    patternSvg: svgUri('<svg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M30 5 L33 20 L48 20 L36 29 L39 44 L30 35 L21 44 L24 29 L12 20 L27 20Z\' fill=\'%23D4B04C\' opacity=\'0.15\'/><circle cx=\'30\' cy=\'30\' r=\'20\' fill=\'none\' stroke=\'%23D4B04C\' stroke-width=\'0.3\' opacity=\'0.12\'/><circle cx=\'30\' cy=\'30\' r=\'10\' fill=\'none\' stroke=\'%23D4B04C\' stroke-width=\'0.2\' opacity=\'0.08\'/></svg>'),
+   218→    previewGradient: 'from-[#2C1810] to-[#5C3A28]',
+   219→    layoutComponent: 'le-beldi',
+   220→  },
+   221→
+   222→  // ─── 5. CAFÉ DES DÉLICES ───────────────────────────────────────────────────
+   223→  {
+   224→    id: 'cafe-des-delices',
+   225→    name: 'Caf\u00e9 des D\u00e9lices',
+   226→    nameAr: 'مقهى النسمات',
+   227→    category: 'Méditerranéen',
+   228→    tier: 'Premium',
+   229→    price: 149,
+   230→    tagline: 'Sidi Bou Said en toute splendeur',
+   231→    isDark: true,
+   232→    coverBg: 'linear-gradient(160deg, #0D2B45 0%, #1B4965 30%, #2A6F97 60%, #1B4965 100%)',
+   233→    bodyBg: '#F0F7FB',
+   234→    accentColor: '#2A6F97',
+   235→    accentLight: '#D4ECFA',
+   236→    textPrimary: '#E8F4FD',
+   237→    textSecondary: '#E8F4FD70',
+   238→    goldColor: '#E8D9A0',
+   239→    ornamentStyle: 'waves',
+   240→    borderStyle: 'corner-ornaments',
+   241→    layoutStyle: 'full-bleed',
+   242→    heroLayout: 'names-centered',
+   243→    countdownStyle: 'elegant',
+   244→    rsvpStyle: 'modern',
+   245→    patternSvg: svgUri('<svg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'20\' cy=\'20\' r=\'1.8\' fill=\'%23fff\' opacity=\'0.20\'/><circle cx=\'0\' cy=\'0\' r=\'1.2\' fill=\'%23fff\' opacity=\'0.12\'/><circle cx=\'40\' cy=\'0\' r=\'1.2\' fill=\'%23fff\' opacity=\'0.12\'/><circle cx=\'0\' cy=\'40\' r=\'1.2\' fill=\'%23fff\' opacity=\'0.12\'/><circle cx=\'40\' cy=\'40\' r=\'1.2\' fill=\'%23fff\' opacity=\'0.12\'/><circle cx=\'20\' cy=\'0\' r=\'0.8\' fill=\'%23fff\' opacity=\'0.08\'/><circle cx=\'20\' cy=\'40\' r=\'0.8\' fill=\'%23fff\' opacity=\'0.08\'/></svg>'),
+   246→    previewGradient: 'from-[#1B4965] to-[#62B6CB]',
+   247→    layoutComponent: 'cafe-des-delices',
+   248→  },
+   249→
+   250→  // ─── 6. L'IMPÉRIALE ────────────────────────────────────────────────────────
+   251→  {
+   252→    id: 'limperiale',
+   253→    name: "L'Imp\u00e9riale",
+   254→    nameAr: 'الإمبراطورية',
+   255→    category: 'Moderne',
+   256→    tier: 'Premium',
+   257→    price: 149,
+   258→    tagline: 'Or cisel\u00e9 sur fond de nuit',
+   259→    isDark: true,
+   260→    coverBg: 'linear-gradient(160deg, #0A0A18 0%, #12122A 30%, #1A1A3E 60%, #0A0A18 100%)',
+   261→    bodyBg: '#FAFAFA',
+   262→    accentColor: '#C9A84C',
+   263→    accentLight: '#E8D9A0',
+   264→    textPrimary: '#EEEEF5',
+   265→    textSecondary: '#EEEEF570',
+   266→    goldColor: '#D4B86A',
+   267→    ornamentStyle: 'geometric',
+   268→    borderStyle: 'art-deco',
+   269→    layoutStyle: 'split',
+   270→    heroLayout: 'names-side-by-side',
+   271→    countdownStyle: 'gold-frames',
+   272→    rsvpStyle: 'modern',
+   273→    patternSvg: svgUri('<svg width=\'12\' height=\'12\' viewBox=\'0 0 12 12\' xmlns=\'http://www.w3.org/2000/svg\'><line x1=\'0\' y1=\'12\' x2=\'12\' y2=\'0\' stroke=\'%23C9A84C\' stroke-width=\'0.3\' opacity=\'0.25\'/></svg>'),
+   274→    previewGradient: 'from-[#0F0F1A] to-[#1A1A3E]',
+   275→    layoutComponent: 'limperiale',
+   276→  },
+   277→
+   278→  // ─── 7. NOIR ET OR ──────────────────────────────────────────────────────────
+   279→  {
+   280→    id: 'noir-et-or',
+   281→    name: 'Noir et Or',
+   282→    nameAr: 'أسود وذهبي',
+   283→    category: 'Moderne',
+   284→    tier: 'Luxe',
+   285→    price: 249,
+   286→    tagline: "L'ultra-moderne, sans compromis",
+   287→    isDark: true,
+   288→    coverBg: 'linear-gradient(160deg, #000000 0%, #0A0A0A 40%, #1A1A1A 70%, #000000 100%)',
+   289→    bodyBg: '#F5F5F5',
+   290→    accentColor: '#C9A84C',
+   291→    accentLight: '#E8D9A0',
+   292→    textPrimary: '#F5F5F5',
+   293→    textSecondary: '#F5F5F560',
+   294→    goldColor: '#C9A84C',
+   295→    ornamentStyle: 'minimal',
+   296→    borderStyle: 'art-deco',
+   297→    layoutStyle: 'asymmetric',
+   298→    heroLayout: 'names-monogram',
+   299→    countdownStyle: 'minimal',
+   300→    rsvpStyle: 'modern',
+   301→    patternSvg: svgUri('<svg width=\'80\' height=\'80\' viewBox=\'0 0 80 80\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'40\' cy=\'40\' r=\'0.5\' fill=\'%23C9A84C\' opacity=\'0.08\'/></svg>'),
+   302→    previewGradient: 'from-[#000000] to-[#1A1A1A]',
+   303→  },
+   304→
+   305→  // ─── 8. LES OLIVIERS ────────────────────────────────────────────────────────
+   306→  {
+   307→    id: 'les-oliviers',
+   308→    name: 'Les Oliviers',
+   309→    nameAr: 'الزيتون',
+   310→    category: 'Botanique',
+   311→    tier: 'Premium',
+   312→    price: 149,
+   313→    tagline: "L'effortless chic des c\u00e9l\u00e9brations en plein air",
+   314→    isDark: false,
+   315→    coverBg: 'linear-gradient(160deg, #F5F0E5 0%, #E8DCC8 30%, #F0E8D8 60%, #C4B99A 100%)',
+   316→    bodyBg: '#FAF8F3',
+   317→    accentColor: '#6B7C5E',
+   318→    accentLight: '#E5EBE0',
+   319→    textPrimary: '#2C3328',
+   320→    textSecondary: '#2C332866',
+   321→    goldColor: '#8B9A7B',
+   322→    ornamentStyle: 'botanical',
+   323→    borderStyle: 'dashed',
+   324→    layoutStyle: 'card-based',
+   325→    heroLayout: 'names-centered',
+   326→    countdownStyle: 'cards',
+   327→    rsvpStyle: 'card',
+   328→    patternSvg: svgUri('<svg width=\'50\' height=\'50\' viewBox=\'0 0 50 50\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M25 0 Q20 15 25 25 Q30 15 25 0\' fill=\'%236B7C5E\' opacity=\'0.10\'/><path d=\'M25 25 Q15 30 10 45\' fill=\'none\' stroke=\'%236B7C5E\' stroke-width=\'0.4\' opacity=\'0.10\'/><path d=\'M25 25 Q35 30 40 45\' fill=\'none\' stroke=\'%236B7C5E\' stroke-width=\'0.4\' opacity=\'0.10\'/><ellipse cx=\'10\' cy=\'45\' rx=\'3\' ry=\'2\' fill=\'%236B7C5E\' opacity=\'0.06\'/><ellipse cx=\'40\' cy=\'45\' rx=\'3\' ry=\'2\' fill=\'%236B7C5E\' opacity=\'0.06\'/></svg>'),
+   329→    previewGradient: 'from-[#E8DCC8] to-[#C4B99A]',
+   330→    layoutComponent: 'les-oliviers',
+   331→  },
+   332→
+   333→  // ─── 9. LA BRISE MARINE ─────────────────────────────────────────────────────
+   334→  {
+   335→    id: 'la-brise-marine',
+   336→    name: 'La Brise Marine',
+   337→    nameAr: 'نسيم البحر',
+   338→    category: 'Romantique',
+   339→    tier: 'Premium',
+   340→    price: 149,
+   341→    tagline: 'Port\u00e9e par la brise m\u00e9diterran\u00e9enne',
+   342→    isDark: false,
+   343→    coverBg: 'linear-gradient(160deg, #E8F4F8 0%, #C5DDE8 30%, #B8D8E8 60%, #87CEEB 100%)',
+   344→    bodyBg: '#F5FAFD',
+   345→    accentColor: '#3A7CA5',
+   346→    accentLight: '#D4ECFA',
+   347→    textPrimary: '#1A3A4A',
+   348→    textSecondary: '#1A3A4A66',
+   349→    goldColor: '#7BAFCC',
+   350→    ornamentStyle: 'waves',
+   351→    borderStyle: 'dotted',
+   352→    layoutStyle: 'full-bleed',
+   353→    heroLayout: 'names-stacked',
+   354→    countdownStyle: 'circles',
+   355→    rsvpStyle: 'card',
+   356→    patternSvg: svgUri('<svg width=\'60\' height=\'20\' viewBox=\'0 0 60 20\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M0 10 Q15 0 30 10 T60 10\' fill=\'none\' stroke=\'%233A7CA5\' stroke-width=\'0.5\' opacity=\'0.20\'/><path d=\'M0 16 Q15 6 30 16 T60 16\' fill=\'none\' stroke=\'%233A7CA5\' stroke-width=\'0.3\' opacity=\'0.12\'/></svg>'),
+   357→    previewGradient: 'from-[#B8D8E8] to-[#87CEEB]',
+   358→  },
+   359→
+   360→  // ─── 10. AN-NOOR ─────────────────────────────────────────────────────────────
+   361→  {
+   362→    id: 'an-noor',
+   363→    name: 'An-Noor',
+   364→    nameAr: 'النور',
+   365→    category: 'Islamique',
+   366→    tier: 'Classique',
+   367→    price: 89,
+   368→    tagline: 'Une inspiration spirituelle et lumineuse',
+   369→    isDark: false,
+   370→    coverBg: 'linear-gradient(160deg, #F8F5EE 0%, #F0EBE0 30%, #F5F0E8 60%, #E8DFD0 100%)',
+   371→    bodyBg: '#FAF8F3',
+   372→    accentColor: '#5A7247',
+   373→    accentLight: '#E0EADB',
+   374→    textPrimary: '#2C3320',
+   375→    textSecondary: '#2C332066',
+   376→    goldColor: '#8B9A6B',
+   377→    ornamentStyle: 'mandala',
+   378→    borderStyle: 'arch-frame',
+   379→    layoutStyle: 'centered-classic',
+   380→    heroLayout: 'names-centered',
+   381→    countdownStyle: 'cards',
+   382→    rsvpStyle: 'card',
+   383→    patternSvg: svgUri('<svg width=\'40\' height=\'50\' viewBox=\'0 0 40 50\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M5 50 L5 20 Q5 5 20 5 Q35 5 35 20 L35 50\' fill=\'none\' stroke=\'%235A7247\' stroke-width=\'0.5\' opacity=\'0.15\'/><circle cx=\'20\' cy=\'8\' r=\'1.5\' fill=\'%235A7247\' opacity=\'0.10\'/></svg>'),
+   384→    previewGradient: 'from-[#F5F0E8] to-[#E8DFD0]',
+   385→    layoutComponent: 'an-noor',
+   386→  },
+   387→
+   388→  // ─── 11. SAHARA DORÉ ───────────────────────────────────────────────────────
+   389→  {
+   390→    id: 'sahara-dore',
+   391→    name: 'Sahara Dor\u00e9',
+   392→    nameAr: 'صحراء ذهبية',
+   393→    category: 'Bohème',
+   394→    tier: 'Premium',
+   395→    price: 149,
+   396→    tagline: "Les teintes chaudes du d\u00e9sert tunisien",
+   397→    isDark: false,
+   398→    coverBg: 'linear-gradient(160deg, #F5E6D0 0%, #E8D5B8 30%, #DECCA8 60%, #D4B88A 100%)',
+   399→    bodyBg: '#FAF6EF',
+   400→    accentColor: '#B8860B',
+   401→    accentLight: '#F5ECD8',
+   402→    textPrimary: '#3D2B1A',
+   403→    textSecondary: '#3D2B1A66',
+   404→    goldColor: '#C9A84C',
+   405→    ornamentStyle: 'tropical',
+   406→    borderStyle: 'dashed',
+   407→    layoutStyle: 'card-based',
+   408→    heroLayout: 'names-stacked',
+   409→    countdownStyle: 'elegant',
+   410→    rsvpStyle: 'card',
+   411→    patternSvg: svgUri('<svg width=\'80\' height=\'40\' viewBox=\'0 0 80 40\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M0 35 Q20 10 40 25 Q60 40 80 15\' fill=\'none\' stroke=\'%23B8860B\' stroke-width=\'0.5\' opacity=\'0.12\'/><path d=\'M0 40 Q20 20 40 32 Q60 42 80 22\' fill=\'none\' stroke=\'%23B8860B\' stroke-width=\'0.3\' opacity=\'0.08\'/></svg>'),
+   412→    previewGradient: 'from-[#F5E6D0] to-[#D4B88A]',
+   413→    layoutComponent: 'sahara-dore',
+   414→  },
+   415→
+   416→  // ─── 12. BLANC PUR ──────────────────────────────────────────────────────────
+   417→  {
+   418→    id: 'blanc-pur',
+   419→    name: 'Blanc Pur',
+   420→    nameAr: 'أبيض نقي',
+   421→    category: 'Minimaliste',
+   422→    tier: 'Classique',
+   423→    price: 89,
+   424→    tagline: "La beaut\u00e9 dans la simplicit\u00e9 absolue",
+   425→    isDark: false,
+   426→    coverBg: 'linear-gradient(160deg, #FFFFFF 0%, #FAFAFA 40%, #F5F5F5 70%, #FFFFFF 100%)',
+   427→    bodyBg: '#FFFFFF',
+   428→    accentColor: '#7B2D3B',
+   429→    accentLight: '#F5E6E8',
+   430→    textPrimary: '#1A1A1A',
+   431→    textSecondary: '#1A1A1A55',
+   432→    goldColor: '#CCCCCC',
+   433→    ornamentStyle: 'minimal',
+   434→    borderStyle: 'none',
+   435→    layoutStyle: 'centered-classic',
+   436→    heroLayout: 'names-centered',
+   437→    countdownStyle: 'minimal',
+   438→    rsvpStyle: 'minimal',
+   439→    patternSvg: svgUri('<svg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'20\' cy=\'20\' r=\'0.3\' fill=\'%23000\' opacity=\'0.04\'/></svg>'),
+   440→    previewGradient: 'from-[#FAFAFA] to-[#E8E8E8]',
+   441→    layoutComponent: 'blanc-pur',
+   442→  },
+   443→
+   444→  // ─── 13. GATSBY ──────────────────────────────────────────────────────────────
+   445→  {
+   446→    id: 'gatsby',
+   447→    name: 'Gatsby',
+   448→    nameAr: 'غاتسبي',
+   449→    category: 'Art Déco',
+   450→    tier: 'Luxe',
+   451→    price: 249,
+   452→    tagline: "Le glamour des ann\u00e9es 1920 revis\u00e9",
+   453→    isDark: true,
+   454→    coverBg: 'linear-gradient(160deg, #0A0A0A 0%, #1A1A1A 30%, #0A0A0A 60%, #1A1A1A 100%)',
+   455→    bodyBg: '#FAFAFA',
+   456→    accentColor: '#C9A84C',
+   457→    accentLight: '#E8D9A0',
+   458→    textPrimary: '#F0E6D3',
+   459→    textSecondary: '#F0E6D360',
+   460→    goldColor: '#D4B86A',
+   461→    ornamentStyle: 'art-deco',
+   462→    borderStyle: 'art-deco',
+   463→    layoutStyle: 'asymmetric',
+   464→    heroLayout: 'names-monogram',
+   465→    countdownStyle: 'gold-frames',
+   466→    rsvpStyle: 'modern',
+   467→    patternSvg: svgUri('<svg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M20 0 L40 20 L20 40 L0 20Z\' fill=\'none\' stroke=\'%23C9A84C\' stroke-width=\'0.3\' opacity=\'0.12\'/><circle cx=\'20\' cy=\'20\' r=\'8\' fill=\'none\' stroke=\'%23C9A84C\' stroke-width=\'0.2\' opacity=\'0.08\'/><line x1=\'20\' y1=\'0\' x2=\'20\' y2=\'40\' stroke=\'%23C9A84C\' stroke-width=\'0.15\' opacity=\'0.06\'/><line x1=\'0\' y1=\'20\' x2=\'40\' y2=\'20\' stroke=\'%23C9A84C\' stroke-width=\'0.15\' opacity=\'0.06\'/></svg>'),
+   468→    previewGradient: 'from-[#0A0A0A] to-[#2A2A2A]',
+   469→    layoutComponent: 'gatsby',
+   470→  },
+   471→
+   472→  // ─── 14. ÉTOILES DE SOUSSE ──────────────────────────────────────────────────
+   473→  {
+   474→    id: 'etoiles-de-sousse',
+   475→    name: '\u00c9toiles de Sousse',
+   476→    nameAr: 'نجوم سوسة',
+   477→    category: 'Céleste',
+   478→    tier: 'Premium',
+   479→    price: 149,
+   480→    tagline: 'Sous les \u00e9toiles de la M\u00e9diterran\u00e9e',
+   481→    isDark: true,
+   482→    coverBg: 'linear-gradient(160deg, #050A1A 0%, #0A1535 30%, #0F1F45 60%, #050A1A 100%)',
+   483→    bodyBg: '#F8F9FC',
+   484→    accentColor: '#6B8DD6',
+   485→    accentLight: '#D8E2F5',
+   486→    textPrimary: '#E0E8F5',
+   487→    textSecondary: '#E0E8F570',
+   488→    goldColor: '#B8C8E8',
+   489→    ornamentStyle: 'celestial',
+   490→    borderStyle: 'corner-ornaments',
+   491→    layoutStyle: 'centered-classic',
+   492→    heroLayout: 'names-circular',
+   493→    countdownStyle: 'circles',
+   494→    rsvpStyle: 'card',
+   495→    patternSvg: svgUri('<svg width=\'80\' height=\'80\' viewBox=\'0 0 80 80\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'20\' cy=\'15\' r=\'1\' fill=\'%23fff\' opacity=\'0.15\'/><circle cx=\'55\' cy=\'25\' r=\'0.7\' fill=\'%23fff\' opacity=\'0.12\'/><circle cx=\'35\' cy=\'50\' r=\'0.8\' fill=\'%23fff\' opacity=\'0.10\'/><circle cx=\'70\' cy=\'60\' r=\'1.2\' fill=\'%23fff\' opacity=\'0.18\'/><circle cx=\'10\' cy=\'65\' r=\'0.6\' fill=\'%23fff\' opacity=\'0.08\'/><circle cx=\'60\' cy=\'5\' r=\'0.5\' fill=\'%23fff\' opacity=\'0.07\'/><circle cx=\'45\' cy=\'75\' r=\'0.9\' fill=\'%23fff\' opacity=\'0.14\'/><circle cx=\'80\' cy=\'35\' r=\'0.6\' fill=\'%23fff\' opacity=\'0.09\'/><circle cx=\'5\' cy=\'40\' r=\'1.1\' fill=\'%23fff\' opacity=\'0.16\'/></svg>'),
+   496→    previewGradient: 'from-[#0A1535] to-[#1A2D55]',
+   497→    layoutComponent: 'etoiles-de-sousse',
+   498→  },
+   499→
+   500→  // ═══════════════════════════════════════════════════════════════════════════════
+   501→  //  NEW WAVE — Tunisian / Mediterranean / Modern designs
+   502→  //  Inspired by invitio.io + 2025 wedding invitation trends.
+   503→  // ═══════════════════════════════════════════════════════════════════════════════
+   504→
+   505→  // ─── 15. LA BRISE NAUTIQUE (flagship — matches invitio.io reference) ────────
+   506→  {
+   507→    id: 'la-brise-nautique',
+   508→    name: 'La Brise Nautique',
+   509→    nameAr: 'نسيم البحر',
+   510→    category: 'Méditerranéen',
+   511→    tier: 'Premium',
+   512→    price: 149,
+   513→    tagline: 'Sable pâle, eau turquoise et lumière dorée — une invitation portée par la brise du large.',
+   514→    isDark: false,
+   515→    coverBg: 'linear-gradient(170deg, #F5E9D4 0%, #E8D9B8 25%, #B8DCE0 55%, #6FA8B5 85%, #2A6F7E 100%)',
+   516→    bodyBg: '#FBF6EC',
+   517→    accentColor: '#2A6F7E',
+   518→    accentLight: '#D4E8EC',
+   519→    textPrimary: '#1F3A42',
+   520→    textSecondary: '#1F3A4266',
+   521→    goldColor: '#C9A55C',
+   522→    ornamentStyle: 'waves',
+   523→    borderStyle: 'corner-ornaments',
+   524→    layoutStyle: 'full-bleed',
+   525→    heroLayout: 'names-centered',
+   526→    countdownStyle: 'elegant',
+   527→    rsvpStyle: 'card',
+   528→    patternSvg: svgUri('<svg width=\'80\' height=\'40\' viewBox=\'0 0 80 40\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M0 20 Q20 5 40 20 T80 20\' fill=\'none\' stroke=\'%232A6F7E\' stroke-width=\'0.6\' opacity=\'0.18\'/><path d=\'M0 28 Q20 13 40 28 T80 28\' fill=\'none\' stroke=\'%232A6F7E\' stroke-width=\'0.4\' opacity=\'0.12\'/><path d=\'M0 36 Q20 21 40 36 T80 36\' fill=\'none\' stroke=\'%232A6F7E\' stroke-width=\'0.3\' opacity=\'0.08\'/></svg>'),
+   529→    previewGradient: 'from-[#E8D9B8] via-[#B8DCE0] to-[#2A6F7E]',
+   530→    layoutComponent: 'la-brise-nautique',
+   531→  },
+   532→
+   533→  // ─── 16. LELLA BEYA (beylical / Ottoman) ─────────────────────────────────────
+   534→  {
+   535→    id: 'lella-beya',
+   536→    name: 'Lella Beya',
+   537→    nameAr: 'الليلة البية',
+   538→    category: 'Traditionnel',
+   539→    tier: 'Luxe',
+   540→    price: 249,
+   541→    tagline: "L'éclat des palais beylicaux : or bruni, splendeur ottomane et étiquette princière.",
+   542→    isDark: true,
+   543→    coverBg: 'linear-gradient(160deg, #1A0F0A 0%, #2D1B10 30%, #4A2F1A 60%, #1A0F0A 100%)',
+   544→    bodyBg: '#FBF5EA',
+   545→    accentColor: '#C9A55C',
+   546→    accentLight: '#E8D4A8',
+   547→    textPrimary: '#F5E6C8',
+   548→    textSecondary: '#F5E6C870',
+   549→    goldColor: '#D4B06A',
+   550→    ornamentStyle: 'arabesque',
+   551→    borderStyle: 'ornate',
+   552→    layoutStyle: 'centered-classic',
+   553→    heroLayout: 'names-centered',
+   554→    countdownStyle: 'gold-frames',
+   555→    rsvpStyle: 'ornate',
+   556→    patternSvg: svgUri('<svg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M30 5 L33 22 L50 22 L36 32 L41 49 L30 39 L19 49 L24 32 L10 22 L27 22Z\' fill=\'none\' stroke=\'%23D4B06A\' stroke-width=\'0.4\' opacity=\'0.20\'/><circle cx=\'30\' cy=\'30\' r=\'18\' fill=\'none\' stroke=\'%23D4B06A\' stroke-width=\'0.3\' opacity=\'0.14\'/><circle cx=\'30\' cy=\'30\' r=\'10\' fill=\'none\' stroke=\'%23D4B06A\' stroke-width=\'0.2\' opacity=\'0.10\'/><circle cx=\'30\' cy=\'30\' r=\'2\' fill=\'%23D4B06A\' opacity=\'0.18\'/></svg>'),
+   557→    previewGradient: 'from-[#1A0F0A] to-[#4A2F1A]',
+   558→  },
+   559→
+   560→  // ─── 17. SIDI BOU SAÏD (blue & white village) ───────────────────────────────
+   561→  {
+   562→    id: 'sidi-bou-said',
+   563→    name: 'Sidi Bou Sa\u00efd',
+   564→    nameAr: 'سيدي بو سعيد',
+   565→    category: 'Méditerranéen',
+   566→    tier: 'Premium',
+   567→    price: 149,
+   568→    tagline: 'Portes bleues, jasmin et M\u00e9diterran\u00e9e infinie — l\'invitation qui sent l\'air du large.',
+   569→    isDark: true,
+   570→    coverBg: 'linear-gradient(160deg, #0A2540 0%, #14467A 30%, #1E5A9C 60%, #0A2540 100%)',
+   571→    bodyBg: '#F5F8FC',
+   572→    accentColor: '#1E5A9C',
+   573→    accentLight: '#D4E4F5',
+   574→    textPrimary: '#F0F5FA',
+   575→    textSecondary: '#F0F5FA70',
+   576→    goldColor: '#E8D9A0',
+   577→    ornamentStyle: 'arabesque',
+   578→    borderStyle: 'arch-frame',
+   579→    layoutStyle: 'centered-classic',
+   580→    heroLayout: 'names-centered',
+   581→    countdownStyle: 'elegant',
+   582→    rsvpStyle: 'card',
+   583→    patternSvg: svgUri('<svg width=\'50\' height=\'60\' viewBox=\'0 0 50 60\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M5 60 L5 25 Q5 5 25 5 Q45 5 45 25 L45 60\' fill=\'none\' stroke=\'%23fff\' stroke-width=\'0.5\' opacity=\'0.20\'/><circle cx=\'25\' cy=\'10\' r=\'1\' fill=\'%23fff\' opacity=\'0.30\'/><line x1=\'25\' y1=\'5\' x2=\'25\' y2=\'60\' stroke=\'%23fff\' stroke-width=\'0.3\' opacity=\'0.08\'/></svg>'),
+   584→    previewGradient: 'from-[#14467A] to-[#1E5A9C]',
+   585→    layoutComponent: 'sidi-bou-said',
+   586→  },
+   587→
+   588→  // ─── 18. YASMINE & JASMIN (botanical white-green) ───────────────────────────
+   589→  {
+   590→    id: 'yasmine-jasmin',
+   591→    name: 'Yasmine & Jasmin',
+   592→    nameAr: 'ياسمين وجاسمين',
+   593→    category: 'Botanique',
+   594→    tier: 'Classique',
+   595→    price: 89,
+   596→    tagline: 'La d\u00e9licatesse des fleurs de jasmin sur fond ivoire.',
+   597→    isDark: false,
+   598→    coverBg: 'linear-gradient(165deg, #FBFAF5 0%, #F0F0E5 30%, #E5E8DC 60%, #D4D8C5 100%)',
+   599→    bodyBg: '#FDFCF7',
+   600→    accentColor: '#5C7A4A',
+   601→    accentLight: '#E0E8D4',
+   602→    textPrimary: '#2A3320',
+   603→    textSecondary: '#2A332066',
+   604→    goldColor: '#8B9A6B',
+   605→    ornamentStyle: 'botanical',
+   606→    borderStyle: 'corner-ornaments',
+   607→    layoutStyle: 'centered-classic',
+   608→    heroLayout: 'names-stacked',
+   609→    countdownStyle: 'cards',
+   610→    rsvpStyle: 'card',
+   611→    patternSvg: svgUri('<svg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'20\' cy=\'20\' r=\'3\' fill=\'none\' stroke=\'%235C7A4A\' stroke-width=\'0.3\' opacity=\'0.18\'/><circle cx=\'20\' cy=\'20\' r=\'1.5\' fill=\'%235C7A4A\' opacity=\'0.12\'/><path d=\'M20 17 L20 23 M17 20 L23 20\' stroke=\'%235C7A4A\' stroke-width=\'0.4\' opacity=\'0.18\'/><ellipse cx=\'14\' cy=\'14\' rx=\'2\' ry=\'1\' fill=\'%235C7A4A\' opacity=\'0.08\' transform=\'rotate(-45 14 14)\'/><ellipse cx=\'26\' cy=\'14\' rx=\'2\' ry=\'1\' fill=\'%235C7A4A\' opacity=\'0.08\' transform=\'rotate(45 26 14)\'/></svg>'),
+   612→    previewGradient: 'from-[#F0F0E5] to-[#D4D8C5]',
+   613→  },
+   614→
+   615→  // ─── 19. DAR EL BEY (Tunisian palace) ───────────────────────────────────────
+   616→  {
+   617→    id: 'dar-el-bey',
+   618→    name: 'Dar El Bey',
+   619→    nameAr: 'دار الباي',
+   620→    category: 'Traditionnel',
+   621→    tier: 'Premium',
+   622→    price: 149,
+   623→    tagline: 'L\'architecture mauresque des palais de Tunis — fer forgé, stucs et patines d\'or.',
+   624→    isDark: true,
+   625→    coverBg: 'linear-gradient(160deg, #1F1408 0%, #3D2818 30%, #5C3F25 60%, #2A1B10 100%)',
+   626→    bodyBg: '#FBF5EA',
+   627→    accentColor: '#C9A55C',
+   628→    accentLight: '#E8D4A8',
+   629→    textPrimary: '#F0E0C5',
+   630→    textSecondary: '#F0E0C570',
+   631→    goldColor: '#D4B06A',
+   632→    ornamentStyle: 'arabesque',
+   633→    borderStyle: 'arch-frame',
+   634→    layoutStyle: 'centered-classic',
+   635→    heroLayout: 'names-centered',
+   636→    countdownStyle: 'gold-frames',
+   637→    rsvpStyle: 'ornate',
+   638→    patternSvg: svgUri('<svg width=\'80\' height=\'80\' viewBox=\'0 0 80 80\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M40 5 L50 25 L70 30 L55 45 L60 65 L40 55 L20 65 L25 45 L10 30 L30 25Z\' fill=\'none\' stroke=\'%23D4B06A\' stroke-width=\'0.4\' opacity=\'0.18\'/><path d=\'M40 15 Q50 25 50 40 Q50 55 40 60 Q30 55 30 40 Q30 25 40 15Z\' fill=\'none\' stroke=\'%23D4B06A\' stroke-width=\'0.3\' opacity=\'0.12\'/></svg>'),
+   639→    previewGradient: 'from-[#1F1408] to-[#5C3F25]',
+   640→  },
+   641→
+   642→  // ─── 20. CARTHAGE OR (gold on burgundy, ancient Carthage) ───────────────────
+   643→  {
+   644→    id: 'carthage-or',
+   645→    name: 'Carthage Or',
+   646→    nameAr: 'قرطاج الذهب',
+   647→    category: 'Classique',
+   648→    tier: 'Luxe',
+   649→    price: 249,
+   650→    tagline: 'L\'or des phéniciens sur pourpre royale — un héritage millénaire.',
+   651→    isDark: true,
+   652→    coverBg: 'linear-gradient(160deg, #2A0A0E 0%, #4A1520 30%, #6B2230 60%, #2A0A0E 100%)',
+   653→    bodyBg: '#FBF5EA',
+   654→    accentColor: '#D4B06A',
+   655→    accentLight: '#E8D4A8',
+   656→    textPrimary: '#F5E6C8',
+   657→    textSecondary: '#F5E6C870',
+   658→    goldColor: '#E8C878',
+   659→    ornamentStyle: 'filigree',
+   660→    borderStyle: 'ornate',
+   661→    layoutStyle: 'centered-classic',
+   662→    heroLayout: 'names-centered',
+   663→    countdownStyle: 'gold-frames',
+   664→    rsvpStyle: 'ornate',
+   665→    patternSvg: svgUri('<svg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'30\' cy=\'30\' r=\'25\' fill=\'none\' stroke=\'%23E8C878\' stroke-width=\'0.4\' opacity=\'0.18\'/><circle cx=\'30\' cy=\'30\' r=\'18\' fill=\'none\' stroke=\'%23E8C878\' stroke-width=\'0.3\' opacity=\'0.14\'/><circle cx=\'30\' cy=\'30\' r=\'12\' fill=\'none\' stroke=\'%23E8C878\' stroke-width=\'0.2\' opacity=\'0.10\'/><path d=\'M30 5 L30 55 M5 30 L55 30 M12 12 L48 48 M12 48 L48 12\' stroke=\'%23E8C878\' stroke-width=\'0.15\' opacity=\'0.10\'/></svg>'),
+   666→    previewGradient: 'from-[#2A0A0E] to-[#6B2230]',
+   667→  },
+   668→
+   669→  // ─── 21. HAMMAMET SUNSET (warm sunset) ──────────────────────────────────────
+   670→  {
+   671→    id: 'hammamet-sunset',
+   672→    name: 'Hammamet Sunset',
+   673→    nameAr: 'غروب الحمامات',
+   674→    category: 'Romantique',
+   675→    tier: 'Premium',
+   676→    price: 149,
+   677→    tagline: 'Les teintes d\'un coucher de soleil sur la baie d\'Hammamet.',
+   678→    isDark: false,
+   679→    coverBg: 'linear-gradient(165deg, #FFE5C2 0%, #FFB088 25%, #E8755C 55%, #8B3D5C 85%, #2D1832 100%)',
+   680→    bodyBg: '#FFF8F0',
+   681→    accentColor: '#8B3D5C',
+   682→    accentLight: '#F5D8DE',
+   683→    textPrimary: '#3D1F28',
+   684→    textSecondary: '#3D1F2866',
+   685→    goldColor: '#D4A878',
+   686→    ornamentStyle: 'floral',
+   687→    borderStyle: 'none',
+   688→    layoutStyle: 'full-bleed',
+   689→    heroLayout: 'names-stacked',
+   690→    countdownStyle: 'elegant',
+   691→    rsvpStyle: 'modern',
+   692→    patternSvg: svgUri('<svg width=\'60\' height=\'20\' viewBox=\'0 0 60 20\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M0 10 Q15 5 30 10 T60 10\' fill=\'none\' stroke=\'%238B3D5C\' stroke-width=\'0.4\' opacity=\'0.12\'/><path d=\'M0 14 Q15 9 30 14 T60 14\' fill=\'none\' stroke=\'%238B3D5C\' stroke-width=\'0.3\' opacity=\'0.08\'/></svg>'),
+   693→    previewGradient: 'from-[#FFB088] via-[#E8755C] to-[#8B3D5C]',
+   694→  },
+   695→
+   696→  // ─── 22. TATAOUINE DÉSERT (desert sand) ─────────────────────────────────────
+   697→  {
+   698→    id: 'tataouine-desert',
+   699→    name: 'Tataouine D\u00e9sert',
+   700→    nameAr: 'تطاوين الصحراء',
+   701→    category: 'Bohème',
+   702→    tier: 'Classique',
+   703→    price: 89,
+   704→    tagline: 'Les dunes ocrées et l\'ombre bleue des ksour berbères.',
+   705→    isDark: false,
+   706→    coverBg: 'linear-gradient(165deg, #F5E2C8 0%, #E8C8A0 30%, #C9A878 60%, #8B6B45 100%)',
+   707→    bodyBg: '#FAF1E0',
+   708→    accentColor: '#8B4A2A',
+   709→    accentLight: '#F0D8C5',
+   710→    textPrimary: '#3D2418',
+   711→    textSecondary: '#3D241866',
+   712→    goldColor: '#B8853D',
+   713→    ornamentStyle: 'geometric',
+   714→    borderStyle: 'dashed',
+   715→    layoutStyle: 'card-based',
+   716→    heroLayout: 'names-stacked',
+   717→    countdownStyle: 'elegant',
+   718→    rsvpStyle: 'card',
+   719→    patternSvg: svgUri('<svg width=\'80\' height=\'40\' viewBox=\'0 0 80 40\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M0 30 Q20 10 40 28 Q60 45 80 22\' fill=\'none\' stroke=\'%238B4A2A\' stroke-width=\'0.5\' opacity=\'0.15\'/><path d=\'M0 38 Q20 22 40 35 Q60 48 80 30\' fill=\'none\' stroke=\'%238B4A2A\' stroke-width=\'0.3\' opacity=\'0.10\'/></svg>'),
+   720→    previewGradient: 'from-[#E8C8A0] to-[#8B6B45]',
+   721→  },
+   722→
+   723→  // ─── 23. DJERBA INSULAIRE (island blue/white) ───────────────────────────────
+   724→  {
+   725→    id: 'djerba-insulaire',
+   726→    name: 'Djerba Insulaire',
+   727→    nameAr: 'جربة الجزيرة',
+   728→    category: 'Méditerranéen',
+   729→    tier: 'Premium',
+   730→    price: 149,
+   731→    tagline: 'L\'île aux mille palmiers, ses pêcheurs et ses houches blanchies à la chaux.',
+   732→    isDark: false,
+   733→    coverBg: 'linear-gradient(170deg, #FFFFFF 0%, #F0F4F8 25%, #D4E4F0 55%, #87B8D4 85%, #4A8AA8 100%)',
+   734→    bodyBg: '#FAFCFE',
+   735→    accentColor: '#4A8AA8',
+   736→    accentLight: '#D4E8F0',
+   737→    textPrimary: '#1F3848',
+   738→    textSecondary: '#1F384866',
+   739→    goldColor: '#D4A878',
+   740→    ornamentStyle: 'waves',
+   741→    borderStyle: 'dotted',
+   742→    layoutStyle: 'full-bleed',
+   743→    heroLayout: 'names-centered',
+   744→    countdownStyle: 'circles',
+   745→    rsvpStyle: 'card',
+   746→    patternSvg: svgUri('<svg width=\'60\' height=\'24\' viewBox=\'0 0 60 24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M0 8 Q15 0 30 8 T60 8\' fill=\'none\' stroke=\'%234A8AA8\' stroke-width=\'0.5\' opacity=\'0.20\'/><path d=\'M0 16 Q15 8 30 16 T60 16\' fill=\'none\' stroke=\'%234A8AA8\' stroke-width=\'0.4\' opacity=\'0.15\'/><circle cx=\'30\' cy=\'4\' r=\'0.6\' fill=\'%234A8AA8\' opacity=\'0.25\'/></svg>'),
+   747→    previewGradient: 'from-[#D4E4F0] to-[#4A8AA8]',
+   748→  },
+   749→
+   750→  // ─── 24. KAIROUAN SACRÉ (holy city, geometric) ──────────────────────────────
+   751→  {
+   752→    id: 'kairouan-sacre',
+   753→    name: 'Kairouan Sacr\u00e9',
+   754→    nameAr: 'القيروان المقدسة',
+   755→    category: 'Islamique',
+   756→    tier: 'Premium',
+   757→    price: 149,
+   758→    tagline: 'La cité des 300 mosquées — géométrie sacrée et lumière de miel.',
+   759→    isDark: true,
+   760→    coverBg: 'linear-gradient(160deg, #1A1208 0%, #2D1F10 30%, #4A3220 60%, #1A1208 100%)',
+   761→    bodyBg: '#FBF5EA',
+   762→    accentColor: '#D4A55C',
+   763→    accentLight: '#E8D4A8',
+   764→    textPrimary: '#F5E6C8',
+   765→    textSecondary: '#F5E6C870',
+   766→    goldColor: '#D4B06A',
+   767→    ornamentStyle: 'geometric',
+   768→    borderStyle: 'corner-ornaments',
+   769→    layoutStyle: 'centered-classic',
+   770→    heroLayout: 'names-centered',
+   771→    countdownStyle: 'gold-frames',
+   772→    rsvpStyle: 'ornate',
+   773→    patternSvg: svgUri('<svg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M30 5 L55 30 L30 55 L5 30Z\' fill=\'none\' stroke=\'%23D4B06A\' stroke-width=\'0.4\' opacity=\'0.20\'/><path d=\'M30 15 L45 30 L30 45 L15 30Z\' fill=\'none\' stroke=\'%23D4B06A\' stroke-width=\'0.3\' opacity=\'0.14\'/><path d=\'M30 5 L30 55 M5 30 L55 30\' stroke=\'%23D4B06A\' stroke-width=\'0.2\' opacity=\'0.10\'/><circle cx=\'30\' cy=\'30\' r=\'3\' fill=\'%23D4B06A\' opacity=\'0.18\'/></svg>'),
+   774→    previewGradient: 'from-[#1A1208] to-[#4A3220]',
+   775→    layoutComponent: 'kairouan-sacre',
+   776→  },
+   777→
+   778→  // ─── 25. NUITS DE RAMADAN (crescent moon) ───────────────────────────────────
+   779→  {
+   780→    id: 'nuits-de-ramadan',
+   781→    name: 'Nuits de Ramadan',
+   782→    nameAr: 'ليالي رمضان',
+   783→    category: 'Islamique',
+   784→    tier: 'Luxe',
+   785→    price: 249,
+   786→    tagline: 'Le croissant d\'or sur ciel d\'encre — l\'esprit des nuits sacrées.',
+   787→    isDark: true,
+   788→    coverBg: 'linear-gradient(170deg, #0A0F1F 0%, #14213D 25%, #1F3855 50%, #2A4A6E 75%, #0A0F1F 100%)',
+   789→    bodyBg: '#F5F8FC',
+   790→    accentColor: '#D4B06A',
+   791→    accentLight: '#E8D4A8',
+   792→    textPrimary: '#E8EDF5',
+   793→    textSecondary: '#E8EDF570',
+   794→    goldColor: '#E8C878',
+   795→    ornamentStyle: 'celestial',
+   796→    borderStyle: 'corner-ornaments',
+   797→    layoutStyle: 'centered-classic',
+   798→    heroLayout: 'names-circular',
+   799→    countdownStyle: 'circles',
+   800→    rsvpStyle: 'card',
+   801→    patternSvg: svgUri('<svg width=\'80\' height=\'80\' viewBox=\'0 0 80 80\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'40\' cy=\'20\' r=\'8\' fill=\'none\' stroke=\'%23E8C878\' stroke-width=\'0.4\' opacity=\'0.20\'/><path d=\'M40 12 A8 8 0 1 0 40 28 A6 6 0 1 1 40 12Z\' fill=\'%23E8C878\' opacity=\'0.15\'/><circle cx=\'15\' cy=\'15\' r=\'0.8\' fill=\'%23fff\' opacity=\'0.35\'/><circle cx=\'65\' cy=\'25\' r=\'0.6\' fill=\'%23fff\' opacity=\'0.25\'/><circle cx=\'25\' cy=\'55\' r=\'0.7\' fill=\'%23fff\' opacity=\'0.30\'/><circle cx=\'70\' cy=\'60\' r=\'1\' fill=\'%23fff\' opacity=\'0.40\'/><circle cx=\'10\' cy=\'40\' r=\'0.5\' fill=\'%23fff\' opacity=\'0.20\'/></svg>'),
+   802→    previewGradient: 'from-[#14213D] to-[#2A4A6E]',
+   803→    layoutComponent: 'nuits-de-ramadan',
+   804→  },
+   805→
+   806→  // ─── 26. PALMIER TENDRE (palm leaves, modern romantic) ──────────────────────
+   807→  {
+   808→    id: 'palmier-tendre',
+   809→    name: 'Palmier Tendre',
+   810→    nameAr: 'النخيل العذب',
+   811→    category: 'Botanique',
+   812→    tier: 'Classique',
+   813→    price: 89,
+   814→    tagline: 'L\'ombre fraîche des palmiers sur fond de sable clair.',
+   815→    isDark: false,
+   816→    coverBg: 'linear-gradient(165deg, #FAFAF2 0%, #EDEFE0 30%, #D4DEC0 60%, #8B9A6B 100%)',
+   817→    bodyBg: '#FCFCF5',
+   818→    accentColor: '#5C6B3F',
+   819→    accentLight: '#E0E5D0',
+   820→    textPrimary: '#28321A',
+   821→    textSecondary: '#28321A66',
+   822→    goldColor: '#8B9A6B',
+   823→    ornamentStyle: 'botanical',
+   824→    borderStyle: 'corner-ornaments',
+   825→    layoutStyle: 'card-based',
+   826→    heroLayout: 'names-centered',
+   827→    countdownStyle: 'cards',
+   828→    rsvpStyle: 'card',
+   829→    patternSvg: svgUri('<svg width=\'40\' height=\'60\' viewBox=\'0 0 40 60\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M20 60 L20 10\' stroke=\'%235C6B3F\' stroke-width=\'0.5\' opacity=\'0.18\'/><path d=\'M20 15 Q5 10 5 5 Q15 8 20 15Z\' fill=\'%235C6B3F\' opacity=\'0.10\'/><path d=\'M20 15 Q35 10 35 5 Q25 8 20 15Z\' fill=\'%235C6B3F\' opacity=\'0.10\'/><path d=\'M20 25 Q8 22 5 18 Q15 20 20 25Z\' fill=\'%235C6B3F\' opacity=\'0.08\'/><path d=\'M20 25 Q32 22 35 18 Q25 20 20 25Z\' fill=\'%235C6B3F\' opacity=\'0.08\'/><path d=\'M20 35 Q10 33 8 30 Q15 32 20 35Z\' fill=\'%235C6B3F\' opacity=\'0.06\'/><path d=\'M20 35 Q30 33 32 30 Q25 32 20 35Z\' fill=\'%235C6B3F\' opacity=\'0.06\'/></svg>'),
+   830→    previewGradient: 'from-[#EDEFE0] to-[#8B9A6B]',
+   831→  },
+   832→
+   833→  // ─── 27. L'ÉDITORIAL (magazine-style, warm earthy, Great Vibes script) ─────
+   834→  //  Inspired by premium magazine-grade wedding publications: Great Vibes
+   835→  //  cursive script on every heading, warm cream parchment background,
+   836→  //  dark coffee ink for names, soft tan section labels. Bilingual Arabic
+   837→  //  (Amiri calligraphic typeface) + Latin script with Quranic verse and
+   838→  //  family invitation text. 12+ editorial sections with generous whitespace.
+   839→  {
+   840→    id: 'editorial',
+   841→    name: "L'Éditorial",
+   842→    nameAr: 'المجلة',
+   843→    category: 'Moderne',
+   844→    tier: 'Luxe',
+   845→    price: 249,
+   846→    tagline: "L'élégance d'un magazine de mariage — typographie signature Great Vibes, palette terreuse chaleureuse, versets coraniques bilingues.",
+   847→    isDark: false,
+   848→    coverBg: 'linear-gradient(170deg, #F5EFE6 0%, #E8E3DD 50%, #DDD3C5 100%)',
+   849→    bodyBg: '#FBF8F2',
+   850→    accentColor: '#63452C',
+   851→    accentLight: '#E8D9C7',
+   852→    textPrimary: '#1A1414',
+   853→    textSecondary: '#1A141466',
+   854→    goldColor: '#B79C7D',
+   855→    ornamentStyle: 'minimal',
+   856→    borderStyle: 'none',
+   857→    layoutStyle: 'centered-classic',
+   858→    heroLayout: 'names-stacked',
+   859→    countdownStyle: 'minimal',
+   860→    rsvpStyle: 'card',
+   861→    patternSvg: svgUri('<svg width=\'18\' height=\'18\' viewBox=\'0 0 18 18\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'9\' cy=\'9\' r=\'0.7\' fill=\'%23B79C7D\' opacity=\'0.20\'/></svg>'),
+   862→    previewGradient: 'from-[#F5EFE6] to-[#B79C7D]',
+   863→    layoutComponent: 'editorial',
+   864→  },
+   865→
+   866→  // ─── 28. JARDIN SAGE (sage green + cream + terracotta, Great Vibes script) ──
+   867→  //  Inspired by inviteness.com reference t-a2b01004ee626a0c:
+   868→  //  sage green primary on warm cream, Great Vibes script for EVERY heading,
+   869→  //  card-based sections with thin borders + square corners, generous whitespace,
+   870→  //  bilingual Quranic verse, structured family lineage (both sets of parents).
+   871→  {
+   872→    id: 'jardin-sage',
+   873→    name: 'Jardin Sage',
+   874→    nameAr: 'حديقة المريمية',
+   875→    category: 'Botanique',
+   876→    tier: 'Luxe',
+   877→    price: 249,
+   878→    tagline: "Sauge tendre sur crème chaude — typographie Great Vibes, cartes à bords fins, verset coranique bilingue et lignée familiale structurée.",
+   879→    isDark: false,
+   880→    coverBg: 'linear-gradient(165deg, #F7F5F2 0%, #EDE8E0 30%, #DDE6D5 60%, #BACFAF 100%)',
+   881→    bodyBg: '#F7F5F2',
+   882→    accentColor: '#B3774D',
+   883→    accentLight: '#E8DDD0',
+   884→    textPrimary: '#674832',
+   885→    textSecondary: '#67483266',
+   886→    goldColor: '#BACFAF',
+   887→    ornamentStyle: 'botanical',
+   888→    borderStyle: 'corner-ornaments',
+   889→    layoutStyle: 'card-based',
+   890→    heroLayout: 'names-stacked',
+   891→    countdownStyle: 'cards',
+   892→    rsvpStyle: 'card',
+   893→    patternSvg: svgUri('<svg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M20 8 Q14 14 20 20 Q26 14 20 8\' fill=\'%23BACFAF\' opacity=\'0.12\'/><path d=\'M20 20 Q14 26 20 32 Q26 26 20 20\' fill=\'%23BACFAF\' opacity=\'0.10\'/><circle cx=\'20\' cy=\'20\' r=\'0.8\' fill=\'%23B3774D\' opacity=\'0.15\'/></svg>'),
+   894→    previewGradient: 'from-[#F7F5F2] via-[#DDE6D5] to-[#BACFAF]',
+   895→    layoutComponent: 'jardin-sage',
+   896→  },
+   897→];
+   898→
+   899→// ─── Helpers ──────────────────────────────────────────────────────────────────
+   900→export function getTemplateById(id: string): TemplateStyle | undefined {
+   901→  return TEMPLATES.find(t => t.id === id);
+   902→}
+   903→
+   904→export function getTemplatesByCategory(cat: string): TemplateStyle[] {
+   905→  return TEMPLATES.filter(t => t.category === cat);
+   906→}
+   907→
+   908→export const ALL_CATEGORIES: Category[] = [
+   909→  'Tous' as Category,
+   910→  ...Array.from(new Set(TEMPLATES.map(t => t.category)))
+   911→];
+   912→

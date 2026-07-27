@@ -1,0 +1,614 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect, useMemo, useCallback } from 'react';
+     4→import { motion, type Variants, AnimatePresence } from 'framer-motion';
+     5→import { ChevronDown, MapPin, Heart, Clock, X, Check, Sparkles, AlertCircle } from 'lucide-react';
+     6→import { Button } from '@/components/ui/button';
+     7→import { Input } from '@/components/ui/input';
+     8→import { Textarea } from '@/components/ui/textarea';
+     9→import type { TemplateStyle } from './template-registry';
+    10→import { OrnamentalDivider, TemplateBorder, PatternOverlay, CoverVignette } from './ornaments';
+    11→import { useT } from '@/lib/i18n/use-t';
+    12→import { LaBriseNautiqueTemplate } from './specialized/la-brise-nautique';
+    13→import { JardinsDeCarthageTemplate } from './specialized/jardins-de-carthage';
+    14→import { LeGrandPalaisTemplate } from './specialized/le-grand-palais';
+    15→import { ChateauDeRoseTemplate } from './specialized/chateau-de-rose';
+    16→import { LeBeldiTemplate } from './specialized/le-beldi';
+    17→import { CafeDesDelicesTemplate } from './specialized/cafe-des-delices';
+    18→import { BlancPurTemplate } from './specialized/blanc-pur';
+    19→import { GatsbyTemplate } from './specialized/gatsby';
+    20→import { AnNoorTemplate } from './specialized/an-noor';
+    21→import { LesOliviersTemplate } from './specialized/les-oliviers';
+    22→import { SaharaDoreTemplate } from './specialized/sahara-dore';
+    23→import { EditorialTemplate } from './specialized/editorial';
+    24→import { SidiBouSaidTemplate } from './specialized/sidi-bou-said';
+    25→import { KairouanSacreTemplate } from './specialized/kairouan-sacre';
+    26→import { NuitsDeRamadanTemplate } from './specialized/nuits-de-ramadan';
+    27→import { LimperialeTemplate } from './specialized/limperiale';
+    28→import { EtoilesDeSousseTemplate } from './specialized/etoiles-de-sousse';
+    29→import { JardinSageTemplate } from './specialized/jardin-sage';
+    30→
+    31→// ─── Props ───────────────────────────────────────────────────────────────────
+    32→export interface InvitationData {
+    33→  partner1Name: string;
+    34→  partner2Name: string;
+    35→  eventDate: string;
+    36→  venueName?: string;
+    37→  venueAddress?: string;
+    38→  eventTime?: string;
+    39→  dressCode?: string;
+    40→  message?: string;
+    41→  parents?: string;
+    42→  schedule?: Array<{ time: string; label: string }>;
+    43→  galleryImages?: string[];
+    44→  /** Bilingual Quranic verse — arabic + translation. Used by `jardin-sage`. */
+    45→  quranicVerse?: { arabic: string; translation: string };
+    46→  /** Groom's parents — e.g. "Mr. Mounir Guesmi & Mrs. Laila Ben Yahya" */
+    47→  groomParents?: string;
+    48→  /** Bride's parents — e.g. "Mr. Hichem Zouari & Mrs. Nadia Ben Moussa" */
+    49→  brideParents?: string;
+    50→  /** Day program — distinct from `schedule` (which is the timeline). Used by `jardin-sage`. */
+    51→  dayProgram?: Array<{ time: string; activity: string }>;
+    52→  /** FAQ entries */
+    53→  faq?: Array<{ question: string; answer: string }>;
+    54→  /** Transport / parking info */
+    55→  transportInfo?: string;
+    56→  /** ─── Extended fields used by `jardin-sage` (inviteness.com reference) ─── */
+    57→  /** Google Maps embed URL (the `src` of an <iframe>) — for The Venue section */
+    58→  venueMapEmbed?: string;
+    59→  /** Activities / experiences planned for guests */
+    60→  activities?: Array<{ title: string; description: string; time?: string }>;
+    61→  /** Accommodation info + nearby hotel recommendations */
+    62→  accommodation?: {
+    63→    description: string;
+    64→    recommendations: Array<{ name: string; address: string; rate?: string }>;
+    65→  };
+    66→  /** Menu courses (dinner / buffet) */
+    67→  menu?: Array<{ course: string; description: string }>;
+    68→  /** Gift registry info */
+    69→  giftRegistry?: { description: string; link?: string };
+    70→  /** Show the "Let's share moments together" guest photo-upload section */
+    71→  photoUploadEnabled?: boolean;
+    72→  /** Show the "Contact Collector" form (collect guest phone/email) */
+    73→  contactCollectorEnabled?: boolean;
+    74→  /** Special notes / informational bullets (e.g. "Children welcome", "No gifts please") */
+    75→  specialNotes?: Array<{ title: string; note: string }>;
+    76→  /** Free-form thank-you message for the closing section */
+    77→  thankYouMessage?: string;
+    78→  /** About-the-celebration paragraph (longer-form intro) */
+    79→  aboutCelebration?: string;
+    80→}
+    81→
+    82→interface InvitationTemplateProps {
+    83→  template: TemplateStyle;
+    84→  data: InvitationData;
+    85→  mode?: 'preview' | 'live';
+    86→  onClose?: () => void;
+    87→  /** Slug of the event — required for `live` mode so RSVP can POST to the API */
+    88→  eventSlug?: string;
+    89→}
+    90→
+    91→// (Date formatting now handled by `useT().formatDate()` — see src/lib/i18n/use-t.ts)
+    92→
+    93→function getTimeUntil(target: Date) {
+    94→  const diff = Math.max(0, target.getTime() - Date.now());
+    95→  return {
+    96→    jours: Math.floor(diff / 86400000),
+    97→    heures: Math.floor((diff / 3600000) % 24),
+    98→    minutes: Math.floor((diff / 60000) % 60),
+    99→    secondes: Math.floor((diff / 1000) % 60),
+   100→  };
+   101→}
+   102→
+   103→// ─── Animation variants ──────────────────────────────────────────────────────
+   104→const fadeInUp: Variants = {
+   105→  hidden: { opacity: 0, y: 30 },
+   106→  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } },
+   107→};
+   108→const stagger: Variants = {
+   109→  hidden: {}, visible: { transition: { staggerChildren: 0.12 } },
+   110→};
+   111→const scaleIn: Variants = {
+   112→  hidden: { opacity: 0, scale: 0.8 },
+   113→  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } },
+   114→};
+   115→
+   116→// ═══════════════════════════════════════════════════════════════════════════════
+   117→//  MAIN COMPONENT — Dispatcher
+   118→// ═══════════════════════════════════════════════════════════════════════════════
+   119→// Each template can declare `layoutComponent: 'la-brise-nautique'` (etc.) in the
+   120→// registry to use its own bespoke layout. The generic renderer below is the
+   121→// fallback for templates without a specialized component.
+   122→export function InvitationTemplate(props: InvitationTemplateProps) {
+   123→  const { template: tpl } = props;
+   124→
+   125→  switch (tpl.layoutComponent) {
+   126→    case 'la-brise-nautique':
+   127→      return <LaBriseNautiqueTemplate {...props} />;
+   128→    case 'jardins-de-carthage':
+   129→      return <JardinsDeCarthageTemplate {...props} />;
+   130→    case 'le-grand-palais':
+   131→      return <LeGrandPalaisTemplate {...props} />;
+   132→    case 'chateau-de-rose':
+   133→      return <ChateauDeRoseTemplate {...props} />;
+   134→    case 'le-beldi':
+   135→      return <LeBeldiTemplate {...props} />;
+   136→    case 'cafe-des-delices':
+   137→      return <CafeDesDelicesTemplate {...props} />;
+   138→    case 'blanc-pur':
+   139→      return <BlancPurTemplate {...props} />;
+   140→    case 'gatsby':
+   141→      return <GatsbyTemplate {...props} />;
+   142→    case 'an-noor':
+   143→      return <AnNoorTemplate {...props} />;
+   144→    case 'les-oliviers':
+   145→      return <LesOliviersTemplate {...props} />;
+   146→    case 'sahara-dore':
+   147→      return <SaharaDoreTemplate {...props} />;
+   148→    case 'editorial':
+   149→      return <EditorialTemplate {...props} />;
+   150→    case 'sidi-bou-said':
+   151→      return <SidiBouSaidTemplate {...props} />;
+   152→    case 'kairouan-sacre':
+   153→      return <KairouanSacreTemplate {...props} />;
+   154→    case 'nuits-de-ramadan':
+   155→      return <NuitsDeRamadanTemplate {...props} />;
+   156→    case 'limperiale':
+   157→      return <LimperialeTemplate {...props} />;
+   158→    case 'etoiles-de-sousse':
+   159→      return <EtoilesDeSousseTemplate {...props} />;
+   160→    case 'jardin-sage':
+   161→      return <JardinSageTemplate {...props} />;
+   162→    default:
+   163→      return <GenericInvitationTemplate {...props} />;
+   164→  }
+   165→}
+   166→
+   167→// ═══════════════════════════════════════════════════════════════════════════════
+   168→//  GENERIC RENDERER — fallback for templates without a specialized component
+   169→// ═══════════════════════════════════════════════════════════════════════════════
+   170→function GenericInvitationTemplate({ template: tpl, data, mode = 'preview', onClose, eventSlug }: InvitationTemplateProps) {
+   171→  const { t, formatDate } = useT();
+   172→  const targetDate = useMemo(() => new Date(data.eventDate), [data.eventDate]);
+   173→  const [countdown, setCountdown] = useState(getTimeUntil(targetDate));
+   174→  const [rsvpName, setRsvpName] = useState('');
+   175→  const [rsvpGuests, setRsvpGuests] = useState('1');
+   176→  const [rsvpNote, setRsvpNote] = useState('');
+   177→  const [rsvpStatus, setRsvpStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+   178→  const [rsvpError, setRsvpError] = useState<string | null>(null);
+   179→
+   180→  useEffect(() => {
+   181→    const iv = setInterval(() => setCountdown(getTimeUntil(targetDate)), 1000);
+   182→    return () => clearInterval(iv);
+   183→  }, [targetDate]);
+   184→
+   185→  const handleRsvp = useCallback(async (e: React.FormEvent) => {
+   186→    e.preventDefault();
+   187→    if (mode === 'preview') {
+   188→      // Preview mode — simulate success without calling the API
+   189→      setRsvpStatus('loading');
+   190→      setTimeout(() => setRsvpStatus('success'), 800);
+   191→      return;
+   192→    }
+   193→    if (!eventSlug) {
+   194→      setRsvpStatus('error');
+   195→      setRsvpError(t('rsvp.missingSlug'));
+   196→      return;
+   197→    }
+   198→    setRsvpStatus('loading');
+   199→    setRsvpError(null);
+   200→    try {
+   201→      const res = await fetch(`/api/events/${eventSlug}/rsvp`, {
+   202→        method: 'POST',
+   203→        headers: { 'Content-Type': 'application/json' },
+   204→        body: JSON.stringify({
+   205→          name: rsvpName,
+   206→          plusOnes: parseInt(rsvpGuests, 10) - 1, // form sends total headcount; store +1s
+   207→          note: rsvpNote,
+   208→        }),
+   209→      });
+   210→      if (!res.ok) {
+   211→        const body = await res.json().catch(() => ({}));
+   212→        throw new Error(body.error ?? `${res.status}`);
+   213→      }
+   214→      setRsvpStatus('success');
+   215→    } catch (err) {
+   216→      setRsvpStatus('error');
+   217→      setRsvpError(err instanceof Error ? err.message : t('rsvp.error'));
+   218→    }
+   219→  }, [mode, eventSlug, rsvpName, rsvpGuests, rsvpNote, t]);
+   220→
+   221→  const monogram = data.partner1Name[0] + '&' + data.partner2Name[0];
+   222→
+   223→  const countdownUnits = [
+   224→    { value: countdown.jours, label: t('countdown.days') },
+   225→    { value: countdown.heures, label: t('countdown.hours') },
+   226→    { value: countdown.minutes, label: t('countdown.minutes') },
+   227→    { value: countdown.secondes, label: t('countdown.seconds') },
+   228→  ];
+   229→
+   230→  return (
+   231→    <div className="min-h-screen font-body" style={{ background: tpl.bodyBg }}>
+   232→      {mode === 'preview' && onClose && (
+   233→        <div className="fixed top-4 right-4 z-50">
+   234→          <button onClick={onClose} className="flex items-center justify-center rounded-full bg-white/80 p-2 shadow-lg backdrop-blur-sm hover:bg-white hover:shadow-xl transition-all" aria-label="Fermer">
+   235→            <X className="h-5 w-5 text-gray-600" />
+   236→          </button>
+   237→        </div>
+   238→      )}
+   239→
+   240→      {/* ═══ COVER SECTION ═══ */}
+   241→      <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
+   242→        <div className="absolute inset-0" style={{ background: tpl.coverBg }} />
+   243→        <PatternOverlay patternSvg={tpl.patternSvg} isDark={tpl.isDark} />
+   244→        <CoverVignette isDark={tpl.isDark} />
+   245→
+   246→        <div className="relative z-10 flex flex-col items-center justify-center px-6 text-center">
+   247→          <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="mb-6">
+   248→            <OrnamentalDivider style={tpl.ornamentStyle} goldColor={tpl.goldColor} className="scale-75" />
+   249→          </motion.div>
+   250→
+   251→          <motion.div initial="hidden" animate="visible" variants={stagger} className="flex flex-col items-center">
+   252→            {tpl.heroLayout === 'names-monogram' && (
+   253→              <>
+   254→                <motion.div variants={scaleIn} className="mb-6">
+   255→                  <div className="flex h-28 w-28 sm:h-32 sm:w-32 items-center justify-center rounded-full border-2" style={{ borderColor: `${tpl.goldColor}50`, boxShadow: `0 0 40px ${tpl.goldColor}15` }}>
+   256→                    <span className="font-display text-3xl sm:text-4xl tracking-widest" style={{ color: tpl.goldColor }}>{monogram}</span>
+   257→                  </div>
+   258→                </motion.div>
+   259→                <motion.p variants={fadeInUp} className="font-script text-4xl sm:text-5xl md:text-6xl" style={{ color: tpl.textPrimary }}>{data.partner1Name}</motion.p>
+   260→                <motion.div variants={scaleIn} className="my-2 flex items-center gap-3">
+   261→                  <div className="h-px w-8" style={{ background: `${tpl.textSecondary}` }} />
+   262→                  <span className="font-script text-2xl sm:text-3xl" style={{ color: tpl.goldColor }}>&amp;</span>
+   263→                  <div className="h-px w-8" style={{ background: `${tpl.textSecondary}` }} />
+   264→                </motion.div>
+   265→                <motion.p variants={fadeInUp} className="font-script text-4xl sm:text-5xl md:text-6xl" style={{ color: tpl.textPrimary }}>{data.partner2Name}</motion.p>
+   266→              </>
+   267→            )}
+   268→
+   269→            {tpl.heroLayout === 'names-circular' && (
+   270→              <>
+   271→                <motion.div variants={scaleIn} className="relative mb-6">
+   272→                  <div className="flex h-36 w-36 sm:h-44 sm:w-44 items-center justify-center rounded-full" style={{ border: `2px dashed ${tpl.goldColor}40`, background: `${tpl.goldColor}08` }}>
+   273→                    <div className="text-center">
+   274→                      <p className="font-script text-3xl sm:text-4xl" style={{ color: tpl.textPrimary }}>{data.partner1Name}</p>
+   275→                      <p className="my-1 font-display text-sm tracking-[0.3em] uppercase" style={{ color: tpl.goldColor }}>&amp;</p>
+   276→                      <p className="font-script text-3xl sm:text-4xl" style={{ color: tpl.textPrimary }}>{data.partner2Name}</p>
+   277→                    </div>
+   278→                  </div>
+   279→                  <motion.div className="absolute inset-0" animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}>
+   280→                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full" style={{ background: tpl.goldColor, opacity: 0.5 }} />
+   281→                  </motion.div>
+   282→                </motion.div>
+   283→              </>
+   284→            )}
+   285→
+   286→            {(tpl.heroLayout === 'names-centered' || tpl.heroLayout === 'names-stacked' || tpl.heroLayout === 'names-side-by-side') && (
+   287→              <>
+   288→                <motion.p variants={fadeInUp} className={`font-script ${tpl.heroLayout === 'names-side-by-side' ? 'text-4xl sm:text-5xl md:text-6xl' : 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl'}`} style={{ color: tpl.textPrimary }}>
+   289→                  {data.partner1Name}
+   290→                </motion.p>
+   291→                <motion.div variants={scaleIn} className="my-3 flex items-center gap-3">
+   292→                  <div className="h-px w-8 sm:w-14" style={{ background: `${tpl.textSecondary}` }} />
+   293→                  <span className={`font-script ${tpl.heroLayout === 'names-side-by-side' ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl'}`} style={{ color: tpl.goldColor }}>&amp;</span>
+   294→                  <div className="h-px w-8 sm:w-14" style={{ background: `${tpl.textSecondary}` }} />
+   295→                </motion.div>
+   296→                <motion.p variants={fadeInUp} className={`font-script ${tpl.heroLayout === 'names-side-by-side' ? 'text-4xl sm:text-5xl md:text-6xl' : 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl'}`} style={{ color: tpl.textPrimary }}>
+   297→                  {data.partner2Name}
+   298→                </motion.p>
+   299→              </>
+   300→            )}
+   301→          </motion.div>
+   302→
+   303→          <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 0.6 }} className="mt-8 h-px w-16" style={{ background: `${tpl.goldColor}50` }} />
+   304→          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.8 }} className="mt-4 font-serif text-base sm:text-lg italic tracking-wide" style={{ color: tpl.textSecondary }}>
+   305→            {formatDate(data.eventDate)}
+   306→          </motion.p>
+   307→
+   308→          <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2" animate={{ y: [0, 8, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}>
+   309→            <ChevronDown className="h-6 w-6" style={{ color: tpl.textSecondary, opacity: 0.4 }} strokeWidth={1.5} />
+   310→          </motion.div>
+   311→        </div>
+   312→      </section>
+   313→
+   314→      {/* ═══ COUNTDOWN SECTION ═══ */}
+   315→      <section className="py-14 sm:py-20" style={{ background: tpl.isDark ? '#FFFFFF' : (tpl.id === 'blanc-pur' ? '#FAFAFA' : tpl.bodyBg) }}>
+   316→        <div className="mx-auto max-w-lg px-6">
+   317→          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-40px' }} className={tpl.countdownStyle === 'circles' ? 'flex justify-center gap-6 sm:gap-10' : 'grid grid-cols-4 gap-3 sm:gap-5'}>
+   318→            {countdownUnits.map((unit) => (
+   319→              <motion.div key={unit.label} variants={scaleIn}>
+   320→                {tpl.countdownStyle === 'circles' ? (
+   321→                  <div className="flex flex-col items-center">
+   322→                    <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full border-2" style={{ borderColor: `${tpl.accentColor}30`, background: `${tpl.accentColor}08` }}>
+   323→                      <span className="font-display text-2xl sm:text-3xl tabular-nums" style={{ color: tpl.accentColor }}>{String(unit.value).padStart(2, '0')}</span>
+   324→                    </div>
+   325→                    <span className="mt-2 text-[10px] uppercase tracking-[0.15em]" style={{ color: tpl.textSecondary }}>{unit.label}</span>
+   326→                  </div>
+   327→                ) : tpl.countdownStyle === 'gold-frames' ? (
+   328→                  <div className="flex flex-col items-center">
+   329→                    <div className="flex h-20 w-full items-center justify-center rounded-lg border p-1" style={{ borderColor: `${tpl.goldColor}40`, background: `linear-gradient(135deg, ${tpl.goldColor}08, ${tpl.goldColor}03)` }}>
+   330→                      <div className="flex h-full w-full items-center justify-center border" style={{ borderColor: `${tpl.goldColor}20` }}>
+   331→                        <span className="font-display text-2xl sm:text-3xl tabular-nums" style={{ color: tpl.goldColor }}>{String(unit.value).padStart(2, '0')}</span>
+   332→                      </div>
+   333→                    </div>
+   334→                    <span className="mt-2 text-[10px] uppercase tracking-[0.15em]" style={{ color: tpl.textSecondary }}>{unit.label}</span>
+   335→                  </div>
+   336→                ) : tpl.countdownStyle === 'minimal' ? (
+   337→                  <div className="flex flex-col items-center">
+   338→                    <span className="font-display text-3xl sm:text-4xl tabular-nums" style={{ color: tpl.accentColor }}>{String(unit.value).padStart(2, '0')}</span>
+   339→                    <span className="mt-1 text-[9px] uppercase tracking-[0.2em]" style={{ color: tpl.textSecondary }}>{unit.label}</span>
+   340→                  </div>
+   341→                ) : tpl.countdownStyle === 'elegant' ? (
+   342→                  <div className="flex flex-col items-center rounded-2xl border px-3 py-4 sm:py-5 shadow-sm" style={{ borderColor: `${tpl.accentColor}15`, background: `${tpl.accentColor}05` }}>
+   343→                    <span className="font-display text-2xl sm:text-3xl tabular-nums" style={{ color: tpl.accentColor }}>{String(unit.value).padStart(2, '0')}</span>
+   344→                    <span className="mt-1.5 text-[10px] uppercase tracking-[0.15em]" style={{ color: tpl.textSecondary }}>{unit.label}</span>
+   345→                  </div>
+   346→                ) : (
+   347→                  <div className="flex flex-col items-center rounded-xl border px-3 py-4 sm:py-5 shadow-sm" style={{ borderColor: `${tpl.accentColor}20`, background: '#FFFFFF' }}>
+   348→                    <span className="font-display text-2xl sm:text-3xl tabular-nums" style={{ color: tpl.accentColor }}>{String(unit.value).padStart(2, '0')}</span>
+   349→                    <span className="mt-1.5 text-[10px] uppercase tracking-[0.15em]" style={{ color: tpl.textSecondary }}>{unit.label}</span>
+   350→                  </div>
+   351→                )}
+   352→              </motion.div>
+   353→            ))}
+   354→          </motion.div>
+   355→        </div>
+   356→      </section>
+   357→
+   358→      {/* ═══ EVENT DETAILS SECTION ═══ */}
+   359→      <section className="py-16 sm:py-20" style={{ background: tpl.bodyBg }}>
+   360→        <div className="mx-auto max-w-md px-6 text-center">
+   361→          <TemplateBorder style={tpl.borderStyle} goldColor={tpl.goldColor}>
+   362→            <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
+   363→              <motion.div variants={fadeInUp}>
+   364→                <p className="font-display text-xs uppercase tracking-[0.25em]" style={{ color: tpl.accentColor }}>
+   365→                  {t('hero.youAreInvited')}
+   366→                </p>
+   367→              </motion.div>
+   368→
+   369→              <motion.div variants={fadeInUp} className="my-6">
+   370→                <OrnamentalDivider style={tpl.ornamentStyle} goldColor={tpl.goldColor} />
+   371→              </motion.div>
+   372→
+   373→              {data.venueName && (
+   374→                <motion.div variants={fadeInUp}>
+   375→                  <p className="font-serif text-2xl italic" style={{ color: tpl.textPrimary, opacity: 0.85 }}>{data.venueName}</p>
+   376→                </motion.div>
+   377→              )}
+   378→
+   379→              {data.venueAddress && (
+   380→                <motion.div variants={fadeInUp}>
+   381→                  <p className="mt-2 text-sm" style={{ color: tpl.textSecondary }}>{data.venueAddress}</p>
+   382→                </motion.div>
+   383→              )}
+   384→
+   385→              {data.eventTime && (
+   386→                <motion.div variants={fadeInUp} className="mt-4 flex items-center justify-center gap-2">
+   387→                  <Clock className="h-4 w-4" style={{ color: tpl.accentColor, opacity: 0.6 }} />
+   388→                  <span className="text-sm" style={{ color: tpl.textSecondary }}>{data.eventTime}</span>
+   389→                </motion.div>
+   390→              )}
+   391→
+   392→              {data.dressCode && (
+   393→                <motion.div variants={fadeInUp} className="mt-2 flex items-center justify-center gap-2">
+   394→                  <Sparkles className="h-4 w-4" style={{ color: tpl.accentColor, opacity: 0.6 }} />
+   395→                  <span className="text-sm" style={{ color: tpl.textSecondary }}>{data.dressCode}</span>
+   396→                </motion.div>
+   397→              )}
+   398→
+   399→              <motion.div variants={fadeInUp} className="mt-8">
+   400→                <div className="rounded-2xl border p-8 transition-all hover:shadow-md cursor-pointer" style={{ borderColor: `${tpl.accentColor}15`, background: `${tpl.accentColor}05` }}>
+   401→                  <div className="flex flex-col items-center gap-2">
+   402→                    <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ background: `${tpl.accentColor}10` }}>
+   403→                      <MapPin className="h-5 w-5" style={{ color: tpl.accentColor, opacity: 0.7 }} />
+   404→                    </div>
+   405→                    <span className="mt-1 text-sm font-medium" style={{ color: tpl.textSecondary }}>{t('details.viewMap')}</span>
+   406→                  </div>
+   407→                </div>
+   408→              </motion.div>
+   409→            </motion.div>
+   410→          </TemplateBorder>
+   411→        </div>
+   412→      </section>
+   413→
+   414→      {/* ═══ SCHEDULE / TIMELINE ═══ */}
+   415→      {data.schedule && data.schedule.length > 0 && (
+   416→        <section className="py-16 sm:py-20" style={{ background: tpl.isDark ? '#FFFFFF' : (tpl.id === 'blanc-pur' ? '#FAFAFA' : tpl.bodyBg) }}>
+   417→          <div className="mx-auto max-w-sm px-6 text-center">
+   418→            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
+   419→              <motion.div variants={fadeInUp}>
+   420→                <p className="font-display text-xs uppercase tracking-[0.25em]" style={{ color: tpl.accentColor }}>{t('details.schedule')}</p>
+   421→              </motion.div>
+   422→              <motion.div variants={fadeInUp} className="my-6">
+   423→                <OrnamentalDivider style={tpl.ornamentStyle} goldColor={tpl.goldColor} />
+   424→              </motion.div>
+   425→              <motion.div variants={stagger} className="space-y-4 text-left">
+   426→                {data.schedule.map((item, i) => (
+   427→                  <motion.div key={i} variants={fadeInUp} className="flex items-start gap-4 p-3 rounded-xl" style={{ background: `${tpl.accentColor}05` }}>
+   428→                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full" style={{ background: `${tpl.accentColor}10` }}>
+   429→                      <Clock className="h-4 w-4" style={{ color: tpl.accentColor }} />
+   430→                    </div>
+   431→                    <div>
+   432→                      <p className="font-display text-xs tracking-wider uppercase" style={{ color: tpl.accentColor }}>{item.time}</p>
+   433→                      <p className="mt-0.5 text-sm" style={{ color: tpl.textPrimary, opacity: 0.8 }}>{item.label}</p>
+   434→                    </div>
+   435→                  </motion.div>
+   436→                ))}
+   437→              </motion.div>
+   438→            </motion.div>
+   439→          </div>
+   440→        </section>
+   441→      )}
+   442→
+   443→      {/* ═══ RSVP SECTION ═══ */}
+   444→      <section className="py-16 sm:py-20" style={{ background: tpl.bodyBg }}>
+   445→        <div className="mx-auto max-w-sm px-6 text-center">
+   446→          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
+   447→            <motion.div variants={fadeInUp}>
+   448→              <p className="font-display text-xs uppercase tracking-[0.25em]" style={{ color: tpl.accentColor }}>{t('rsvp.confirm')}</p>
+   449→            </motion.div>
+   450→            <motion.div variants={fadeInUp} className="my-6">
+   451→              <OrnamentalDivider style={tpl.ornamentStyle} goldColor={tpl.goldColor} />
+   452→            </motion.div>
+   453→
+   454→            {rsvpStatus === 'success' ? (
+   455→              <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-3 py-8">
+   456→                <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ background: `${tpl.accentColor}10` }}>
+   457→                  <Check className="h-7 w-7" style={{ color: tpl.accentColor }} />
+   458→                </div>
+   459→                <p className="font-serif text-lg italic" style={{ color: tpl.textPrimary, opacity: 0.8 }}>{t('rsvp.thankYou')}</p>
+   460→                <p className="text-sm" style={{ color: tpl.textSecondary }}>{t('rsvp.recorded')}</p>
+   461→              </motion.div>
+   462→            ) : (
+   463→              <motion.div variants={fadeInUp}>
+   464→                {rsvpStatus === 'error' && (
+   465→                  <motion.div
+   466→                    initial={{ opacity: 0, y: -8 }}
+   467→                    animate={{ opacity: 1, y: 0 }}
+   468→                    className="mb-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-left text-sm text-red-700"
+   469→                  >
+   470→                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+   471→                    <span>{rsvpError ?? t('rsvp.error')}</span>
+   472→                  </motion.div>
+   473→                )}
+   474→                {tpl.rsvpStyle === 'minimal' ? (
+   475→                  <form onSubmit={handleRsvp} className="mt-4 space-y-3 text-left">
+   476→                    <Input required value={rsvpName} onChange={(e) => setRsvpName(e.target.value)} placeholder={t('rsvp.fullNamePlaceholder')} className="border-gray-200 bg-transparent" />
+   477→                    <Button type="submit" disabled={rsvpStatus === 'loading'} className="w-full rounded-full py-5 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-all" style={{ background: tpl.accentColor }}>
+   478→                      {rsvpStatus === 'loading' ? t('rsvp.submitting') : t('rsvp.submit')}
+   479→                    </Button>
+   480→                  </form>
+   481→                ) : (
+   482→                  <form onSubmit={handleRsvp} className={`mt-4 space-y-4 text-left ${tpl.rsvpStyle === 'card' || tpl.rsvpStyle === 'ornate' ? 'rounded-2xl border p-6 shadow-sm' : ''}`} style={{ borderColor: `${tpl.accentColor}15`, background: tpl.rsvpStyle === 'card' || tpl.rsvpStyle === 'ornate' ? '#FFFFFF' : 'transparent' }}>
+   483→                    <div>
+   484→                      <label className="mb-1.5 block text-[11px] uppercase tracking-wider" style={{ color: tpl.textSecondary }}>{t('rsvp.fullName')}</label>
+   485→                      <Input required value={rsvpName} onChange={(e) => setRsvpName(e.target.value)} placeholder={t('rsvp.fullNamePlaceholder')} className="border-gray-200 bg-cream/40 placeholder:text-gray-300" />
+   486→                    </div>
+   487→                    <div>
+   488→                      <label className="mb-1.5 block text-[11px] uppercase tracking-wider" style={{ color: tpl.textSecondary }}>{t('rsvp.guestCount')}</label>
+   489→                      <select required value={rsvpGuests} onChange={(e) => setRsvpGuests(e.target.value)} className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50">
+   490→                        {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
+   491→                      </select>
+   492→                    </div>
+   493→                    <div>
+   494→                      <label className="mb-1.5 block text-[11px] uppercase tracking-wider" style={{ color: tpl.textSecondary }}>{t('rsvp.dietaryNotes')}</label>
+   495→                      <Textarea value={rsvpNote} onChange={(e) => setRsvpNote(e.target.value)} placeholder={t('rsvp.dietaryPlaceholder')} className="border-gray-200 bg-cream/40 placeholder:text-gray-300 min-h-[60px]" />
+   496→                    </div>
+   497→                    <Button type="submit" disabled={rsvpStatus === 'loading'} className="w-full rounded-full py-5 text-xs font-semibold uppercase tracking-[0.15em] text-white shadow-lg transition-all hover:opacity-90" style={{ background: tpl.accentColor, boxShadow: `0 10px 30px ${tpl.accentColor}25` }}>
+   498→                      {rsvpStatus === 'loading' ? (
+   499→                        <span className="flex items-center gap-2">
+   500→                          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+   501→                          {t('rsvp.submitting')}
+   502→                        </span>
+   503→                      ) : t('rsvp.submit')}
+   504→                    </Button>
+   505→                  </form>
+   506→                )}
+   507→              </motion.div>
+   508→            )}
+   509→          </motion.div>
+   510→        </div>
+   511→      </section>
+   512→
+   513→      {/* ═══ FOOTER ═══ */}
+   514→      <footer className="py-10" style={{ background: tpl.bodyBg }}>
+   515→        <div className="mx-auto max-w-md px-6 text-center">
+   516→          <OrnamentalDivider style={tpl.ornamentStyle} goldColor={tpl.goldColor} className="mb-6" />
+   517→          <p className="flex items-center justify-center gap-2 font-script text-2xl" style={{ color: tpl.textSecondary }}>
+   518→            <Heart className="h-4 w-4" style={{ color: tpl.accentColor, opacity: 0.5 }} fill="currentColor" strokeWidth={0} />
+   519→            {t('footer.withLove')} {data.partner1Name} &amp; {data.partner2Name}
+   520→          </p>
+   521→          <p className="mt-4 text-[10px] uppercase tracking-[0.2em]" style={{ color: tpl.textSecondary, opacity: 0.5 }}>{t('footer.createdWith')}</p>
+   522→        </div>
+   523→      </footer>
+   524→    </div>
+   525→  );
+   526→}
+   527→
+   528→// ═══════════════════════════════════════════════════════════════════════════════
+   529→//  DEFAULT SAMPLE DATA
+   530→// ═══════════════════════════════════════════════════════════════════════════════
+   531→export const SAMPLE_DATA: InvitationData = {
+   532→  partner1Name: 'Yasmine',
+   533→  partner2Name: 'Karim',
+   534→  eventDate: '2026-12-15',
+   535→  venueName: 'Dar El Jeld',
+   536→  venueAddress: '17 Rue Saadaoui, Medina de Tunis',
+   537→  eventTime: '19h00',
+   538→  dressCode: 'Tenue de soirée — palette sauge & crème',
+   539→  message: 'Avec joie et émotion, nous vous invitons à célébrer notre union.',
+   540→  parents: 'Fethi & Aicha • Mehdi & Leila',
+   541→  // ─── Extended sample data (shows every Jardin Sage section) ───
+   542→  quranicVerse: {
+   543→    arabic: 'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً',
+   544→    translation: '"And of His signs is that He created for you from yourselves mates that you may find tranquility in them; and He placed between you affection and mercy."',
+   545→  },
+   546→  groomParents: "Mr. Fethi Guesmi\n&\nMrs. Aicha Ben Yahya",
+   547→  brideParents: "Mr. Mehdi Zouari\n&\nMrs. Leila Ben Moussa",
+   548→  schedule: [
+   549→    { time: '18h30', label: 'Accueil des invités' },
+   550→    { time: '19h00', label: 'Cérémonie religieuse' },
+   551→    { time: '20h00', label: 'Dîner de gala' },
+   552→    { time: '22h30', label: 'Soirée dansante' },
+   553→    { time: '00h30', label: 'Dansse des mariés' },
+   554→  ],
+   555→  dayProgram: [
+   556→    { time: '15h00', activity: 'Préparation & photos' },
+   557→    { time: '17h30', activity: 'Cérémonie du henné' },
+   558→    { time: '19h00', activity: 'Entrée des mariés' },
+   559→    { time: '20h30', activity: 'Dîner servi à table' },
+   560→    { time: '22h00', activity: 'Ouverture du bal' },
+   561→    { time: '01h00', activity: 'Plateau de nuit' },
+   562→  ],
+   563→  faq: [
+   564→    { question: 'Y aura-t-il un parking ?', answer: 'Oui — un parking gratuit est disponible à 50m du domaine. Des voituriers seront présents.' },
+   565→    { question: 'Les enfants sont-ils les bienvenus ?', answer: 'Bien sûr ! Une aire de jeux surveillée sera disponible tout au long de la soirée.' },
+   566→    { question: 'Puis-je venir avec un accompagnant ?', answer: 'Merci de confirmer le nombre exact de convives lors du RSVP.' },
+   567→  ],
+   568→  transportInfo: "Une navette gratuite partira de l'avenue Habib Bourguiba à 18h00 précises. Retour assuré jusqu'à 2h00 du matin. Pour les véhicules personnels, suivez le fléchage « Mariage Yasmine & Karim » depuis la rocade de La Marsa.",
+   569→  venueMapEmbed: 'https://www.openstreetmap.org/export/embed.html?bbox=10.165%2C36.795%2C10.185%2C36.815&layer=mapnik&marker=36.805%2C10.175',
+   570→  activities: [
+   571→    { title: 'Cérémonie du henné', description: "L'art traditionnel du henné, exécuté par une experte de la médina.", time: '17h30' },
+   572→    { title: 'Dégustation de pâtisseries', description: 'Sélection de sweets tunisiens : baklava, kaak warka, yoyo.', time: '20h00' },
+   573→    { title: 'Concert de oud', description: "Récital de musique arabo-andalouse par l'ensemble Al-Azifet.", time: '21h30' },
+   574→    { title: 'Photobooth botanique', description: 'Coin photo avec arches de fleurs fraîches et accessoires.', time: '22h00' },
+   575→  ],
+   576→  accommodation: {
+   577→    description: "Pour nos invités de passage, nous avons négocié des tarifs préférentiels dans trois hôtels à 10 minutes du domaine. Mentionnez « Mariage Yasmine & Karim » lors de votre réservation.",
+   578→    recommendations: [
+   579→      { name: 'Laico Hotel & Spa', address: 'Avenue Habib Bourguiba, Tunis', rate: '180 DT / nuit' },
+   580→      { name: 'Mövenpick Gammarth', address: 'Les Côtes de Carthage, La Marsa', rate: '240 DT / nuit' },
+   581→      { name: 'Dar El Jeld — Riad', address: '17 Rue Saadaoui, Médina de Tunis', rate: '320 DT / nuit' },
+   582→    ],
+   583→  },
+   584→  menu: [
+   585→    { course: 'Apéritif', description: "Brik au thon, mini-salade méchouia, kefteji en cuillère — servir avec jus de citronnier frais" },
+   586→    { course: 'Entrée', description: "Carpaccio de daurade, fleur de sel de Sidi Bou Saïd, huile d'olive de Sfax" },
+   587→    { course: "Plat principal — viande", description: "Méchoui d'agneau de Thala, épices de Kairouan, semoule d'orge aux amandes" },
+   588→    { course: "Plat principal — poisson", description: "Dorade royale en croûte de sel, légumes du Cap Bon rôtis, beurre blanc au citron confit" },
+   589→    { course: 'Plateau de fromages', description: 'Sélection tunisienne : rigouta, bébél, fromage de chèvre du Zaghouan, miel de jujubier' },
+   590→    { course: 'Dessert', description: "Assiette de pâtisseries fines : baklava aux pistaches, kaak warka, samsa à l'amande — glace au geranium" },
+   591→  ],
+   592→  giftRegistry: {
+   593→    description: "Votre présence est le plus beau des cadeaux. Pour ceux qui souhaitent tout de même contribuer, une cagnotte en ligne est ouverte pour notre voyage de noces au Bali.",
+   594→    link: '#',
+   595→  },
+   596→  photoUploadEnabled: true,
+   597→  contactCollectorEnabled: true,
+   598→  specialNotes: [
+   599→    { title: 'Confidentialité', note: "Les photos prises lors de la soirée seront partagées sur une galerie privée accessible uniquement aux invités." },
+   600→    { title: 'Sécurité', note: "Veuillez conserver votre invitation numérique sur vous. Elle servira de laissez-passer à l'entrée." },
+   601→    { title: 'Climat', note: "La cérémonie aura lieu en extérieur couvert. Prévoyez un châle léger pour le soir." },
+   602→  ],
+   603→  thankYouMessage: "From the bottom of our hearts, thank you for being part of the most beautiful day of our lives. Your presence, your smile, and your love are the gifts we will cherish forever.",
+   604→  aboutCelebration: "We met under the jasmine arbor of Sidi Bou Saïd on a summer evening. Five years later, surrounded by the people who shaped us, we want to celebrate the next chapter — yours and ours. Expect flowers that smell of orange blossom, a long dinner under olive trees, and dancing until the stars fade.",
+   605→  galleryImages: [
+   606→    'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80',
+   607→    'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=600&q=80',
+   608→    'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=600&q=80',
+   609→    'https://images.unsplash.com/photo-1525258946800-98cfd641d0de?w=600&q=80',
+   610→    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=600&q=80',
+   611→    'https://images.unsplash.com/photo-1525772764200-be829a350797?w=600&q=80',
+   612→  ],
+   613→};
+   614→
