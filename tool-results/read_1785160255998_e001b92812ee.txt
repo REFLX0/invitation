@@ -1,0 +1,761 @@
+     1→'use client';
+     2→
+     3→// ═══════════════════════════════════════════════════════════════════════════════
+     4→//  L'Éditorial — Specialized Layout
+     5→// ═══════════════════════════════════════════════════════════════════════════════
+     6→//  Design language (inspired by magazine-grade editorial invitations):
+     7→//    • Palette: warm cream parchment + dark coffee ink + soft tan accents
+     8→//    • Mood: intimate, editorial, slow-scroll — like a coffee-table book
+     9→//    • Typography signature: Great Vibes script for every heading (the signature
+    10→//      look of premium wedding publications), Cormorant Garamond italic for body,
+    11→//      Amiri for Arabic verses & blessings (proper Arabic calligraphic typeface)
+    12→//    • Layout: 12+ sections of generous whitespace — hero with stacked script
+    13→//      names + Bismillah + Quranic verse + family invitation + countdown +
+    14→//      story + day program + venue + FAQ + RSVP + dress code + closing
+    15→//    • Decoration: hairline rules, small diamond glyphs, no heavy borders —
+    16→//      typography and spacing carry the design
+    17→// ═══════════════════════════════════════════════════════════════════════════════
+    18→
+    19→import { motion } from 'framer-motion';
+    20→import { MapPin, Clock, X, Check, Calendar, Heart, Sparkles, Gift, Menu as MenuIcon } from 'lucide-react';
+    21→import { Button } from '@/components/ui/button';
+    22→import { Input } from '@/components/ui/input';
+    23→import { Textarea } from '@/components/ui/textarea';
+    24→import {
+    25→  SpecializedTemplateProps,
+    26→  useCountdown,
+    27→  useRsvpForm,
+    28→  fadeInUp,
+    29→  stagger,
+    30→  SectionLabel,
+    31→} from './_shared';
+    32→import { useT } from '@/lib/i18n/use-t';
+    33→
+    34→// ─── Small diamond ornament used as separator across the template ───────────
+    35→function Diamond({ color, size = 6 }: { color: string; size?: number }) {
+    36→  return (
+    37→    <svg
+    38→      width={size}
+    39→      height={size}
+    40→      viewBox="0 0 6 6"
+    41→      aria-hidden
+    42→      xmlns="http://www.w3.org/2000/svg"
+    43→      style={{ display: 'inline-block' }}
+    44→    >
+    45→      <path d="M3 0 L6 3 L3 6 L0 3 Z" fill={color} />
+    46→    </svg>
+    47→  );
+    48→}
+    49→
+    50→// ─── Hairline divider with a centered diamond ───────────────────────────────
+    51→function Hairline({ color, width = 'w-16' }: { color: string; width?: string }) {
+    52→  return (
+    53→    <div className={`flex items-center justify-center gap-2 ${width}`}>
+    54→      <span className="h-px flex-1" style={{ background: `linear-gradient(to right, transparent, ${color}80)` }} />
+    55→      <Diamond color={color} size={5} />
+    56→      <span className="h-px flex-1" style={{ background: `linear-gradient(to left, transparent, ${color}80)` }} />
+    57→    </div>
+    58→  );
+    59→}
+    60→
+    61→// ─── The Quranic verse about marriage (Surat Ar-Rum 30:21) ──────────────────
+    62→// Rendered in Amiri (Arabic calligraphic typeface) for proper shaping.
+    63→const QURAN_VERSE_AR =
+    64→  'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً';
+    65→const QURAN_VERSE_FR =
+    66→  'Et parmi Ses signes, Il a créé pour vous, de vous-mêmes, des épouses pour que vous viviez avec elles en tranquillité, et Il a mis entre vous de l’affection et de la bonté.';
+    67→const QURAN_VERSE_EN =
+    68→  'And of His signs is that He created for you from yourselves mates that you may find tranquility in them; and He placed between you affection and mercy.';
+    69→
+    70→// ─── Template component ─────────────────────────────────────────────────────
+    71→export function EditorialTemplate({
+    72→  template: tpl,
+    73→  data,
+    74→  mode = 'preview',
+    75→  onClose,
+    76→  eventSlug,
+    77→}: SpecializedTemplateProps) {
+    78→  const { t, formatDate } = useT();
+    79→  const countdown = useCountdown(data.eventDate);
+    80→  const rsvp = useRsvpForm(mode, eventSlug);
+    81→
+    82→  // Palette pulled from the template style (so the registry controls look)
+    83→  const ink = tpl.textPrimary;          // near-black warm
+    84→  const inkSoft = tpl.textSecondary;    // soft gray
+    85→  const coffee = tpl.accentColor;       // warm coffee brown (names color)
+    86→  const tan = tpl.goldColor;            // soft tan (section labels)
+    87→  const cream = tpl.bodyBg;             // soft ivory
+    88→  const parchment = tpl.coverBg;        // warm cream gradient (string)
+    89→
+    90→  const countdownUnits = [
+    91→    { value: countdown.jours, label: t('countdown.days') },
+    92→    { value: countdown.heures, label: t('countdown.hours') },
+    93→    { value: countdown.minutes, label: t('countdown.minutes') },
+    94→    { value: countdown.secondes, label: t('countdown.seconds') },
+    95→  ];
+    96→
+    97→  // Build a Google Maps link from the venue address (opens in new tab)
+    98→  const venueQuery = [data.venueName, data.venueAddress].filter(Boolean).join(', ');
+    99→  const venueHref = venueQuery
+   100→    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venueQuery)}`
+   101→    : undefined;
+   102→
+   103→  return (
+   104→    <div
+   105→      className="min-h-screen font-body relative"
+   106→      style={{ background: cream, color: ink }}
+   107→    >
+   108→      {mode === 'preview' && onClose && (
+   109→        <button
+   110→          onClick={onClose}
+   111→          className="fixed top-4 right-4 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-white/80 backdrop-blur text-stone-400 hover:text-stone-700 hover:bg-white transition-colors"
+   112→          aria-label="Fermer"
+   113→        >
+   114→          <X className="h-5 w-5" />
+   115→        </button>
+   116→      )}
+   117→
+   118→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   119→      {/*  HERO — full-bleed warm cream with stacked Great Vibes script names   */}
+   120→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   121→      <motion.section
+   122→        variants={stagger}
+   123→        initial="hidden"
+   124→        animate="visible"
+   125→        className="relative min-h-[100dvh] flex flex-col items-center justify-center px-6 py-16 sm:py-20 overflow-hidden text-center"
+   126→        style={{ background: parchment }}
+   127→      >
+   128→        {/* Subtle paper-grain texture using radial dots */}
+   129→        <div
+   130→          className="absolute inset-0 opacity-[0.18] pointer-events-none"
+   131→          style={{
+   132→            backgroundImage: `radial-gradient(${tan}40 0.5px, transparent 0.5px)`,
+   133→            backgroundSize: '18px 18px',
+   134→          }}
+   135→          aria-hidden
+   136→        />
+   137→
+   138→        {/* Bismillah — ﷽ ligature in Amiri */}
+   139→        <motion.p
+   140→          variants={fadeInUp}
+   141→          className="relative font-arabic font-bold text-2xl sm:text-3xl mb-6"
+   142→          style={{ color: coffee, opacity: 0.85 }}
+   143→          dir="rtl"
+   144→          lang="ar"
+   145→        >
+   146→          ﷽
+   147→        </motion.p>
+   148→
+   149→        {/* Section label */}
+   150→        <motion.div variants={fadeInUp} className="relative">
+   151→          <SectionLabel color={tan}>{t('hero.save')}</SectionLabel>
+   152→        </motion.div>
+   153→
+   154→        {/* Stacked names — the signature */}
+   155→        <motion.h1
+   156→          variants={fadeInUp}
+   157→          className="relative font-script leading-[0.95] mt-4 text-[15vw] sm:text-[12vw] md:text-[10vw] lg:text-[8rem]"
+   158→          style={{ color: coffee }}
+   159→        >
+   160→          {data.partner1Name}
+   161→        </motion.h1>
+   162→
+   163→        <motion.div variants={fadeInUp} className="relative my-1 sm:my-2">
+   164→          <span
+   165→            className="font-serif italic text-base sm:text-lg tracking-[0.15em]"
+   166→            style={{ color: tan }}
+   167→          >
+   168→            &amp;
+   169→          </span>
+   170→        </motion.div>
+   171→
+   172→        <motion.h1
+   173→          variants={fadeInUp}
+   174→          className="relative font-script leading-[0.95] text-[15vw] sm:text-[12vw] md:text-[10vw] lg:text-[8rem]"
+   175→          style={{ color: coffee }}
+   176→        >
+   177→          {data.partner2Name}
+   178→        </motion.h1>
+   179→
+   180→        {/* Date marker */}
+   181→        <motion.div variants={fadeInUp} className="relative mt-6 flex flex-col items-center gap-2">
+   182→          <Hairline color={tan} width="w-20" />
+   183→          <p
+   184→            className="font-serif italic text-sm sm:text-base tracking-wide"
+   185→            style={{ color: inkSoft }}
+   186→          >
+   187→            {formatDate(data.eventDate)}
+   188→          </p>
+   189→          <Hairline color={tan} width="w-20" />
+   190→        </motion.div>
+   191→
+   192→        {/* Scroll hint */}
+   193→        <motion.p
+   194→          variants={fadeInUp}
+   195→          className="relative mt-8 text-[10px] uppercase tracking-[0.4em]"
+   196→          style={{ color: tan, opacity: 0.7 }}
+   197→        >
+   198→          {t('hero.scroll')}
+   199→        </motion.p>
+   200→      </motion.section>
+   201→
+   202→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   203→      {/*  QURANIC VERSE — bilingual Arabic + French/English translation       */}
+   204→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   205→      <motion.section
+   206→        variants={stagger}
+   207→        initial="hidden"
+   208→        whileInView="visible"
+   209→        viewport={{ once: true, amount: 0.3 }}
+   210→        className="px-6 py-24 sm:py-32 max-w-2xl mx-auto text-center"
+   211→      >
+   212→        <motion.p
+   213→          variants={fadeInUp}
+   214→          className="font-arabic font-bold text-2xl sm:text-3xl leading-[2.2] mb-10"
+   215→          style={{ color: ink }}
+   216→          dir="rtl"
+   217→          lang="ar"
+   218→        >
+   219→          {QURAN_VERSE_AR}
+   220→        </motion.p>
+   221→
+   222→        <motion.div variants={fadeInUp} className="my-8 flex justify-center">
+   223→          <Hairline color={tan} width="w-24" />
+   224→        </motion.div>
+   225→
+   226→        <motion.p
+   227→          variants={fadeInUp}
+   228→          className="font-serif italic text-base sm:text-lg leading-relaxed max-w-xl mx-auto"
+   229→          style={{ color: inkSoft }}
+   230→        >
+   231→          {QURAN_VERSE_FR}
+   232→        </motion.p>
+   233→
+   234→        <motion.p
+   235→          variants={fadeInUp}
+   236→          className="mt-3 text-[10px] uppercase tracking-[0.35em]"
+   237→          style={{ color: tan }}
+   238→        >
+   239→          Ar-Rum · 30:21
+   240→        </motion.p>
+   241→      </motion.section>
+   242→
+   243→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   244→      {/*  FAMILY INVITATION — Arabic host text from both families             */}
+   245→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   246→      {data.parents && (
+   247→        <motion.section
+   248→          variants={stagger}
+   249→          initial="hidden"
+   250→          whileInView="visible"
+   251→          viewport={{ once: true, amount: 0.3 }}
+   252→          className="px-6 py-20 sm:py-24 max-w-xl mx-auto text-center"
+   253→        >
+   254→          <motion.p
+   255→            variants={fadeInUp}
+   256→            className="font-arabic font-bold text-lg sm:text-xl leading-loose mb-6"
+   257→            style={{ color: ink }}
+   258→            dir="rtl"
+   259→            lang="ar"
+   260→          >
+   261→            تتشرّف عائلتا
+   262→          </motion.p>
+   263→
+   264→          <motion.p
+   265→            variants={fadeInUp}
+   266→            className="font-arabic font-bold text-xl sm:text-2xl leading-loose"
+   267→            style={{ color: coffee }}
+   268→            dir="rtl"
+   269→            lang="ar"
+   270→          >
+   271→            {data.parents}
+   272→          </motion.p>
+   273→
+   274→          <motion.p
+   275→            variants={fadeInUp}
+   276→            className="font-arabic font-bold text-base sm:text-lg leading-loose mt-6"
+   277→            style={{ color: inkSoft }}
+   278→            dir="rtl"
+   279→            lang="ar"
+   280→          >
+   281→            بدعوتكم لحضور حفل عقد قران ابنيهما
+   282→          </motion.p>
+   283→
+   284→          <motion.div variants={fadeInUp} className="mt-8 flex justify-center">
+   285→            <Hairline color={tan} width="w-20" />
+   286→          </motion.div>
+   287→
+   288→          {/* Latin-script names as visual anchor */}
+   289→          <motion.p
+   290→            variants={fadeInUp}
+   291→            className="font-script text-4xl sm:text-5xl mt-6"
+   292→            style={{ color: coffee }}
+   293→          >
+   294→            {data.partner1Name} &amp; {data.partner2Name}
+   295→          </motion.p>
+   296→        </motion.section>
+   297→      )}
+   298→
+   299→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   300→      {/*  COUNTDOWN — minimal elegant numbers on hairline tiles               */}
+   301→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   302→      <motion.section
+   303→        variants={stagger}
+   304→        initial="hidden"
+   305→        whileInView="visible"
+   306→        viewport={{ once: true, amount: 0.3 }}
+   307→        className="px-6 py-24 sm:py-28 text-center"
+   308→      >
+   309→        <motion.div variants={fadeInUp}>
+   310→          <SectionLabel color={tan}>{t('countdown.title')}</SectionLabel>
+   311→        </motion.div>
+   312→
+   313→        <motion.h2
+   314→          variants={fadeInUp}
+   315→          className="font-script text-5xl sm:text-6xl mt-4 mb-3"
+   316→          style={{ color: coffee }}
+   317→        >
+   318→          Until our wedding
+   319→        </motion.h2>
+   320→
+   321→        <motion.p
+   322→          variants={fadeInUp}
+   323→          className="font-serif italic text-sm sm:text-base mb-12"
+   324→          style={{ color: inkSoft }}
+   325→        >
+   326→          {formatDate(data.eventDate)}
+   327→        </motion.p>
+   328→
+   329→        <div className="mt-4 grid grid-cols-4 gap-3 sm:gap-6 max-w-xl mx-auto">
+   330→          {countdownUnits.map((unit) => (
+   331→            <motion.div
+   332→              key={unit.label}
+   333→              variants={fadeInUp}
+   334→              className="flex flex-col items-center"
+   335→            >
+   336→              <span
+   337→                className="font-script text-4xl sm:text-5xl md:text-6xl leading-none"
+   338→                style={{ color: coffee }}
+   339→              >
+   340→                {String(unit.value).padStart(2, '0')}
+   341→              </span>
+   342→              <span
+   343→                className="mt-2 text-[9px] sm:text-[10px] uppercase tracking-[0.3em]"
+   344→                style={{ color: tan }}
+   345→              >
+   346→                {unit.label}
+   347→              </span>
+   348→            </motion.div>
+   349→          ))}
+   350→        </div>
+   351→      </motion.section>
+   352→
+   353→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   354→      {/*  STORY — couple's message rendered as an editorial pull-quote         */}
+   355→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   356→      {data.message && (
+   357→        <motion.section
+   358→          variants={stagger}
+   359→          initial="hidden"
+   360→          whileInView="visible"
+   361→          viewport={{ once: true, amount: 0.3 }}
+   362→          className="px-6 py-24 sm:py-32 max-w-3xl mx-auto text-center"
+   363→        >
+   364→          <motion.div variants={fadeInUp} className="mb-8">
+   365→            <Sparkles className="mx-auto h-5 w-5" style={{ color: tan }} />
+   366→          </motion.div>
+   367→
+   368→          <motion.h2
+   369→            variants={fadeInUp}
+   370→            className="font-script text-5xl sm:text-6xl mb-8"
+   371→            style={{ color: coffee }}
+   372→          >
+   373→            Our story
+   374→          </motion.h2>
+   375→
+   376→          <motion.div variants={fadeInUp} className="mb-10 flex justify-center">
+   377→            <Hairline color={tan} width="w-24" />
+   378→          </motion.div>
+   379→
+   380→          <motion.blockquote
+   381→            variants={fadeInUp}
+   382→            className="font-serif italic text-xl sm:text-2xl leading-relaxed max-w-2xl mx-auto"
+   383→            style={{ color: ink }}
+   384→          >
+   385→            &ldquo;{data.message}&rdquo;
+   386→          </motion.blockquote>
+   387→
+   388→          <motion.p
+   389→            variants={fadeInUp}
+   390→            className="mt-8 font-script text-3xl"
+   391→            style={{ color: coffee }}
+   392→          >
+   393→            {data.partner1Name} &amp; {data.partner2Name}
+   394→          </motion.p>
+   395→        </motion.section>
+   396→      )}
+   397→
+   398→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   399→      {/*  DETAILS — date / venue / time as elegant editorial rows             */}
+   400→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   401→      <motion.section
+   402→        variants={stagger}
+   403→        initial="hidden"
+   404→        whileInView="visible"
+   405→        viewport={{ once: true, amount: 0.3 }}
+   406→        className="px-6 py-24 sm:py-28 max-w-2xl mx-auto text-center"
+   407→      >
+   408→        <motion.div variants={fadeInUp}>
+   409→          <SectionLabel color={tan}>{t('details.title')}</SectionLabel>
+   410→        </motion.div>
+   411→
+   412→        <motion.h2
+   413→          variants={fadeInUp}
+   414→          className="font-script text-5xl sm:text-6xl mt-4 mb-10"
+   415→          style={{ color: coffee }}
+   416→        >
+   417→          The celebration
+   418→        </motion.h2>
+   419→
+   420→        <motion.div variants={fadeInUp} className="mb-12 flex justify-center">
+   421→          <Hairline color={tan} width="w-24" />
+   422→        </motion.div>
+   423→
+   424→        <div className="space-y-12 max-w-md mx-auto">
+   425→          <motion.div variants={fadeInUp} className="flex flex-col items-center gap-3">
+   426→            <Calendar className="h-5 w-5" style={{ color: tan }} />
+   427→            <p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: tan }}>
+   428→              {t('hero.save')}
+   429→            </p>
+   430→            <p className="font-serif text-lg sm:text-xl" style={{ color: ink }}>
+   431→              {formatDate(data.eventDate)}
+   432→            </p>
+   433→          </motion.div>
+   434→
+   435→          {data.eventTime && (
+   436→            <motion.div variants={fadeInUp} className="flex flex-col items-center gap-3">
+   437→              <Clock className="h-5 w-5" style={{ color: tan }} />
+   438→              <p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: tan }}>
+   439→                Time
+   440→              </p>
+   441→              <p className="font-serif text-lg sm:text-xl" style={{ color: ink }}>
+   442→                {data.eventTime}
+   443→              </p>
+   444→            </motion.div>
+   445→          )}
+   446→
+   447→          {data.venueName && (
+   448→            <motion.div variants={fadeInUp} className="flex flex-col items-center gap-3">
+   449→              <MapPin className="h-5 w-5" style={{ color: tan }} />
+   450→              <p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: tan }}>
+   451→                The venue
+   452→              </p>
+   453→              <p className="font-script text-3xl sm:text-4xl" style={{ color: coffee }}>
+   454→                {data.venueName}
+   455→              </p>
+   456→              {data.venueAddress && (
+   457→                <p
+   458→                  className="font-serif italic text-sm sm:text-base max-w-xs"
+   459→                  style={{ color: inkSoft }}
+   460→                >
+   461→                  {data.venueAddress}
+   462→                </p>
+   463→              )}
+   464→              {venueHref && (
+   465→                <a
+   466→                  href={venueHref}
+   467→                  target="_blank"
+   468→                  rel="noopener noreferrer"
+   469→                  className="mt-2 text-[10px] uppercase tracking-[0.3em] underline-offset-4 hover:underline"
+   470→                  style={{ color: tan }}
+   471→                >
+   472→                  {t('details.viewMap')}
+   473→                </a>
+   474→              )}
+   475→            </motion.div>
+   476→          )}
+   477→
+   478→          {data.dressCode && (
+   479→            <motion.div variants={fadeInUp} className="flex flex-col items-center gap-3">
+   480→              <Heart className="h-5 w-5" style={{ color: tan }} />
+   481→              <p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: tan }}>
+   482→                Dress code
+   483→              </p>
+   484→              <p className="font-serif italic text-base sm:text-lg" style={{ color: ink }}>
+   485→                {data.dressCode}
+   486→              </p>
+   487→            </motion.div>
+   488→          )}
+   489→        </div>
+   490→      </motion.section>
+   491→
+   492→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   493→      {/*  DAY PROGRAM — timeline with script-font times                        */}
+   494→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   495→      {data.schedule && data.schedule.length > 0 && (
+   496→        <motion.section
+   497→          variants={stagger}
+   498→          initial="hidden"
+   499→          whileInView="visible"
+   500→          viewport={{ once: true, amount: 0.3 }}
+   501→          className="px-6 py-24 sm:py-28 max-w-2xl mx-auto text-center"
+   502→        >
+   503→          <motion.div variants={fadeInUp}>
+   504→            <SectionLabel color={tan}>{t('details.schedule')}</SectionLabel>
+   505→          </motion.div>
+   506→
+   507→          <motion.h2
+   508→            variants={fadeInUp}
+   509→            className="font-script text-5xl sm:text-6xl mt-4 mb-10"
+   510→            style={{ color: coffee }}
+   511→          >
+   512→            Day program
+   513→          </motion.h2>
+   514→
+   515→          <motion.div variants={fadeInUp} className="mb-14 flex justify-center">
+   516→            <Hairline color={tan} width="w-24" />
+   517→          </motion.div>
+   518→
+   519→          <div className="max-w-md mx-auto space-y-10">
+   520→            {data.schedule.map((item, i) => (
+   521→              <motion.div
+   522→                key={i}
+   523→                variants={fadeInUp}
+   524→                className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6"
+   525→              >
+   526→                <span
+   527→                  className="font-script text-3xl sm:text-4xl shrink-0"
+   528→                  style={{ color: coffee }}
+   529→                >
+   530→                  {item.time}
+   531→                </span>
+   532→                <Diamond color={tan} size={5} />
+   533→                <span
+   534→                  className="font-serif italic text-base sm:text-lg text-center sm:text-left"
+   535→                  style={{ color: ink }}
+   536→                >
+   537→                  {item.label}
+   538→                </span>
+   539→              </motion.div>
+   540→            ))}
+   541→          </div>
+   542→        </motion.section>
+   543→      )}
+   544→
+   545→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   546→      {/*  GIFT REGISTRY + MENU — twin editorial cards                          */}
+   547→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   548→      <motion.section
+   549→        variants={stagger}
+   550→        initial="hidden"
+   551→        whileInView="visible"
+   552→        viewport={{ once: true, amount: 0.3 }}
+   553→        className="px-6 py-24 sm:py-28 max-w-4xl mx-auto"
+   554→      >
+   555→        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12">
+   556→          {/* Gift registry card */}
+   557→          <motion.div
+   558→            variants={fadeInUp}
+   559→            className="text-center p-8 sm:p-10"
+   560→            style={{ background: tpl.accentLight + '50', border: `1px solid ${tan}40` }}
+   561→          >
+   562→            <Gift className="mx-auto h-6 w-6 mb-4" style={{ color: tan }} />
+   563→            <p className="text-[10px] uppercase tracking-[0.3em] mb-3" style={{ color: tan }}>
+   564→              Gift registry
+   565→            </p>
+   566→            <h3 className="font-script text-3xl sm:text-4xl mb-4" style={{ color: coffee }}>
+   567→              With love
+   568→            </h3>
+   569→            <p
+   570→              className="font-serif italic text-sm sm:text-base leading-relaxed"
+   571→              style={{ color: inkSoft }}
+   572→            >
+   573→              Your presence is the greatest gift. For those who wish to honor us further,
+   574→              contributions to our new home are warmly welcomed.
+   575→            </p>
+   576→          </motion.div>
+   577→
+   578→          {/* Menu card */}
+   579→          <motion.div
+   580→            variants={fadeInUp}
+   581→            className="text-center p-8 sm:p-10"
+   582→            style={{ background: tpl.accentLight + '50', border: `1px solid ${tan}40` }}
+   583→          >
+   584→            <MenuIcon className="mx-auto h-6 w-6 mb-4" style={{ color: tan }} />
+   585→            <p className="text-[10px] uppercase tracking-[0.3em] mb-3" style={{ color: tan }}>
+   586→              Menu
+   587→            </p>
+   588→            <h3 className="font-script text-3xl sm:text-4xl mb-4" style={{ color: coffee }}>
+   589→              A taste of Tunisia
+   590→            </h3>
+   591→            <p
+   592→              className="font-serif italic text-sm sm:text-base leading-relaxed"
+   593→              style={{ color: inkSoft }}
+   594→            >
+   595→              A curated menu celebrating Tunisian flavors — from brick à l’œuf to lamb
+   596→              mechoui, finished with baklava and mint tea.
+   597→            </p>
+   598→          </motion.div>
+   599→        </div>
+   600→      </motion.section>
+   601→
+   602→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   603→      {/*  RSVP — editorial form on cream card                                  */}
+   604→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   605→      <motion.section
+   606→        variants={stagger}
+   607→        initial="hidden"
+   608→        whileInView="visible"
+   609→        viewport={{ once: true, amount: 0.3 }}
+   610→        className="px-6 py-24 sm:py-28 max-w-2xl mx-auto text-center"
+   611→      >
+   612→        <motion.div variants={fadeInUp}>
+   613→          <SectionLabel color={tan}>{t('rsvp.title')}</SectionLabel>
+   614→        </motion.div>
+   615→
+   616→        <motion.h2
+   617→          variants={fadeInUp}
+   618→          className="font-script text-5xl sm:text-6xl mt-4 mb-4"
+   619→          style={{ color: coffee }}
+   620→        >
+   621→          Confirm attendance
+   622→        </motion.h2>
+   623→
+   624→        <motion.p
+   625→          variants={fadeInUp}
+   626→          className="font-serif italic text-sm sm:text-base mb-10"
+   627→          style={{ color: inkSoft }}
+   628→        >
+   629→          {t('rsvp.subtitle')}
+   630→        </motion.p>
+   631→
+   632→        <motion.div variants={fadeInUp} className="mb-10 flex justify-center">
+   633→          <Hairline color={tan} width="w-24" />
+   634→        </motion.div>
+   635→
+   636→        {rsvp.status === 'success' ? (
+   637→          <motion.div
+   638→            initial={{ opacity: 0, scale: 0.9 }}
+   639→            animate={{ opacity: 1, scale: 1 }}
+   640→            className="py-10"
+   641→          >
+   642→            <Check className="mx-auto h-10 w-10 mb-4" style={{ color: coffee }} />
+   643→            <p className="font-script text-4xl mb-3" style={{ color: coffee }}>
+   644→              {t('rsvp.thankYou')}
+   645→            </p>
+   646→            <p className="font-serif italic text-sm" style={{ color: inkSoft }}>
+   647→              {t('rsvp.recorded')}
+   648→            </p>
+   649→          </motion.div>
+   650→        ) : (
+   651→          <motion.form
+   652→            variants={fadeInUp}
+   653→            onSubmit={rsvp.submit}
+   654→            className="max-w-md mx-auto space-y-4 text-left"
+   655→          >
+   656→            <Input
+   657→              value={rsvp.name}
+   658→              onChange={(e) => rsvp.setName(e.target.value)}
+   659→              placeholder={t('rsvp.namePlaceholder')}
+   660→              required
+   661→              className="bg-white/60 border-tan/40 placeholder:text-ink-faint"
+   662→              style={{ color: ink }}
+   663→            />
+   664→            <Input
+   665→              type="number"
+   666→              min="1"
+   667→              max="10"
+   668→              value={rsvp.guests}
+   669→              onChange={(e) => rsvp.setGuests(e.target.value)}
+   670→              placeholder={t('rsvp.guestsPlaceholder')}
+   671→              className="bg-white/60 border-tan/40 placeholder:text-ink-faint"
+   672→              style={{ color: ink }}
+   673→            />
+   674→            <Textarea
+   675→              value={rsvp.note}
+   676→              onChange={(e) => rsvp.setNote(e.target.value)}
+   677→              placeholder={t('rsvp.notePlaceholder')}
+   678→              rows={3}
+   679→              className="bg-white/60 border-tan/40 placeholder:text-ink-faint resize-none"
+   680→              style={{ color: ink }}
+   681→            />
+   682→            {rsvp.error && (
+   683→              <p className="text-xs text-red-700 text-center">{rsvp.error}</p>
+   684→            )}
+   685→            <Button
+   686→              type="submit"
+   687→              disabled={rsvp.status === 'loading'}
+   688→              className="w-full rounded-full text-[11px] uppercase tracking-[0.3em] py-4"
+   689→              style={{ background: coffee, color: cream }}
+   690→            >
+   691→              {rsvp.status === 'loading' ? t('rsvp.submitting') : t('rsvp.submit')}
+   692→            </Button>
+   693→          </motion.form>
+   694→        )}
+   695→      </motion.section>
+   696→
+   697→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   698→      {/*  CLOSING — names script + thank-you blessing                          */}
+   699→      {/* ═══════════════════════════════════════════════════════════════════ */}
+   700→      <motion.section
+   701→        variants={stagger}
+   702→        initial="hidden"
+   703→        whileInView="visible"
+   704→        viewport={{ once: true, amount: 0.3 }}
+   705→        className="px-6 py-24 sm:py-32 text-center"
+   706→        style={{ background: parchment }}
+   707→      >
+   708→        <motion.p
+   709→          variants={fadeInUp}
+   710→          className="font-arabic font-bold text-xl sm:text-2xl mb-8"
+   711→          style={{ color: coffee, opacity: 0.85 }}
+   712→          dir="rtl"
+   713→          lang="ar"
+   714→        >
+   715→          بارك الله لكما وبارك عليكما وجمع بينكما في خير
+   716→        </motion.p>
+   717→
+   718→        <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   719→          <Hairline color={tan} width="w-24" />
+   720→        </motion.div>
+   721→
+   722→        <motion.p
+   723→          variants={fadeInUp}
+   724→          className="font-script text-5xl sm:text-6xl md:text-7xl leading-none"
+   725→          style={{ color: coffee }}
+   726→        >
+   727→          {data.partner1Name}
+   728→        </motion.p>
+   729→        <motion.p
+   730→          variants={fadeInUp}
+   731→          className="font-serif italic text-base sm:text-lg my-3 tracking-[0.15em]"
+   732→          style={{ color: tan }}
+   733→        >
+   734→          &amp;
+   735→        </motion.p>
+   736→        <motion.p
+   737→          variants={fadeInUp}
+   738→          className="font-script text-5xl sm:text-6xl md:text-7xl leading-none"
+   739→          style={{ color: coffee }}
+   740→        >
+   741→          {data.partner2Name}
+   742→        </motion.p>
+   743→
+   744→        <motion.p
+   745→          variants={fadeInUp}
+   746→          className="mt-10 text-[10px] uppercase tracking-[0.4em]"
+   747→          style={{ color: tan }}
+   748→        >
+   749→          {formatDate(data.eventDate)}
+   750→        </motion.p>
+   751→      </motion.section>
+   752→
+   753→      <footer className="px-6 py-10 text-center" style={{ background: cream }}>
+   754→        <p className="text-[9px] uppercase tracking-[0.4em]" style={{ color: tan }}>
+   755→          Avec amour · {data.partner1Name} &amp; {data.partner2Name}
+   756→        </p>
+   757→      </footer>
+   758→    </div>
+   759→  );
+   760→}
+   761→

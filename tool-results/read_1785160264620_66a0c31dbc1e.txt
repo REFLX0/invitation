@@ -1,0 +1,606 @@
+   601→                  </div>
+   602→                </motion.div>
+   603→                <p
+   604→                  className="mt-4 text-[10px] font-semibold uppercase tracking-[0.3em]"
+   605→                  style={{ color: P.gold, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   606→                >
+   607→                  Plus d&apos;infos à suivre
+   608→                </p>
+   609→              </motion.div>
+   610→            )}
+   611→          </AnimatePresence>
+   612→        </div>
+   613→      </motion.section>
+   614→
+   615→      {/* ═══════════════════════════════════════════════════════════════════
+   616→          SECTION 4 — LE LIEU
+   617→          ═══════════════════════════════════════════════════════════════════ */}
+   618→      <motion.section
+   619→        id="lieu"
+   620→        variants={stagger}
+   621→        initial="hidden"
+   622→        whileInView="visible"
+   623→        viewport={{ once: true, amount: 0.1 }}
+   624→        className="relative w-full px-5 py-20 sm:px-6 sm:py-24"
+   625→        style={{ backgroundColor: P.cream }}
+   626→      >
+   627→        <FloralCorner position="tr" />
+   628→        <FloralCorner position="bl" />
+   629→
+   630→        <div className="relative z-10 mx-auto max-w-lg text-center">
+   631→          <motion.p
+   632→            variants={fadeInUp}
+   633→            className="mb-2 text-[10px] font-semibold uppercase tracking-[0.4em]"
+   634→            style={{ color: P.gold, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   635→          >
+   636→            LE LIEU
+   637→          </motion.p>
+   638→          <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   639→            <div className="h-px w-16" style={{ backgroundColor: P.line }} />
+   640→          </motion.div>
+   641→
+   642→          {/* Venue photo */}
+   643→          <motion.div variants={fadeInUp} className="mx-auto mb-8 max-w-md overflow-hidden" style={{ borderRadius: 12 }}>
+   644→            {data.venueImage ? (
+   645→              <img src={data.venueImage} alt={data.venueName || 'Le lieu'} className="h-56 w-full object-cover sm:h-64" />
+   646→            ) : (
+   647→              <div className="flex h-56 items-center justify-center sm:h-64" style={{ backgroundColor: P.creamAlt }}>
+   648→                <MapPin className="h-10 w-10" style={{ color: P.gold, opacity: 0.3 }} />
+   649→              </div>
+   650→            )}
+   651→          </motion.div>
+   652→
+   653→          <motion.h3
+   654→            variants={fadeInUp}
+   655→            className="text-xl sm:text-2xl"
+   656→            style={{ color: P.navy, fontFamily: 'var(--font-cormorant), serif', fontWeight: 600 }}
+   657→          >
+   658→            {data.venueName || 'Le Domaine des Jardins'}
+   659→          </motion.h3>
+   660→          <motion.p
+   661→            variants={fadeInUp}
+   662→            className="mt-2 text-sm italic"
+   663→            style={{ color: P.gold, fontFamily: 'var(--font-cormorant), serif' }}
+   664→          >
+   665→            {data.venueAddress || 'Tunis, Tunisie'}
+   666→          </motion.p>
+   667→
+   668→          <motion.div variants={fadeInUp} className="my-6 flex justify-center">
+   669→            <GoldRule />
+   670→          </motion.div>
+   671→
+   672→          {data.venueDescription && (
+   673→            <motion.p variants={fadeInUp} className="mb-8 text-sm leading-relaxed" style={{ color: P.navyMuted, fontFamily: 'var(--font-cormorant), serif' }}>
+   674→              {data.venueDescription}
+   675→            </motion.p>
+   676→          )}
+   677→
+   678→          <motion.div variants={fadeInUp} className="flex justify-center">
+   679→            <a
+   680→              href={data.venueDirectionsUrl || (data.venueAddress ? `https://maps.google.com/?q=${encodeURIComponent(data.venueAddress)}` : '#')}
+   681→              target="_blank"
+   682→              rel="noopener noreferrer"
+   683→              className="inline-flex items-center gap-2 border px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] transition-colors"
+   684→              style={{
+   685→                borderColor: P.navy,
+   686→                color: P.navy,
+   687→                borderRadius: 999,
+   688→                fontFamily: 'var(--font-montserrat), sans-serif',
+   689→              }}
+   690→            >
+   691→              <MapPin className="h-3.5 w-3.5" style={{ color: P.navy }} />
+   692→              Voir l&apos;itinéraire
+   693→            </a>
+   694→          </motion.div>
+   695→        </div>
+   696→      </motion.section>
+   697→
+   698→      {/* ═══════════════════════════════════════════════════════════════════
+   699→          SECTION 5 — LE PROGRAMME (vertical timeline)
+   700→          ═══════════════════════════════════════════════════════════════════ */}
+   701→      <motion.section
+   702→        id="programme"
+   703→        variants={stagger}
+   704→        initial="hidden"
+   705→        whileInView="visible"
+   706→        viewport={{ once: true, amount: 0.1 }}
+   707→        className="relative w-full px-5 py-20 sm:px-6 sm:py-24"
+   708→        style={{ backgroundColor: P.cream }}
+   709→      >
+   710→        <FloralCorner position="tl" />
+   711→        <FloralCorner position="tr" />
+   712→
+   713→        <div className="relative z-10 mx-auto max-w-md text-center">
+   714→          <motion.div variants={fadeInUp} className="mb-4 flex justify-center">
+   715→            <LaurelMonogram initials={mono} size={40} />
+   716→          </motion.div>
+   717→
+   718→          <motion.h2
+   719→            variants={fadeInUp}
+   720→            className="mb-2"
+   721→            style={{
+   722→              fontFamily: '"Great Vibes", cursive',
+   723→              color: P.navy,
+   724→              fontSize: 'clamp(28px, 6vw, 42px)',
+   725→            }}
+   726→          >
+   727→            Le Programme
+   728→          </motion.h2>
+   729→
+   730→          <motion.p
+   731→            variants={fadeInUp}
+   732→            className="mb-6 text-[10px] font-semibold uppercase tracking-[0.25em]"
+   733→            style={{ color: P.gold, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   734→          >
+   735→            {formatDate(data.eventDate)}
+   736→          </motion.p>
+   737→
+   738→          <motion.div variants={fadeInUp} className="mb-10 flex justify-center">
+   739→            <GoldRule />
+   740→          </motion.div>
+   741→
+   742→          {/* Vertical timeline */}
+   743→          <motion.div variants={fadeInUp} className="relative text-left">
+   744→            {/* Vertical line */}
+   745→            <div className="absolute top-0 bottom-0 left-[18px] w-px sm:left-[22px]" style={{ backgroundColor: P.line }} />
+   746→
+   747→            <div className="space-y-8">
+   748→              {schedule.map((item, i) => (
+   749→                <div key={i} className="relative flex gap-5">
+   750→                  {/* Icon circle */}
+   751→                  <div
+   752→                    className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center sm:h-10 sm:w-10"
+   753→                    style={{
+   754→                      backgroundColor: P.white,
+   755→                      border: `1.5px solid ${P.gold}`,
+   756→                      borderRadius: '50%',
+   757→                    }}
+   758→                  >
+   759→                    <ScheduleIcon icon={item.icon} className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ color: P.forest }} />
+   760→                  </div>
+   761→
+   762→                  {/* Content */}
+   763→                  <div className="flex-1 pt-0.5">
+   764→                    <p
+   765→                      className="text-sm font-bold"
+   766→                      style={{ color: P.navy, fontFamily: 'var(--font-montserrat), sans-serif', letterSpacing: '0.05em' }}
+   767→                    >
+   768→                      {item.time}
+   769→                    </p>
+   770→                    <p
+   771→                      className="text-base font-semibold"
+   772→                      style={{ color: P.navy, fontFamily: 'var(--font-cormorant), serif' }}
+   773→                    >
+   774→                      {item.label}
+   775→                    </p>
+   776→                    {item.sublabel && (
+   777→                      <p className="mt-0.5 text-sm italic" style={{ color: P.gold, fontFamily: 'var(--font-cormorant), serif' }}>
+   778→                        {item.sublabel}
+   779→                      </p>
+   780→                    )}
+   781→                  </div>
+   782→                </div>
+   783→              ))}
+   784→            </div>
+   785→          </motion.div>
+   786→        </div>
+   787→      </motion.section>
+   788→
+   789→      {/* ═══════════════════════════════════════════════════════════════════
+   790→          SECTION 6 — DRESS CODE
+   791→          ═══════════════════════════════════════════════════════════════════ */}
+   792→      <motion.section
+   793→        id="dresscode"
+   794→        variants={stagger}
+   795→        initial="hidden"
+   796→        whileInView="visible"
+   797→        viewport={{ once: true, amount: 0.1 }}
+   798→        className="relative w-full px-5 py-20 sm:px-6 sm:py-24"
+   799→        style={{ backgroundColor: P.creamAlt }}
+   800→      >
+   801→        <FloralCorner position="bl" />
+   802→        <FloralCorner position="br" />
+   803→
+   804→        <div className="relative z-10 mx-auto max-w-lg text-center">
+   805→          <motion.h2
+   806→            variants={fadeInUp}
+   807→            className="mb-2"
+   808→            style={{
+   809→              fontFamily: '"Great Vibes", cursive',
+   810→              color: P.navy,
+   811→              fontSize: 'clamp(28px, 6vw, 42px)',
+   812→            }}
+   813→          >
+   814→            Dress Code
+   815→          </motion.h2>
+   816→          <motion.div variants={fadeInUp} className="mb-6 flex justify-center">
+   817→            <div className="h-px w-16" style={{ backgroundColor: P.line }} />
+   818→          </motion.div>
+   819→
+   820→          <motion.p variants={fadeInUp} className="text-sm leading-relaxed" style={{ color: P.navyMuted, fontFamily: 'var(--font-cormorant), serif' }}>
+   821→            {data.dressCode || 'Pour sublimer cette journée d\'exception, nous vous invitons à respecter le dress code.'}
+   822→          </motion.p>
+   823→
+   824→          {/* Script theme label */}
+   825→          <motion.p
+   826→            variants={fadeInUp}
+   827→            className="mt-6"
+   828→            style={{
+   829→              fontFamily: '"Great Vibes", cursive',
+   830→              color: P.gold,
+   831→              fontSize: 'clamp(28px, 6vw, 44px)',
+   832→            }}
+   833→          >
+   834→            {data.dressCodeTheme || 'Garden Chic'}
+   835→          </motion.p>
+   836→
+   837→          {/* Color swatches */}
+   838→          <motion.div variants={fadeInUp} className="mt-8 flex flex-col items-center gap-4">
+   839→            <p className="text-[9px] font-semibold uppercase tracking-[0.3em]" style={{ color: P.navyMuted, fontFamily: 'var(--font-montserrat), sans-serif' }}>
+   840→              Couleurs Conseillées
+   841→            </p>
+   842→            <div className="flex gap-3">
+   843→              {(data.dressCodeColors || ['#E8E0D4', '#8B7355', '#4A5C3F', '#A8B5A0', '#C9A0A0']).map((c, i) => (
+   844→                <div key={i} className="flex flex-col items-center gap-2">
+   845→                  <div className="h-10 w-10 sm:h-12 sm:w-12" style={{ backgroundColor: c, borderRadius: '50%' }} />
+   846→                </div>
+   847→              ))}
+   848→            </div>
+   849→          </motion.div>
+   850→
+   851→          {/* 3 columns */}
+   852→          <motion.div variants={fadeInUp} className="mt-10 grid grid-cols-3 gap-4">
+   853→            {[
+   854→              { icon: <Shirt className="h-5 w-5" />, label: 'Tenue Élégante' },
+   855→              { icon: <Leaf className="h-5 w-5" />, label: 'Harmonie Naturelle' },
+   856→              { icon: <Camera className="h-5 w-5" />, label: 'Souvenirs Précieux' },
+   857→            ].map((item, i) => (
+   858→              <div key={i} className="flex flex-col items-center gap-2">
+   859→                <div style={{ color: P.forest }}>{item.icon}</div>
+   860→                <span className="text-[8px] font-semibold uppercase tracking-[0.12em]" style={{ color: P.navyMuted, fontFamily: 'var(--font-montserrat), sans-serif' }}>
+   861→                  {item.label}
+   862→                </span>
+   863→              </div>
+   864→            ))}
+   865→          </motion.div>
+   866→
+   867→          <motion.p variants={fadeInUp} className="mt-8 text-sm italic" style={{ color: P.navyMuted, fontFamily: 'var(--font-cormorant), serif' }}>
+   868→            {data.dressCodeNote || 'Merci de privilégier des tenues de saison adaptées à un événement en extérieur.'}
+   869→          </motion.p>
+   870→
+   871→          {/* Small monogram */}
+   872→          <motion.div variants={fadeInUp} className="mt-6 flex justify-center">
+   873→            <LaurelMonogram initials={mono} size={32} />
+   874→          </motion.div>
+   875→        </div>
+   876→      </motion.section>
+   877→
+   878→      {/* ═══════════════════════════════════════════════════════════════════
+   879→          SECTION 7 — RSVP
+   880→          ═══════════════════════════════════════════════════════════════════ */}
+   881→      <motion.section
+   882→        id="rsvp"
+   883→        variants={stagger}
+   884→        initial="hidden"
+   885→        whileInView="visible"
+   886→        viewport={{ once: true, amount: 0.1 }}
+   887→        className="relative grid min-h-[90svh] w-full place-items-center overflow-hidden"
+   888→      >
+   889→        {/* Background image */}
+   890→        {data.rsvpImage ? (
+   891→          <>
+   892→            <img src={data.rsvpImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+   893→            <div className="absolute inset-0" style={{ backgroundColor: P.overlayDark }} />
+   894→          </>
+   895→        ) : (
+   896→          <div className="absolute inset-0" style={{ background: P.creamAlt }} />
+   897→        )}
+   898→
+   899→        {/* Floral corners */}
+   900→        <FloralCorner position="tl" color="#E8D5E0" />
+   901→        <FloralCorner position="tr" color="#E8D5E0" />
+   902→
+   903→        <div className="relative z-10 mx-auto w-full max-w-md px-5 py-16 sm:py-20">
+   904→          <div className="text-center">
+   905→            <motion.div variants={fadeInUp} className="mb-4 flex justify-center">
+   906→              <LaurelMonogram initials={mono} size={40} />
+   907→            </motion.div>
+   908→            <motion.h2
+   909→              variants={fadeInUp}
+   910→              className="text-2xl font-bold"
+   911→              style={{ color: P.white, fontFamily: 'var(--font-montserrat), sans-serif', letterSpacing: '0.15em' }}
+   912→            >
+   913→              RSVP
+   914→            </motion.h2>
+   915→            <motion.div variants={fadeInUp} className="mt-4 mb-6 flex justify-center">
+   916→              <div className="flex items-center gap-3">
+   917→                <div className="h-px w-8" style={{ backgroundColor: 'rgba(201,162,76,0.5)' }} />
+   918→                <Filigree color={P.gold} className="h-4 w-4" />
+   919→                <div className="h-px w-8" style={{ backgroundColor: 'rgba(201,162,76,0.5)' }} />
+   920→              </div>
+   921→            </motion.div>
+   922→            <motion.p variants={fadeInUp} className="text-sm italic" style={{ color: P.white, fontFamily: 'var(--font-cormorant), serif', opacity: 0.9 }}>
+   923→              Merci de faire partie de notre histoire.
+   924→            </motion.p>
+   925→            <motion.p variants={fadeInUp} className="mt-2 text-sm" style={{ color: P.gold, fontFamily: 'var(--font-cormorant), serif' }}>
+   926→              Merci de confirmer votre présence avant le {data.rsvpDeadline || formatDate(data.eventDate)}.
+   927→            </motion.p>
+   928→          </div>
+   929→
+   930→          {rsvpSent ? (
+   931→            <motion.div
+   932→              initial={{ opacity: 0, scale: 0.95 }}
+   933→              animate={{ opacity: 1, scale: 1 }}
+   934→              className="mt-10 py-10 text-center"
+   935→              style={{ backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 16 }}
+   936→            >
+   937→              <Check className="mx-auto mb-4 h-10 w-10" style={{ color: P.forest }} />
+   938→              <p style={{ fontFamily: '"Great Vibes", cursive', color: P.navy, fontSize: '28px' }}>Merci !</p>
+   939→              <p className="mt-2 text-sm italic" style={{ color: P.navyMuted, fontFamily: 'var(--font-cormorant), serif' }}>
+   940→                Votre confirmation a bien été reçue.
+   941→              </p>
+   942→            </motion.div>
+   943→          ) : (
+   944→            <motion.form
+   945→              variants={fadeInUp}
+   946→              onSubmit={(e) => {
+   947→                e.preventDefault();
+   948→                rsvp.setName(rsvpName);
+   949→                rsvp.setContact(rsvpContact);
+   950→                rsvp.setGuests(String(rsvpGuestCount));
+   951→                rsvp.setNote(rsvpMessage);
+   952→                rsvp.setAttending(rsvpAttending);
+   953→                if (mode === 'preview') {
+   954→                  setRsvpSent(true);
+   955→                  return;
+   956→                }
+   957→                rsvp.submit(e).then(() => {
+   958→                  if (rsvp.status !== 'error') setRsvpSent(true);
+   959→                });
+   960→              }}
+   961→              className="mt-10 space-y-4"
+   962→              style={{ backgroundColor: 'rgba(255,255,255,0.92)', borderRadius: 16, padding: '24px' }}
+   963→            >
+   964→              {/* Name */}
+   965→              <div className="relative">
+   966→                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: P.navyMuted }} />
+   967→                <Input
+   968→                  value={rsvpName}
+   969→                  onChange={(e) => setRsvpName(e.target.value)}
+   970→                  placeholder="Nom complet"
+   971→                  required
+   972→                  className="border pl-10"
+   973→                  style={{ borderColor: P.lineDark, color: P.navy, borderRadius: 10, backgroundColor: 'transparent' }}
+   974→                />
+   975→              </div>
+   976→
+   977→              {/* Email / Phone */}
+   978→              <div className="relative">
+   979→                <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: P.navyMuted }} />
+   980→                <Input
+   981→                  value={rsvpContact}
+   982→                  onChange={(e) => setRsvpContact(e.target.value)}
+   983→                  placeholder="Email / Téléphone"
+   984→                  className="border pl-10"
+   985→                  style={{ borderColor: P.lineDark, color: P.navy, borderRadius: 10, backgroundColor: 'transparent' }}
+   986→                />
+   987→              </div>
+   988→
+   989→              {/* Attending radio */}
+   990→              <div>
+   991→                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: P.navyMuted, fontFamily: 'var(--font-montserrat), sans-serif' }}>
+   992→                  Serez-vous des nôtres ?
+   993→                </p>
+   994→                <div className="flex gap-3">
+   995→                  {(['yes', 'no'] as const).map((choice) => (
+   996→                    <button
+   997→                      key={choice}
+   998→                      type="button"
+   999→                      onClick={() => setRsvpAttending(choice)}
+  1000→                      className="flex-1 border py-2.5 text-sm transition-all"
+  1001→                      style={{
+  1002→                        borderColor: rsvpAttending === choice ? P.forest : P.lineDark,
+  1003→                        backgroundColor: rsvpAttending === choice ? P.forest : 'transparent',
+  1004→                        color: rsvpAttending === choice ? P.white : P.navy,
+  1005→                        fontFamily: 'var(--font-cormorant), serif',
+  1006→                        borderRadius: 10,
+  1007→                        fontWeight: 600,
+  1008→                        cursor: 'pointer',
+  1009→                      }}
+  1010→                    >
+  1011→                      {choice === 'yes' ? 'Oui, avec plaisir' : 'Non, avec regret'}
+  1012→                    </button>
+  1013→                  ))}
+  1014→                </div>
+  1015→              </div>
+  1016→
+  1017→              {/* Guest counter */}
+  1018→              <div>
+  1019→                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: P.navyMuted, fontFamily: 'var(--font-montserrat), sans-serif' }}>
+  1020→                  Nombre de personnes
+  1021→                </p>
+  1022→                <div className="flex items-center justify-center gap-6">
+  1023→                  <button
+  1024→                    type="button"
+  1025→                    onClick={() => setRsvpGuestCount(Math.max(1, rsvpGuestCount - 1))}
+  1026→                    className="flex h-9 w-9 items-center justify-center border transition-colors"
+  1027→                    style={{ borderColor: P.lineDark, borderRadius: '50%', backgroundColor: 'transparent' }}
+  1028→                  >
+  1029→                    <Minus className="h-3.5 w-3.5" style={{ color: P.navy }} />
+  1030→                  </button>
+  1031→                  <span className="text-lg font-semibold tabular-nums" style={{ color: P.navy, minWidth: '2ch', textAlign: 'center' }}>
+  1032→                    {rsvpGuestCount}
+  1033→                  </span>
+  1034→                  <button
+  1035→                    type="button"
+  1036→                    onClick={() => setRsvpGuestCount(Math.min(10, rsvpGuestCount + 1))}
+  1037→                    className="flex h-9 w-9 items-center justify-center border transition-colors"
+  1038→                    style={{ borderColor: P.lineDark, borderRadius: '50%', backgroundColor: 'transparent' }}
+  1039→                  >
+  1040→                    <Plus className="h-3.5 w-3.5" style={{ color: P.navy }} />
+  1041→                  </button>
+  1042→                </div>
+  1043→              </div>
+  1044→
+  1045→              {/* Message */}
+  1046→              <Textarea
+  1047→                value={rsvpMessage}
+  1048→                onChange={(e) => setRsvpMessage(e.target.value)}
+  1049→                placeholder="Un message pour les mariés ?"
+  1050→                rows={3}
+  1051→                className="border resize-none"
+  1052→                style={{ borderColor: P.lineDark, color: P.navy, borderRadius: 10, backgroundColor: 'transparent' }}
+  1053→              />
+  1054→
+  1055→              {/* Vocal message button */}
+  1056→              <button
+  1057→                type="button"
+  1058→                onClick={() => toast({ title: 'Message vocal', description: 'Bientôt disponible — restez connectés !' })}
+  1059→                className="flex w-full items-center justify-center gap-2 border py-3 text-xs font-semibold uppercase tracking-[0.15em] transition-colors"
+  1060→                style={{
+  1061→                  borderColor: P.lineDark,
+  1062→                  backgroundColor: 'transparent',
+  1063→                  color: P.navy,
+  1064→                  borderRadius: 10,
+  1065→                  fontFamily: 'var(--font-montserrat), sans-serif',
+  1066→                  cursor: 'pointer',
+  1067→                }}
+  1068→              >
+  1069→                <Mic className="h-4 w-4" />
+  1070→                Laisser un vœu vocal
+  1071→              </button>
+  1072→
+  1073→              {/* Submit + Cancel */}
+  1074→              <div className="flex gap-3">
+  1075→                <Button
+  1076→                  type="submit"
+  1077→                  className="flex-1 border-0 text-[11px] font-semibold uppercase tracking-[0.15em]"
+  1078→                  style={{ backgroundColor: P.forest, color: P.white, borderRadius: 10 }}
+  1079→                >
+  1080→                  Confirmer ma présence
+  1081→                </Button>
+  1082→                <Button
+  1083→                  type="button"
+  1084→                  onClick={() => {
+  1085→                    setRsvpName(''); setRsvpContact(''); setRsvpMessage('');
+  1086→                    setRsvpAttending(null); setRsvpGuestCount(2);
+  1087→                  }}
+  1088→                  variant="outline"
+  1089→                  className="border text-[11px] font-semibold uppercase tracking-[0.15em]"
+  1090→                  style={{ borderColor: P.lineDark, color: P.navy, borderRadius: 10 }}
+  1091→                >
+  1092→                  Annuler
+  1093→                </Button>
+  1094→              </div>
+  1095→            </motion.form>
+  1096→          )}
+  1097→
+  1098→          {/* Bottom floral corners */}
+  1099→          <FloralCorner position="bl" color="#E8D5E0" />
+  1100→          <FloralCorner position="br" color="#E8D5E0" />
+  1101→        </div>
+  1102→      </motion.section>
+  1103→
+  1104→      {/* ═══════════════════════════════════════════════════════════════════
+  1105→          SECTION 8 — MERCI
+  1106→          ═══════════════════════════════════════════════════════════════════ */}
+  1107→      <motion.section
+  1108→        id="merci"
+  1109→        variants={stagger}
+  1110→        initial="hidden"
+  1111→        whileInView="visible"
+  1112→        viewport={{ once: true, amount: 0.1 }}
+  1113→        className="relative grid min-h-[80dvh] w-full place-items-center overflow-hidden"
+  1114→      >
+  1115→        {/* Background image */}
+  1116→        {data.thankYouImage ? (
+  1117→          <>
+  1118→            <img src={data.thankYouImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+  1119→            <div className="absolute inset-0" style={{ backgroundColor: P.overlayDark }} />
+  1120→          </>
+  1121→        ) : (
+  1122→          <div className="absolute inset-0" style={{ background: `linear-gradient(168deg, ${P.creamAlt} 0%, ${P.cream} 100%)` }} />
+  1123→        )}
+  1124→
+  1125→        <FloralCorner position="tl" color="#E8D5E0" />
+  1126→        <FloralCorner position="tr" color="#E8D5E0" />
+  1127→
+  1128→        <div className="relative z-10 mx-auto max-w-lg px-6 py-20 text-center">
+  1129→          <motion.div variants={fadeInUp} className="mb-4 flex justify-center">
+  1130→            <LaurelMonogram initials={mono} size={40} />
+  1131→          </motion.div>
+  1132→
+  1133→          <motion.h2
+  1134→            variants={fadeInUp}
+  1135→            className="mb-2"
+  1136→            style={{
+  1137→              fontFamily: '"Great Vibes", cursive',
+  1138→              color: P.gold,
+  1139→              fontSize: 'clamp(32px, 7vw, 52px)',
+  1140→            }}
+  1141→          >
+  1142→            Merci
+  1143→          </motion.h2>
+  1144→
+  1145→          <motion.p
+  1146→            variants={fadeInUp}
+  1147→            className="text-[10px] font-semibold uppercase tracking-[0.35em]"
+  1148→            style={{ color: P.navy, fontFamily: 'var(--font-montserrat), sans-serif' }}
+  1149→          >
+  1150→            Du Fond du Cœur
+  1151→          </motion.p>
+  1152→
+  1153→          <motion.div variants={fadeInUp} className="my-8 flex justify-center">
+  1154→            <GoldRule />
+  1155→          </motion.div>
+  1156→
+  1157→          <motion.p variants={fadeInUp} className="text-base leading-relaxed" style={{ color: data.thankYouImage ? 'rgba(255,255,255,0.9)' : P.navyMuted, fontFamily: 'var(--font-cormorant), serif' }}>
+  1158→            {data.thankYouMessage ||
+  1159→              'Votre présence, vos sourires et vos vœux rendront ce jour inoubliable. Nous avons hâte de partager encore tant de beaux moments avec vous. Avec toute notre gratitude,'}
+  1160→          </motion.p>
+  1161→
+  1162→          <motion.div variants={fadeInUp} className="mt-10 flex justify-center">
+  1163→            <div className="h-px w-20" style={{ backgroundColor: P.line }} />
+  1164→          </motion.div>
+  1165→
+  1166→          <motion.h3
+  1167→            variants={fadeInUp}
+  1168→            className="mt-6 font-normal"
+  1169→            style={{
+  1170→              fontFamily: '"Great Vibes", cursive',
+  1171→              color: data.thankYouImage ? P.white : P.navy,
+  1172→              fontSize: 'clamp(28px, 6vw, 44px)',
+  1173→            }}
+  1174→          >
+  1175→            {data.partner1Name} &amp; {data.partner2Name}
+  1176→          </motion.h3>
+  1177→
+  1178→          <motion.p
+  1179→            variants={fadeInUp}
+  1180→            className="mt-4 text-[10px] font-medium uppercase tracking-[0.3em]"
+  1181→            style={{ color: data.thankYouImage ? 'rgba(255,255,255,0.6)' : P.navyMuted, fontFamily: 'var(--font-montserrat), sans-serif' }}
+  1182→          >
+  1183→            {formatDate(data.eventDate)}
+  1184→          </motion.p>
+  1185→
+  1186→          {/* Footer brand */}
+  1187→          <motion.div variants={fadeInUp} className="mt-16">
+  1188→            <p
+  1189→              className="text-[10px] font-medium uppercase tracking-[0.2em]"
+  1190→              style={{ color: P.gold, opacity: 0.7, fontFamily: 'var(--font-montserrat), sans-serif' }}
+  1191→            >
+  1192→              Créé avec amour par
+  1193→            </p>
+  1194→            <p
+  1195→              className="mt-1 text-sm font-normal"
+  1196→              style={{ color: P.gold, fontFamily: '"Great Vibes", cursive', opacity: 0.7 }}
+  1197→            >
+  1198→              DAAWA
+  1199→            </p>
+  1200→          </motion.div>
+  1201→        </div>
+  1202→      </motion.section>
+  1203→    </div>
+  1204→  );
+  1205→}
+  1206→

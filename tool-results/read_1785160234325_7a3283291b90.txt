@@ -1,0 +1,1206 @@
+     1→'use client';
+     2→
+     3→// ═══════════════════════════════════════════════════════════════════════════════
+     4→//  Le Grand Palais — Garden-Chic Full-Photo Rebuild
+     5→// ═══════════════════════════════════════════════════════════════════════════════
+     6→//  Palette (crème/navy/or — from template-registry):
+     7→//    coverBg:   #FBF6EF (warm cream)
+     8→//    textPrimary: #1F3350 (deep navy)
+     9→//    textSecondary: #1F335099 (navy 60%)
+    10→//    accentColor: #4A5C3F (forest green)
+    11→//    goldColor: #C9A24C (warm gold)
+    12→//
+    13→//  8 Sections:
+    14→//    1. Hero (full-photo, overlay, "Célébrons l'amour")
+    15→//    2. Message des Mariés (monogram, body text, floral corners)
+    16→//    3. Reveal Date (interactive tap, seal, revealImage background)
+    17→//    4. Le Lieu (venue photo, directions button)
+    18→//    5. Le Programme (vertical timeline, icons)
+    19→//    6. Dress Code (color swatches, script theme label)
+    20→//    7. RSVP (rsvpImage background, radio, stepper, vocal toast)
+    21→//    8. Merci (thankYouImage background, signature)
+    22→//
+    23→//  Chrome: floating sound toggle + menu button (top-right)
+    24→// ═══════════════════════════════════════════════════════════════════════════════
+    25→
+    26→import { useState } from 'react';
+    27→import { motion, AnimatePresence } from 'framer-motion';
+    28→import {
+    29→  MapPin, Clock, X, Check, Calendar, Camera, Heart, Car,
+    30→  ChevronDown, Gift, Shirt, Mic, Music2, Moon,
+    31→  Users, Sparkles, Volume2, VolumeX, Menu, Leaf,
+    32→  Minus, Plus, User, Phone, PartyPopper,
+    33→} from 'lucide-react';
+    34→import { Button } from '@/components/ui/button';
+    35→import { Input } from '@/components/ui/input';
+    36→import { Textarea } from '@/components/ui/textarea';
+    37→import { useToast } from '@/hooks/use-toast';
+    38→import {
+    39→  SpecializedTemplateProps,
+    40→  useCountdown,
+    41→  useRsvpForm,
+    42→  fadeInUp,
+    43→  fadeIn,
+    44→  stagger,
+    45→} from './_shared';
+    46→import { useT } from '@/lib/i18n/use-t';
+    47→
+    48→// ─── Palette constants ──────────────────────────────────────────────────
+    49→const P = {
+    50→  cream:    '#FBF6EF',
+    51→  creamAlt: '#F5EFE5',
+    52→  navy:     '#1F3350',
+    53→  navyMuted:'#1F335099',
+    54→  forest:   '#4A5C3F',
+    55→  forestLt: '#6B7D5F',
+    56→  gold:     '#C9A24C',
+    57→  goldLt:   '#D4B66A',
+    58→  white:    '#FFFFFF',
+    59→  overlay:  'rgba(251,246,239,0.85)',
+    60→  overlayDark:'rgba(31,51,80,0.55)',
+    61→  line:     'rgba(201,162,76,0.35)',
+    62→  lineDark: 'rgba(201,162,76,0.55)',
+    63→} as const;
+    64→
+    65→// ─── Filigree ornament (kept from original) ──────────────────────────────
+    66→function Filigree({ color, className = '' }: { color: string; className?: string }) {
+    67→  return (
+    68→    <svg viewBox="0 0 80 80" className={className} aria-hidden xmlns="http://www.w3.org/2000/svg">
+    69→      <path d="M10 40 Q 20 20 40 20 Q 60 20 70 40 Q 60 60 40 60 Q 20 60 10 40 Z" fill="none" stroke={color} strokeWidth="0.6" opacity="0.5" />
+    70→      <path d="M40 20 L 40 60 M 10 40 L 70 40" stroke={color} strokeWidth="0.4" opacity="0.3" />
+    71→      <circle cx="40" cy="40" r="3" fill={color} opacity="0.6" />
+    72→      <circle cx="40" cy="40" r="1.2" fill={color} />
+    73→    </svg>
+    74→  );
+    75→}
+    76→
+    77→// ─── FloralCorner (watercolor-style roses + foliage SVG) ───────────────
+    78→function FloralCorner({ position, color = P.gold, className = '' }: { position: 'tl' | 'tr' | 'bl' | 'br'; color?: string; className?: string }) {
+    79→  const flips = {
+    80→    tl: '',
+    81→    tr: 'scale-x-[-1]',
+    82→    bl: 'scale-y-[-1]',
+    83→    br: 'scale-x-[-1] scale-y-[-1]',
+    84→  };
+    85→  const positions: Record<string, string> = {
+    86→    tl: 'absolute top-0 left-0',
+    87→    tr: 'absolute top-0 right-0',
+    88→    bl: 'absolute bottom-0 left-0',
+    89→    br: 'absolute bottom-0 right-0',
+    90→  };
+    91→  return (
+    92→    <svg
+    93→      viewBox="0 0 120 120"
+    94→      className={`${positions[position]} ${flips[position]} ${className}`}
+    95→      aria-hidden
+    96→      xmlns="http://www.w3.org/2000/svg"
+    97→      style={{ opacity: 0.18 }}
+    98→    >
+    99→      {/* Foliage branches */}
+   100→      <path d="M10 110 Q 20 80 40 60 Q 55 45 70 30" fill="none" stroke={color} strokeWidth="1" opacity="0.6" />
+   101→      <path d="M15 115 Q 30 90 50 70 Q 65 55 85 35" fill="none" stroke={color} strokeWidth="0.7" opacity="0.4" />
+   102→      {/* Leaves */}
+   103→      <path d="M30 75 Q 20 65 25 55 Q 30 65 30 75 Z" fill={color} opacity="0.5" />
+   104→      <path d="M45 55 Q 55 45 60 35 Q 55 45 45 55 Z" fill={color} opacity="0.4" />
+   105→      <path d="M55 40 Q 65 30 70 20 Q 65 30 55 40 Z" fill={color} opacity="0.45" />
+   106→      <path d="M20 90 Q 10 80 15 70 Q 20 80 20 90 Z" fill={color} opacity="0.35" />
+   107→      {/* Rose buds */}
+   108→      <circle cx="65" cy="25" r="5" fill={color} opacity="0.3" />
+   109→      <circle cx="65" cy="25" r="3" fill={color} opacity="0.5" />
+   110→      <circle cx="40" cy="55" r="4" fill={color} opacity="0.25" />
+   111→      <circle cx="40" cy="55" r="2.5" fill={color} opacity="0.45" />
+   112→      {/* Tiny blossoms */}
+   113→      <circle cx="80" cy="15" r="2" fill={color} opacity="0.3" />
+   114→      <circle cx="50" cy="42" r="1.5" fill={color} opacity="0.35" />
+   115→    </svg>
+   116→  );
+   117→}
+   118→
+   119→// ─── Golden rule (ornamental divider) ────────────────────────────────────
+   120→function GoldRule({ className = '' }: { className?: string }) {
+   121→  return (
+   122→    <div className={`flex items-center justify-center gap-3 ${className}`}>
+   123→      <div className="h-px w-16" style={{ backgroundColor: P.line }} />
+   124→      <Filigree color={P.gold} className="h-6 w-6" />
+   125→      <div className="h-px w-16" style={{ backgroundColor: P.line }} />
+   126→    </div>
+   127→  );
+   128→}
+   129→
+   130→// ─── Laurel wreath monogram (SVG) ────────────────────────────────────────
+   131→function LaurelMonogram({ initials, size = 80, className = '' }: { initials: string; size?: number; className?: string }) {
+   132→  return (
+   133→    <svg viewBox="0 0 100 100" className={className} aria-hidden xmlns="http://www.w3.org/2000/svg" style={{ width: size, height: size }}>
+   134→      {/* Laurel wreath */}
+   135→      <g fill="none" stroke={P.gold} strokeWidth="0.8" opacity="0.6">
+   136→        {/* Left branch */}
+   137→        <path d="M50 80 Q 30 65 25 45 Q 22 30 30 20" />
+   138→        <path d="M30 20 Q 28 28 32 35" opacity="0.4" />
+   139→        <path d="M25 45 Q 18 42 20 35" opacity="0.4" />
+   140→        {/* Right branch */}
+   141→        <path d="M50 80 Q 70 65 75 45 Q 78 30 70 20" />
+   142→        <path d="M70 20 Q 72 28 68 35" opacity="0.4" />
+   143→        <path d="M75 45 Q 82 42 80 35" opacity="0.4" />
+   144→        {/* Top closure */}
+   145→        <path d="M30 20 Q 40 10 50 12 Q 60 10 70 20" />
+   146→      </g>
+   147→      {/* Laurel leaves */}
+   148→      <g fill={P.gold} opacity="0.4">
+   149→        <ellipse cx="28" cy="25" rx="3" ry="7" transform="rotate(-20 28 25)" />
+   150→        <ellipse cx="72" cy="25" rx="3" ry="7" transform="rotate(20 72 25)" />
+   151→        <ellipse cx="24" cy="38" rx="3" ry="6" transform="rotate(-30 24 38)" />
+   152→        <ellipse cx="76" cy="38" rx="3" ry="6" transform="rotate(30 76 38)" />
+   153→        <ellipse cx="40" cy="16" rx="2" ry="5" transform="rotate(-10 40 16)" />
+   154→        <ellipse cx="60" cy="16" rx="2" ry="5" transform="rotate(10 60 16)" />
+   155→      </g>
+   156→      {/* Initials */}
+   157→      <text
+   158→        x="50" y="55"
+   159→        textAnchor="middle"
+   160→        dominantBaseline="middle"
+   161→        style={{
+   162→          fontFamily: '"Great Vibes", cursive',
+   163→          fontSize: '18',
+   164→          fill: P.navy,
+   165→          fontWeight: 400,
+   166→        }}
+   167→      >
+   168→        {initials}
+   169→      </text>
+   170→    </svg>
+   171→  );
+   172→}
+   173→
+   174→// ─── Schedule icon mapper ────────────────────────────────────────────────
+   175→function ScheduleIcon({ icon, className = '', style }: { icon?: string; className?: string; style?: React.CSSProperties }) {
+   176→  const iconMap: Record<string, React.ReactNode> = {
+   177→    heart: <Heart className={className} style={style} />,
+   178→    hands: <Users className={className} style={style} />,
+   179→    glass: <PartyPopper className={className} style={style} />,
+   180→    moon: <Moon className={className} style={style} />,
+   181→    music: <Music2 className={className} style={style} />,
+   182→  };
+   183→  return <>{icon && iconMap[icon] ? iconMap[icon] : <Heart className={className} style={style} />}</>;
+   184→}
+   185→
+   186→// ─── Helper: derive monogram from names ──────────────────────────────────
+   187→function deriveMonogram(data: { partner1Name?: string; partner2Name?: string; monogram?: string }): string {
+   188→  if (data.monogram) return data.monogram;
+   189→  const p1 = (data.partner1Name ?? '').charAt(0).toUpperCase();
+   190→  const p2 = (data.partner2Name ?? '').charAt(0).toUpperCase();
+   191→  return p1 && p2 ? `${p1} ${p2}` : p1 || p2 || '';
+   192→}
+   193→
+   194→// ─── Helper: format date as DD · MM · YYYY ────────────────────────────────
+   195→function formatDateDots(dateStr: string): string {
+   196→  const d = new Date(dateStr);
+   197→  const dd = String(d.getDate()).padStart(2, '0');
+   198→  const mm = String(d.getMonth() + 1).padStart(2, '0');
+   199→  const yyyy = d.getFullYear();
+   200→  return `${dd} \u00B7 ${mm} \u00B7 ${yyyy}`;
+   201→}
+   202→
+   203→// ─── Helper: day of week (French) ─────────────────────────────────────────
+   204→function dayOfWeek(dateStr: string): string {
+   205→  const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+   206→  return days[new Date(dateStr).getDay()] ?? '';
+   207→}
+   208→
+   209→// ─── Helper: month name (French) ────────────────────────────────────────
+   210→function monthName(dateStr: string): string {
+   211→  const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+   212→  const d = new Date(dateStr);
+   213→  return `${months[d.getMonth()]} ${d.getFullYear()}`;
+   214→}
+   215→
+   216→// ══════════════════════════════════════════════════════════════════════════
+   217→//  MAIN TEMPLATE
+   218→// ══════════════════════════════════════════════════════════════════════════
+   219→export function LeGrandPalaisTemplate({
+   220→  template: tpl,
+   221→  data,
+   222→  mode = 'preview',
+   223→  onClose,
+   224→  eventSlug,
+   225→}: SpecializedTemplateProps) {
+   226→  const { t, formatDate } = useT();
+   227→  const countdown = useCountdown(data.eventDate);
+   228→  const rsvp = useRsvpForm(mode, eventSlug);
+   229→  const { toast } = useToast();
+   230→
+   231→  // Reveal date state
+   232→  const [dateRevealed, setDateRevealed] = useState(false);
+   233→
+   234→  // RSVP custom state
+   235→  const [rsvpGuestCount, setRsvpGuestCount] = useState(2);
+   236→  const [rsvpName, setRsvpName] = useState('');
+   237→  const [rsvpContact, setRsvpContact] = useState('');
+   238→  const [rsvpMessage, setRsvpMessage] = useState('');
+   239→  const [rsvpAttending, setRsvpAttending] = useState<'yes' | 'no' | null>(null);
+   240→  const [rsvpSent, setRsvpSent] = useState(false);
+   241→
+   242→  // Sound toggle state
+   243→  const [soundOn, setSoundOn] = useState(false);
+   244→
+   245→  // Menu state
+   246→  const [menuOpen, setMenuOpen] = useState(false);
+   247→
+   248→  // Monogram
+   249→  const mono = deriveMonogram(data);
+   250→
+   251→  // Default schedule if empty
+   252→  const schedule = data.schedule && data.schedule.length > 0
+   253→    ? data.schedule
+   254→    : [
+   255→        { time: '15:30', label: "Accueil des invités", sublabel: "Jardins d'Honneur", icon: 'heart' },
+   256→        { time: '16:00', label: "Cérémonie laïque", sublabel: "Sous les arches", icon: 'hands' },
+   257→        { time: '17:00', label: "Cocktail", sublabel: "Terrasse & jardins", icon: 'glass' },
+   258→        { time: '19:30', label: "Dîner", sublabel: "Sous les étoiles", icon: 'moon' },
+   259→        { time: '22:00', label: "Soirée dansante", sublabel: "Jusqu'au bout de la nuit", icon: 'music' },
+   260→      ];
+   261→
+   262→  // Sections for menu navigation
+   263→  const sections = [
+   264→    { id: 'hero', label: 'Accueil' },
+   265→    { id: 'message', label: 'Message' },
+   266→    { id: 'lieu', label: 'Le Lieu' },
+   267→    { id: 'programme', label: 'Programme' },
+   268→    { id: 'dresscode', label: 'Dress Code' },
+   269→    { id: 'rsvp', label: 'RSVP' },
+   270→    { id: 'merci', label: 'Merci' },
+   271→  ];
+   272→
+   273→  return (
+   274→    <div className="min-h-screen relative" style={{ backgroundColor: P.cream, color: P.navy }}>
+   275→
+   276→      {/* ── Close button (preview only) ── */}
+   277→      {mode === 'preview' && onClose && (
+   278→        <button
+   279→          onClick={onClose}
+   280→          className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border transition hover:bg-white/90"
+   281→          style={{ borderColor: P.lineDark, backgroundColor: P.overlay, backdropFilter: 'blur(8px)' }}
+   282→          aria-label="Fermer"
+   283→        >
+   284→          <X className="h-4 w-4" style={{ color: P.navy }} />
+   285→        </button>
+   286→      )}
+   287→
+   288→      {/* ── Floating chrome (sound + menu) ── */}
+   289→      <div className="fixed top-4 right-4 z-50 flex gap-2">
+   290→        <button
+   291→          onClick={() => setSoundOn(!soundOn)}
+   292→          className="flex h-10 w-10 items-center justify-center rounded-full border transition hover:bg-white/90"
+   293→          style={{ borderColor: P.lineDark, backgroundColor: P.overlay, backdropFilter: 'blur(8px)' }}
+   294→          aria-label="Son"
+   295→        >
+   296→          {soundOn ? <Volume2 className="h-4 w-4" style={{ color: P.navy }} /> : <VolumeX className="h-4 w-4" style={{ color: P.navyMuted }} />}
+   297→        </button>
+   298→        <button
+   299→          onClick={() => setMenuOpen(!menuOpen)}
+   300→          className="flex h-10 w-10 items-center justify-center rounded-full border transition hover:bg-white/90"
+   301→          style={{ borderColor: P.lineDark, backgroundColor: P.overlay, backdropFilter: 'blur(8px)' }}
+   302→          aria-label="Menu"
+   303→        >
+   304→          <Menu className="h-4 w-4" style={{ color: P.navy }} />
+   305→        </button>
+   306→      </div>
+   307→
+   308→      {/* ── Menu dropdown ── */}
+   309→      <AnimatePresence>
+   310→        {menuOpen && (
+   311→          <motion.div
+   312→            initial={{ opacity: 0, y: -10 }}
+   313→            animate={{ opacity: 1, y: 0 }}
+   314→            exit={{ opacity: 0, y: -10 }}
+   315→            className="fixed top-16 right-4 z-50 border py-2"
+   316→            style={{ backgroundColor: P.white, borderColor: P.lineDark, minWidth: 160 }}
+   317→          >
+   318→            {sections.map((s) => (
+   319→              <a
+   320→                key={s.id}
+   321→                href={`#${s.id}`}
+   322→                onClick={() => setMenuOpen(false)}
+   323→                className="block px-5 py-2 text-xs font-medium uppercase tracking-[0.15em] transition-colors hover:bg-gray-50"
+   324→                style={{ color: P.navy, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   325→              >
+   326→                {s.label}
+   327→              </a>
+   328→            ))}
+   329→          </motion.div>
+   330→        )}
+   331→      </AnimatePresence>
+   332→
+   333→      {/* ═══════════════════════════════════════════════════════════════════
+   334→          SECTION 1 — HERO (full-bleed photo, overlay, heroImage)
+   335→          ═══════════════════════════════════════════════════════════════════ */}
+   336→      <motion.section
+   337→        id="hero"
+   338→        variants={stagger}
+   339→        initial="hidden"
+   340→        animate="visible"
+   341→        className="relative grid min-h-[100dvh] w-full place-items-center overflow-hidden text-center"
+   342→      >
+   343→        {/* Background image or gradient fallback */}
+   344→        {data.heroImage ? (
+   345→          <>
+   346→            <img src={data.heroImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+   347→            <div className="absolute inset-0" style={{ backgroundColor: P.overlayDark }} />
+   348→          </>
+   349→        ) : (
+   350→          <div className="absolute inset-0" style={{ background: `linear-gradient(168deg, ${P.creamAlt} 0%, ${P.cream} 60%, ${P.creamAlt} 100%)` }} />
+   351→        )}
+   352→
+   353→        <div className="relative z-10 mx-auto max-w-xl px-6 py-20">
+   354→          <motion.div variants={fadeInUp} className="mb-6 flex justify-center">
+   355→            <Filigree color={P.gold} className="h-12 w-12 sm:h-14 sm:w-14" />
+   356→          </motion.div>
+   357→
+   358→          <motion.p
+   359→            variants={fadeInUp}
+   360→            className="text-sm font-semibold uppercase tracking-[0.35em] sm:text-base"
+   361→            style={{ color: P.white, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   362→          >
+   363→            Célébrons l&apos;amour
+   364→          </motion.p>
+   365→          <motion.p
+   366→            variants={fadeInUp}
+   367→            className="mt-2 text-sm font-semibold uppercase tracking-[0.35em] sm:text-base"
+   368→            style={{ color: P.white, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   369→          >
+   370→            dans un cadre d&apos;exception
+   371→          </motion.p>
+   372→
+   373→          <motion.div variants={fadeInUp} className="my-8 flex justify-center">
+   374→            <GoldRule />
+   375→          </motion.div>
+   376→
+   377→          <motion.p
+   378→            variants={fadeInUp}
+   379→            className="text-base italic"
+   380→            style={{ color: P.white, fontFamily: 'var(--font-cormorant), serif', opacity: 0.9 }}
+   381→          >
+   382→            {data.partner1Name} &amp; {data.partner2Name}
+   383→          </motion.p>
+   384→
+   385→          {/* Scroll indicator */}
+   386→          <motion.div
+   387→            variants={fadeInUp}
+   388→            className="mt-16 flex justify-center"
+   389→          >
+   390→            <motion.div
+   391→              animate={{ y: [0, 6, 0] }}
+   392→              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+   393→            >
+   394→              <ChevronDown className="h-5 w-5" style={{ color: P.white, opacity: 0.8 }} />
+   395→            </motion.div>
+   396→          </motion.div>
+   397→        </div>
+   398→      </motion.section>
+   399→
+   400→      {/* ═══════════════════════════════════════════════════════════════════
+   401→          SECTION 2 — MESSAGE DES MARIÉS
+   402→          ═══════════════════════════════════════════════════════════════════ */}
+   403→      <motion.section
+   404→        id="message"
+   405→        variants={stagger}
+   406→        initial="hidden"
+   407→        whileInView="visible"
+   408→        viewport={{ once: true, amount: 0.1 }}
+   409→        className="relative w-full px-5 py-20 sm:px-6 sm:py-24 md:py-28"
+   410→        style={{ backgroundColor: P.cream }}
+   411→      >
+   412→        {/* Subtle background image */}
+   413→        {(data.revealImage || data.heroImage) && (
+   414→          <div className="pointer-events-none absolute inset-0">
+   415→            <img src={data.revealImage || data.heroImage} alt="" className="h-full w-full object-cover" style={{ opacity: 0.04 }} />
+   416→          </div>
+   417→        )}
+   418→
+   419→        {/* Floral corners */}
+   420→        <FloralCorner position="bl" />
+   421→        <FloralCorner position="br" />
+   422→
+   423→        <div className="relative z-10 mx-auto max-w-lg text-center">
+   424→          {/* Monogram */}
+   425→          <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   426→            <LaurelMonogram initials={mono} size={80} />
+   427→          </motion.div>
+   428→
+   429→          <motion.p
+   430→            variants={fadeInUp}
+   431→            className="mb-6 text-[10px] font-semibold uppercase tracking-[0.4em]"
+   432→            style={{ color: P.navy, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   433→          >
+   434→            Message Des Mariés
+   435→          </motion.p>
+   436→
+   437→          <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   438→            <div className="flex items-center gap-3">
+   439→              <div className="h-px w-12" style={{ backgroundColor: P.line }} />
+   440→              <div className="h-1 w-1 rounded-full" style={{ backgroundColor: P.gold }} />
+   441→              <div className="h-px w-12" style={{ backgroundColor: P.line }} />
+   442→            </div>
+   443→          </motion.div>
+   444→
+   445→          {/* Body text from data.message or default */}
+   446→          <motion.div variants={fadeInUp} className="space-y-2">
+   447→            {(data.message || '').split('\n').map((line, i) => (
+   448→              <p
+   449→                key={i}
+   450→                className="text-base leading-relaxed sm:text-lg"
+   451→                style={{
+   452→                  color: i % 2 === 0 ? P.navy : P.gold,
+   453→                  fontFamily: 'var(--font-cormorant), serif',
+   454→                  fontStyle: i % 2 === 1 ? 'italic' : 'normal',
+   455→                }}
+   456→              >
+   457→                {line}
+   458→              </p>
+   459→            ))}
+   460→            {!data.message && (
+   461→              <>
+   462→                <p className="text-base leading-relaxed sm:text-lg" style={{ color: P.navy, fontFamily: 'var(--font-cormorant), serif' }}>
+   463→                  Nous sommes infiniment heureux
+   464→                </p>
+   465→                <p className="text-base italic leading-relaxed sm:text-lg" style={{ color: P.gold, fontFamily: 'var(--font-cormorant), serif' }}>
+   466→                  de vous convier à célébrer notre union
+   467→                </p>
+   468→                <p className="text-base leading-relaxed sm:text-lg" style={{ color: P.navy, fontFamily: 'var(--font-cormorant), serif' }}>
+   469→                  dans un cadre qui nous est cher.
+   470→                </p>
+   471→              </>
+   472→            )}
+   473→          </motion.div>
+   474→
+   475→          {/* Small leaf ornament */}
+   476→          <motion.div variants={fadeInUp} className="my-6 flex justify-center">
+   477→            <Leaf className="h-4 w-4" style={{ color: P.gold, opacity: 0.5 }} />
+   478→          </motion.div>
+   479→        </div>
+   480→      </motion.section>
+   481→
+   482→      {/* ═══════════════════════════════════════════════════════════════════
+   483→          SECTION 3 — REVEAL DATE (interactive)
+   484→          ═══════════════════════════════════════════════════════════════════ */}
+   485→      <motion.section
+   486→        variants={stagger}
+   487→        initial="hidden"
+   488→        whileInView="visible"
+   489→        viewport={{ once: true, amount: 0.2 }}
+   490→        className="relative grid min-h-[80dvh] w-full place-items-center overflow-hidden text-center"
+   491→      >
+   492→        {/* Background image */}
+   493→        {data.revealImage ? (
+   494→          <>
+   495→            <img src={data.revealImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+   496→            <div className="absolute inset-0" style={{ backgroundColor: P.overlayDark }} />
+   497→          </>
+   498→        ) : (
+   499→          <div className="absolute inset-0" style={{ background: P.creamAlt }} />
+   500→        )}
+   501→
+   502→        <div className="relative z-10 mx-auto max-w-md px-6">
+   503→          <AnimatePresence mode="wait">
+   504→            {!dateRevealed ? (
+   505→              <motion.div
+   506→                key="pre-reveal"
+   507→                initial={{ opacity: 1 }}
+   508→                exit={{ opacity: 0, scale: 0.9 }}
+   509→                transition={{ duration: 0.5 }}
+   510→                className="flex flex-col items-center gap-6"
+   511→              >
+   512→                {/* Wax seal / laurel seal */}
+   513→                <motion.button
+   514→                  onClick={() => setDateRevealed(true)}
+   515→                  className="flex flex-col items-center gap-4 border-0 bg-transparent p-0 cursor-pointer"
+   516→                  whileTap={{ scale: 0.95 }}
+   517→                >
+   518→                  <motion.div
+   519→                    animate={{ scale: [1, 1.04, 1] }}
+   520→                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+   521→                  >
+   522→                    <div
+   523→                      className="flex h-28 w-28 items-center justify-center sm:h-32 sm:w-32"
+   524→                      style={{
+   525→                        backgroundColor: 'rgba(251,246,239,0.92)',
+   526→                        borderRadius: '50%',
+   527→                        border: `2px solid ${P.gold}`,
+   528→                        boxShadow: `0 0 0 4px rgba(201,162,76,0.15), 0 8px 30px rgba(31,51,80,0.15)`,
+   529→                      }}
+   530→                    >
+   531→                      <LaurelMonogram initials={mono} size={60} />
+   532→                    </div>
+   533→                  </motion.div>
+   534→                </motion.button>
+   535→
+   536→                <p
+   537→                  className="text-[10px] font-semibold uppercase tracking-[0.3em]"
+   538→                  style={{ color: P.gold, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   539→                >
+   540→                  TOUCHEZ POUR
+   541→                </p>
+   542→                <p
+   543→                  className="text-sm font-bold uppercase tracking-[0.2em]"
+   544→                  style={{ color: P.white, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   545→                >
+   546→                  RÉVÉLER LA DATE
+   547→                </p>
+   548→              </motion.div>
+   549→            ) : (
+   550→              <motion.div
+   551→                key="revealed"
+   552→                initial={{ opacity: 0, scale: 0.95 }}
+   553→                animate={{ opacity: 1, scale: 1 }}
+   554→                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+   555→                className="flex flex-col items-center gap-4"
+   556→              >
+   557→                <p
+   558→                  className="text-sm font-semibold uppercase tracking-[0.2em]"
+   559→                  style={{ color: P.gold, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   560→                >
+   561→                  Nous nous disons
+   562→                </p>
+   563→                <h2
+   564→                  className="font-normal"
+   565→                  style={{
+   566→                    color: P.white,
+   567→                    fontFamily: '"Great Vibes", cursive',
+   568→                    fontSize: 'clamp(48px, 12vw, 80px)',
+   569→                    lineHeight: 1,
+   570→                  }}
+   571→                >
+   572→                  OUI
+   573→                </h2>
+   574→                <p
+   575→                  className="text-base italic"
+   576→                  style={{ color: P.white, fontFamily: 'var(--font-cormorant), serif', opacity: 0.85 }}
+   577→                >
+   578→                  le
+   579→                </p>
+   580→                <p
+   581→                  className="font-normal"
+   582→                  style={{
+   583→                    color: P.white,
+   584→                    fontFamily: '"Great Vibes", cursive',
+   585→                    fontSize: 'clamp(28px, 6vw, 48px)',
+   586→                  }}
+   587→                >
+   588→                  {formatDateDots(data.eventDate)}
+   589→                </p>
+   590→                <p
+   591→                  className="text-sm italic"
+   592→                  style={{ color: P.white, fontFamily: 'var(--font-cormorant), serif', opacity: 0.8 }}
+   593→                >
+   594→                  {dayOfWeek(data.eventDate)}
+   595→                </p>
+   596→                <motion.div className="mt-6 flex justify-center">
+   597→                  <div className="flex items-center gap-3">
+   598→                    <div className="h-px w-12" style={{ backgroundColor: 'rgba(201,162,76,0.5)' }} />
+   599→                    <Filigree color={P.gold} className="h-5 w-5" />
+   600→                    <div className="h-px w-12" style={{ backgroundColor: 'rgba(201,162,76,0.5)' }} />
+   601→                  </div>
+   602→                </motion.div>
+   603→                <p
+   604→                  className="mt-4 text-[10px] font-semibold uppercase tracking-[0.3em]"
+   605→                  style={{ color: P.gold, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   606→                >
+   607→                  Plus d&apos;infos à suivre
+   608→                </p>
+   609→              </motion.div>
+   610→            )}
+   611→          </AnimatePresence>
+   612→        </div>
+   613→      </motion.section>
+   614→
+   615→      {/* ═══════════════════════════════════════════════════════════════════
+   616→          SECTION 4 — LE LIEU
+   617→          ═══════════════════════════════════════════════════════════════════ */}
+   618→      <motion.section
+   619→        id="lieu"
+   620→        variants={stagger}
+   621→        initial="hidden"
+   622→        whileInView="visible"
+   623→        viewport={{ once: true, amount: 0.1 }}
+   624→        className="relative w-full px-5 py-20 sm:px-6 sm:py-24"
+   625→        style={{ backgroundColor: P.cream }}
+   626→      >
+   627→        <FloralCorner position="tr" />
+   628→        <FloralCorner position="bl" />
+   629→
+   630→        <div className="relative z-10 mx-auto max-w-lg text-center">
+   631→          <motion.p
+   632→            variants={fadeInUp}
+   633→            className="mb-2 text-[10px] font-semibold uppercase tracking-[0.4em]"
+   634→            style={{ color: P.gold, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   635→          >
+   636→            LE LIEU
+   637→          </motion.p>
+   638→          <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+   639→            <div className="h-px w-16" style={{ backgroundColor: P.line }} />
+   640→          </motion.div>
+   641→
+   642→          {/* Venue photo */}
+   643→          <motion.div variants={fadeInUp} className="mx-auto mb-8 max-w-md overflow-hidden" style={{ borderRadius: 12 }}>
+   644→            {data.venueImage ? (
+   645→              <img src={data.venueImage} alt={data.venueName || 'Le lieu'} className="h-56 w-full object-cover sm:h-64" />
+   646→            ) : (
+   647→              <div className="flex h-56 items-center justify-center sm:h-64" style={{ backgroundColor: P.creamAlt }}>
+   648→                <MapPin className="h-10 w-10" style={{ color: P.gold, opacity: 0.3 }} />
+   649→              </div>
+   650→            )}
+   651→          </motion.div>
+   652→
+   653→          <motion.h3
+   654→            variants={fadeInUp}
+   655→            className="text-xl sm:text-2xl"
+   656→            style={{ color: P.navy, fontFamily: 'var(--font-cormorant), serif', fontWeight: 600 }}
+   657→          >
+   658→            {data.venueName || 'Le Domaine des Jardins'}
+   659→          </motion.h3>
+   660→          <motion.p
+   661→            variants={fadeInUp}
+   662→            className="mt-2 text-sm italic"
+   663→            style={{ color: P.gold, fontFamily: 'var(--font-cormorant), serif' }}
+   664→          >
+   665→            {data.venueAddress || 'Tunis, Tunisie'}
+   666→          </motion.p>
+   667→
+   668→          <motion.div variants={fadeInUp} className="my-6 flex justify-center">
+   669→            <GoldRule />
+   670→          </motion.div>
+   671→
+   672→          {data.venueDescription && (
+   673→            <motion.p variants={fadeInUp} className="mb-8 text-sm leading-relaxed" style={{ color: P.navyMuted, fontFamily: 'var(--font-cormorant), serif' }}>
+   674→              {data.venueDescription}
+   675→            </motion.p>
+   676→          )}
+   677→
+   678→          <motion.div variants={fadeInUp} className="flex justify-center">
+   679→            <a
+   680→              href={data.venueDirectionsUrl || (data.venueAddress ? `https://maps.google.com/?q=${encodeURIComponent(data.venueAddress)}` : '#')}
+   681→              target="_blank"
+   682→              rel="noopener noreferrer"
+   683→              className="inline-flex items-center gap-2 border px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] transition-colors"
+   684→              style={{
+   685→                borderColor: P.navy,
+   686→                color: P.navy,
+   687→                borderRadius: 999,
+   688→                fontFamily: 'var(--font-montserrat), sans-serif',
+   689→              }}
+   690→            >
+   691→              <MapPin className="h-3.5 w-3.5" style={{ color: P.navy }} />
+   692→              Voir l&apos;itinéraire
+   693→            </a>
+   694→          </motion.div>
+   695→        </div>
+   696→      </motion.section>
+   697→
+   698→      {/* ═══════════════════════════════════════════════════════════════════
+   699→          SECTION 5 — LE PROGRAMME (vertical timeline)
+   700→          ═══════════════════════════════════════════════════════════════════ */}
+   701→      <motion.section
+   702→        id="programme"
+   703→        variants={stagger}
+   704→        initial="hidden"
+   705→        whileInView="visible"
+   706→        viewport={{ once: true, amount: 0.1 }}
+   707→        className="relative w-full px-5 py-20 sm:px-6 sm:py-24"
+   708→        style={{ backgroundColor: P.cream }}
+   709→      >
+   710→        <FloralCorner position="tl" />
+   711→        <FloralCorner position="tr" />
+   712→
+   713→        <div className="relative z-10 mx-auto max-w-md text-center">
+   714→          <motion.div variants={fadeInUp} className="mb-4 flex justify-center">
+   715→            <LaurelMonogram initials={mono} size={40} />
+   716→          </motion.div>
+   717→
+   718→          <motion.h2
+   719→            variants={fadeInUp}
+   720→            className="mb-2"
+   721→            style={{
+   722→              fontFamily: '"Great Vibes", cursive',
+   723→              color: P.navy,
+   724→              fontSize: 'clamp(28px, 6vw, 42px)',
+   725→            }}
+   726→          >
+   727→            Le Programme
+   728→          </motion.h2>
+   729→
+   730→          <motion.p
+   731→            variants={fadeInUp}
+   732→            className="mb-6 text-[10px] font-semibold uppercase tracking-[0.25em]"
+   733→            style={{ color: P.gold, fontFamily: 'var(--font-montserrat), sans-serif' }}
+   734→          >
+   735→            {formatDate(data.eventDate)}
+   736→          </motion.p>
+   737→
+   738→          <motion.div variants={fadeInUp} className="mb-10 flex justify-center">
+   739→            <GoldRule />
+   740→          </motion.div>
+   741→
+   742→          {/* Vertical timeline */}
+   743→          <motion.div variants={fadeInUp} className="relative text-left">
+   744→            {/* Vertical line */}
+   745→            <div className="absolute top-0 bottom-0 left-[18px] w-px sm:left-[22px]" style={{ backgroundColor: P.line }} />
+   746→
+   747→            <div className="space-y-8">
+   748→              {schedule.map((item, i) => (
+   749→                <div key={i} className="relative flex gap-5">
+   750→                  {/* Icon circle */}
+   751→                  <div
+   752→                    className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center sm:h-10 sm:w-10"
+   753→                    style={{
+   754→                      backgroundColor: P.white,
+   755→                      border: `1.5px solid ${P.gold}`,
+   756→                      borderRadius: '50%',
+   757→                    }}
+   758→                  >
+   759→                    <ScheduleIcon icon={item.icon} className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ color: P.forest }} />
+   760→                  </div>
+   761→
+   762→                  {/* Content */}
+   763→                  <div className="flex-1 pt-0.5">
+   764→                    <p
+   765→                      className="text-sm font-bold"
+   766→                      style={{ color: P.navy, fontFamily: 'var(--font-montserrat), sans-serif', letterSpacing: '0.05em' }}
+   767→                    >
+   768→                      {item.time}
+   769→                    </p>
+   770→                    <p
+   771→                      className="text-base font-semibold"
+   772→                      style={{ color: P.navy, fontFamily: 'var(--font-cormorant), serif' }}
+   773→                    >
+   774→                      {item.label}
+   775→                    </p>
+   776→                    {item.sublabel && (
+   777→                      <p className="mt-0.5 text-sm italic" style={{ color: P.gold, fontFamily: 'var(--font-cormorant), serif' }}>
+   778→                        {item.sublabel}
+   779→                      </p>
+   780→                    )}
+   781→                  </div>
+   782→                </div>
+   783→              ))}
+   784→            </div>
+   785→          </motion.div>
+   786→        </div>
+   787→      </motion.section>
+   788→
+   789→      {/* ═══════════════════════════════════════════════════════════════════
+   790→          SECTION 6 — DRESS CODE
+   791→          ═══════════════════════════════════════════════════════════════════ */}
+   792→      <motion.section
+   793→        id="dresscode"
+   794→        variants={stagger}
+   795→        initial="hidden"
+   796→        whileInView="visible"
+   797→        viewport={{ once: true, amount: 0.1 }}
+   798→        className="relative w-full px-5 py-20 sm:px-6 sm:py-24"
+   799→        style={{ backgroundColor: P.creamAlt }}
+   800→      >
+   801→        <FloralCorner position="bl" />
+   802→        <FloralCorner position="br" />
+   803→
+   804→        <div className="relative z-10 mx-auto max-w-lg text-center">
+   805→          <motion.h2
+   806→            variants={fadeInUp}
+   807→            className="mb-2"
+   808→            style={{
+   809→              fontFamily: '"Great Vibes", cursive',
+   810→              color: P.navy,
+   811→              fontSize: 'clamp(28px, 6vw, 42px)',
+   812→            }}
+   813→          >
+   814→            Dress Code
+   815→          </motion.h2>
+   816→          <motion.div variants={fadeInUp} className="mb-6 flex justify-center">
+   817→            <div className="h-px w-16" style={{ backgroundColor: P.line }} />
+   818→          </motion.div>
+   819→
+   820→          <motion.p variants={fadeInUp} className="text-sm leading-relaxed" style={{ color: P.navyMuted, fontFamily: 'var(--font-cormorant), serif' }}>
+   821→            {data.dressCode || 'Pour sublimer cette journée d\'exception, nous vous invitons à respecter le dress code.'}
+   822→          </motion.p>
+   823→
+   824→          {/* Script theme label */}
+   825→          <motion.p
+   826→            variants={fadeInUp}
+   827→            className="mt-6"
+   828→            style={{
+   829→              fontFamily: '"Great Vibes", cursive',
+   830→              color: P.gold,
+   831→              fontSize: 'clamp(28px, 6vw, 44px)',
+   832→            }}
+   833→          >
+   834→            {data.dressCodeTheme || 'Garden Chic'}
+   835→          </motion.p>
+   836→
+   837→          {/* Color swatches */}
+   838→          <motion.div variants={fadeInUp} className="mt-8 flex flex-col items-center gap-4">
+   839→            <p className="text-[9px] font-semibold uppercase tracking-[0.3em]" style={{ color: P.navyMuted, fontFamily: 'var(--font-montserrat), sans-serif' }}>
+   840→              Couleurs Conseillées
+   841→            </p>
+   842→            <div className="flex gap-3">
+   843→              {(data.dressCodeColors || ['#E8E0D4', '#8B7355', '#4A5C3F', '#A8B5A0', '#C9A0A0']).map((c, i) => (
+   844→                <div key={i} className="flex flex-col items-center gap-2">
+   845→                  <div className="h-10 w-10 sm:h-12 sm:w-12" style={{ backgroundColor: c, borderRadius: '50%' }} />
+   846→                </div>
+   847→              ))}
+   848→            </div>
+   849→          </motion.div>
+   850→
+   851→          {/* 3 columns */}
+   852→          <motion.div variants={fadeInUp} className="mt-10 grid grid-cols-3 gap-4">
+   853→            {[
+   854→              { icon: <Shirt className="h-5 w-5" />, label: 'Tenue Élégante' },
+   855→              { icon: <Leaf className="h-5 w-5" />, label: 'Harmonie Naturelle' },
+   856→              { icon: <Camera className="h-5 w-5" />, label: 'Souvenirs Précieux' },
+   857→            ].map((item, i) => (
+   858→              <div key={i} className="flex flex-col items-center gap-2">
+   859→                <div style={{ color: P.forest }}>{item.icon}</div>
+   860→                <span className="text-[8px] font-semibold uppercase tracking-[0.12em]" style={{ color: P.navyMuted, fontFamily: 'var(--font-montserrat), sans-serif' }}>
+   861→                  {item.label}
+   862→                </span>
+   863→              </div>
+   864→            ))}
+   865→          </motion.div>
+   866→
+   867→          <motion.p variants={fadeInUp} className="mt-8 text-sm italic" style={{ color: P.navyMuted, fontFamily: 'var(--font-cormorant), serif' }}>
+   868→            {data.dressCodeNote || 'Merci de privilégier des tenues de saison adaptées à un événement en extérieur.'}
+   869→          </motion.p>
+   870→
+   871→          {/* Small monogram */}
+   872→          <motion.div variants={fadeInUp} className="mt-6 flex justify-center">
+   873→            <LaurelMonogram initials={mono} size={32} />
+   874→          </motion.div>
+   875→        </div>
+   876→      </motion.section>
+   877→
+   878→      {/* ═══════════════════════════════════════════════════════════════════
+   879→          SECTION 7 — RSVP
+   880→          ═══════════════════════════════════════════════════════════════════ */}
+   881→      <motion.section
+   882→        id="rsvp"
+   883→        variants={stagger}
+   884→        initial="hidden"
+   885→        whileInView="visible"
+   886→        viewport={{ once: true, amount: 0.1 }}
+   887→        className="relative grid min-h-[90svh] w-full place-items-center overflow-hidden"
+   888→      >
+   889→        {/* Background image */}
+   890→        {data.rsvpImage ? (
+   891→          <>
+   892→            <img src={data.rsvpImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+   893→            <div className="absolute inset-0" style={{ backgroundColor: P.overlayDark }} />
+   894→          </>
+   895→        ) : (
+   896→          <div className="absolute inset-0" style={{ background: P.creamAlt }} />
+   897→        )}
+   898→
+   899→        {/* Floral corners */}
+   900→        <FloralCorner position="tl" color="#E8D5E0" />
+   901→        <FloralCorner position="tr" color="#E8D5E0" />
+   902→
+   903→        <div className="relative z-10 mx-auto w-full max-w-md px-5 py-16 sm:py-20">
+   904→          <div className="text-center">
+   905→            <motion.div variants={fadeInUp} className="mb-4 flex justify-center">
+   906→              <LaurelMonogram initials={mono} size={40} />
+   907→            </motion.div>
+   908→            <motion.h2
+   909→              variants={fadeInUp}
+   910→              className="text-2xl font-bold"
+   911→              style={{ color: P.white, fontFamily: 'var(--font-montserrat), sans-serif', letterSpacing: '0.15em' }}
+   912→            >
+   913→              RSVP
+   914→            </motion.h2>
+   915→            <motion.div variants={fadeInUp} className="mt-4 mb-6 flex justify-center">
+   916→              <div className="flex items-center gap-3">
+   917→                <div className="h-px w-8" style={{ backgroundColor: 'rgba(201,162,76,0.5)' }} />
+   918→                <Filigree color={P.gold} className="h-4 w-4" />
+   919→                <div className="h-px w-8" style={{ backgroundColor: 'rgba(201,162,76,0.5)' }} />
+   920→              </div>
+   921→            </motion.div>
+   922→            <motion.p variants={fadeInUp} className="text-sm italic" style={{ color: P.white, fontFamily: 'var(--font-cormorant), serif', opacity: 0.9 }}>
+   923→              Merci de faire partie de notre histoire.
+   924→            </motion.p>
+   925→            <motion.p variants={fadeInUp} className="mt-2 text-sm" style={{ color: P.gold, fontFamily: 'var(--font-cormorant), serif' }}>
+   926→              Merci de confirmer votre présence avant le {data.rsvpDeadline || formatDate(data.eventDate)}.
+   927→            </motion.p>
+   928→          </div>
+   929→
+   930→          {rsvpSent ? (
+   931→            <motion.div
+   932→              initial={{ opacity: 0, scale: 0.95 }}
+   933→              animate={{ opacity: 1, scale: 1 }}
+   934→              className="mt-10 py-10 text-center"
+   935→              style={{ backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 16 }}
+   936→            >
+   937→              <Check className="mx-auto mb-4 h-10 w-10" style={{ color: P.forest }} />
+   938→              <p style={{ fontFamily: '"Great Vibes", cursive', color: P.navy, fontSize: '28px' }}>Merci !</p>
+   939→              <p className="mt-2 text-sm italic" style={{ color: P.navyMuted, fontFamily: 'var(--font-cormorant), serif' }}>
+   940→                Votre confirmation a bien été reçue.
+   941→              </p>
+   942→            </motion.div>
+   943→          ) : (
+   944→            <motion.form
+   945→              variants={fadeInUp}
+   946→              onSubmit={(e) => {
+   947→                e.preventDefault();
+   948→                rsvp.setName(rsvpName);
+   949→                rsvp.setContact(rsvpContact);
+   950→                rsvp.setGuests(String(rsvpGuestCount));
+   951→                rsvp.setNote(rsvpMessage);
+   952→                rsvp.setAttending(rsvpAttending);
+   953→                if (mode === 'preview') {
+   954→                  setRsvpSent(true);
+   955→                  return;
+   956→                }
+   957→                rsvp.submit(e).then(() => {
+   958→                  if (rsvp.status !== 'error') setRsvpSent(true);
+   959→                });
+   960→              }}
+   961→              className="mt-10 space-y-4"
+   962→              style={{ backgroundColor: 'rgba(255,255,255,0.92)', borderRadius: 16, padding: '24px' }}
+   963→            >
+   964→              {/* Name */}
+   965→              <div className="relative">
+   966→                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: P.navyMuted }} />
+   967→                <Input
+   968→                  value={rsvpName}
+   969→                  onChange={(e) => setRsvpName(e.target.value)}
+   970→                  placeholder="Nom complet"
+   971→                  required
+   972→                  className="border pl-10"
+   973→                  style={{ borderColor: P.lineDark, color: P.navy, borderRadius: 10, backgroundColor: 'transparent' }}
+   974→                />
+   975→              </div>
+   976→
+   977→              {/* Email / Phone */}
+   978→              <div className="relative">
+   979→                <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: P.navyMuted }} />
+   980→                <Input
+   981→                  value={rsvpContact}
+   982→                  onChange={(e) => setRsvpContact(e.target.value)}
+   983→                  placeholder="Email / Téléphone"
+   984→                  className="border pl-10"
+   985→                  style={{ borderColor: P.lineDark, color: P.navy, borderRadius: 10, backgroundColor: 'transparent' }}
+   986→                />
+   987→              </div>
+   988→
+   989→              {/* Attending radio */}
+   990→              <div>
+   991→                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: P.navyMuted, fontFamily: 'var(--font-montserrat), sans-serif' }}>
+   992→                  Serez-vous des nôtres ?
+   993→                </p>
+   994→                <div className="flex gap-3">
+   995→                  {(['yes', 'no'] as const).map((choice) => (
+   996→                    <button
+   997→                      key={choice}
+   998→                      type="button"
+   999→                      onClick={() => setRsvpAttending(choice)}
+  1000→                      className="flex-1 border py-2.5 text-sm transition-all"
+  1001→                      style={{
+  1002→                        borderColor: rsvpAttending === choice ? P.forest : P.lineDark,
+  1003→                        backgroundColor: rsvpAttending === choice ? P.forest : 'transparent',
+  1004→                        color: rsvpAttending === choice ? P.white : P.navy,
+  1005→                        fontFamily: 'var(--font-cormorant), serif',
+  1006→                        borderRadius: 10,
+  1007→                        fontWeight: 600,
+  1008→                        cursor: 'pointer',
+  1009→                      }}
+  1010→                    >
+  1011→                      {choice === 'yes' ? 'Oui, avec plaisir' : 'Non, avec regret'}
+  1012→                    </button>
+  1013→                  ))}
+  1014→                </div>
+  1015→              </div>
+  1016→
+  1017→              {/* Guest counter */}
+  1018→              <div>
+  1019→                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: P.navyMuted, fontFamily: 'var(--font-montserrat), sans-serif' }}>
+  1020→                  Nombre de personnes
+  1021→                </p>
+  1022→                <div className="flex items-center justify-center gap-6">
+  1023→                  <button
+  1024→                    type="button"
+  1025→                    onClick={() => setRsvpGuestCount(Math.max(1, rsvpGuestCount - 1))}
+  1026→                    className="flex h-9 w-9 items-center justify-center border transition-colors"
+  1027→                    style={{ borderColor: P.lineDark, borderRadius: '50%', backgroundColor: 'transparent' }}
+  1028→                  >
+  1029→                    <Minus className="h-3.5 w-3.5" style={{ color: P.navy }} />
+  1030→                  </button>
+  1031→                  <span className="text-lg font-semibold tabular-nums" style={{ color: P.navy, minWidth: '2ch', textAlign: 'center' }}>
+  1032→                    {rsvpGuestCount}
+  1033→                  </span>
+  1034→                  <button
+  1035→                    type="button"
+  1036→                    onClick={() => setRsvpGuestCount(Math.min(10, rsvpGuestCount + 1))}
+  1037→                    className="flex h-9 w-9 items-center justify-center border transition-colors"
+  1038→                    style={{ borderColor: P.lineDark, borderRadius: '50%', backgroundColor: 'transparent' }}
+  1039→                  >
+  1040→                    <Plus className="h-3.5 w-3.5" style={{ color: P.navy }} />
+  1041→                  </button>
+  1042→                </div>
+  1043→              </div>
+  1044→
+  1045→              {/* Message */}
+  1046→              <Textarea
+  1047→                value={rsvpMessage}
+  1048→                onChange={(e) => setRsvpMessage(e.target.value)}
+  1049→                placeholder="Un message pour les mariés ?"
+  1050→                rows={3}
+  1051→                className="border resize-none"
+  1052→                style={{ borderColor: P.lineDark, color: P.navy, borderRadius: 10, backgroundColor: 'transparent' }}
+  1053→              />
+  1054→
+  1055→              {/* Vocal message button */}
+  1056→              <button
+  1057→                type="button"
+  1058→                onClick={() => toast({ title: 'Message vocal', description: 'Bientôt disponible — restez connectés !' })}
+  1059→                className="flex w-full items-center justify-center gap-2 border py-3 text-xs font-semibold uppercase tracking-[0.15em] transition-colors"
+  1060→                style={{
+  1061→                  borderColor: P.lineDark,
+  1062→                  backgroundColor: 'transparent',
+  1063→                  color: P.navy,
+  1064→                  borderRadius: 10,
+  1065→                  fontFamily: 'var(--font-montserrat), sans-serif',
+  1066→                  cursor: 'pointer',
+  1067→                }}
+  1068→              >
+  1069→                <Mic className="h-4 w-4" />
+  1070→                Laisser un vœu vocal
+  1071→              </button>
+  1072→
+  1073→              {/* Submit + Cancel */}
+  1074→              <div className="flex gap-3">
+  1075→                <Button
+  1076→                  type="submit"
+  1077→                  className="flex-1 border-0 text-[11px] font-semibold uppercase tracking-[0.15em]"
+  1078→                  style={{ backgroundColor: P.forest, color: P.white, borderRadius: 10 }}
+  1079→                >
+  1080→                  Confirmer ma présence
+  1081→                </Button>
+  1082→                <Button
+  1083→                  type="button"
+  1084→                  onClick={() => {
+  1085→                    setRsvpName(''); setRsvpContact(''); setRsvpMessage('');
+  1086→                    setRsvpAttending(null); setRsvpGuestCount(2);
+  1087→                  }}
+  1088→                  variant="outline"
+  1089→                  className="border text-[11px] font-semibold uppercase tracking-[0.15em]"
+  1090→                  style={{ borderColor: P.lineDark, color: P.navy, borderRadius: 10 }}
+  1091→                >
+  1092→                  Annuler
+  1093→                </Button>
+  1094→              </div>
+  1095→            </motion.form>
+  1096→          )}
+  1097→
+  1098→          {/* Bottom floral corners */}
+  1099→          <FloralCorner position="bl" color="#E8D5E0" />
+  1100→          <FloralCorner position="br" color="#E8D5E0" />
+  1101→        </div>
+  1102→      </motion.section>
+  1103→
+  1104→      {/* ═══════════════════════════════════════════════════════════════════
+  1105→          SECTION 8 — MERCI
+  1106→          ═══════════════════════════════════════════════════════════════════ */}
+  1107→      <motion.section
+  1108→        id="merci"
+  1109→        variants={stagger}
+  1110→        initial="hidden"
+  1111→        whileInView="visible"
+  1112→        viewport={{ once: true, amount: 0.1 }}
+  1113→        className="relative grid min-h-[80dvh] w-full place-items-center overflow-hidden"
+  1114→      >
+  1115→        {/* Background image */}
+  1116→        {data.thankYouImage ? (
+  1117→          <>
+  1118→            <img src={data.thankYouImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+  1119→            <div className="absolute inset-0" style={{ backgroundColor: P.overlayDark }} />
+  1120→          </>
+  1121→        ) : (
+  1122→          <div className="absolute inset-0" style={{ background: `linear-gradient(168deg, ${P.creamAlt} 0%, ${P.cream} 100%)` }} />
+  1123→        )}
+  1124→
+  1125→        <FloralCorner position="tl" color="#E8D5E0" />
+  1126→        <FloralCorner position="tr" color="#E8D5E0" />
+  1127→
+  1128→        <div className="relative z-10 mx-auto max-w-lg px-6 py-20 text-center">
+  1129→          <motion.div variants={fadeInUp} className="mb-4 flex justify-center">
+  1130→            <LaurelMonogram initials={mono} size={40} />
+  1131→          </motion.div>
+  1132→
+  1133→          <motion.h2
+  1134→            variants={fadeInUp}
+  1135→            className="mb-2"
+  1136→            style={{
+  1137→              fontFamily: '"Great Vibes", cursive',
+  1138→              color: P.gold,
+  1139→              fontSize: 'clamp(32px, 7vw, 52px)',
+  1140→            }}
+  1141→          >
+  1142→            Merci
+  1143→          </motion.h2>
+  1144→
+  1145→          <motion.p
+  1146→            variants={fadeInUp}
+  1147→            className="text-[10px] font-semibold uppercase tracking-[0.35em]"
+  1148→            style={{ color: P.navy, fontFamily: 'var(--font-montserrat), sans-serif' }}
+  1149→          >
+  1150→            Du Fond du Cœur
+  1151→          </motion.p>
+  1152→
+  1153→          <motion.div variants={fadeInUp} className="my-8 flex justify-center">
+  1154→            <GoldRule />
+  1155→          </motion.div>
+  1156→
+  1157→          <motion.p variants={fadeInUp} className="text-base leading-relaxed" style={{ color: data.thankYouImage ? 'rgba(255,255,255,0.9)' : P.navyMuted, fontFamily: 'var(--font-cormorant), serif' }}>
+  1158→            {data.thankYouMessage ||
+  1159→              'Votre présence, vos sourires et vos vœux rendront ce jour inoubliable. Nous avons hâte de partager encore tant de beaux moments avec vous. Avec toute notre gratitude,'}
+  1160→          </motion.p>
+  1161→
+  1162→          <motion.div variants={fadeInUp} className="mt-10 flex justify-center">
+  1163→            <div className="h-px w-20" style={{ backgroundColor: P.line }} />
+  1164→          </motion.div>
+  1165→
+  1166→          <motion.h3
+  1167→            variants={fadeInUp}
+  1168→            className="mt-6 font-normal"
+  1169→            style={{
+  1170→              fontFamily: '"Great Vibes", cursive',
+  1171→              color: data.thankYouImage ? P.white : P.navy,
+  1172→              fontSize: 'clamp(28px, 6vw, 44px)',
+  1173→            }}
+  1174→          >
+  1175→            {data.partner1Name} &amp; {data.partner2Name}
+  1176→          </motion.h3>
+  1177→
+  1178→          <motion.p
+  1179→            variants={fadeInUp}
+  1180→            className="mt-4 text-[10px] font-medium uppercase tracking-[0.3em]"
+  1181→            style={{ color: data.thankYouImage ? 'rgba(255,255,255,0.6)' : P.navyMuted, fontFamily: 'var(--font-montserrat), sans-serif' }}
+  1182→          >
+  1183→            {formatDate(data.eventDate)}
+  1184→          </motion.p>
+  1185→
+  1186→          {/* Footer brand */}
+  1187→          <motion.div variants={fadeInUp} className="mt-16">
+  1188→            <p
+  1189→              className="text-[10px] font-medium uppercase tracking-[0.2em]"
+  1190→              style={{ color: P.gold, opacity: 0.7, fontFamily: 'var(--font-montserrat), sans-serif' }}
+  1191→            >
+  1192→              Créé avec amour par
+  1193→            </p>
+  1194→            <p
+  1195→              className="mt-1 text-sm font-normal"
+  1196→              style={{ color: P.gold, fontFamily: '"Great Vibes", cursive', opacity: 0.7 }}
+  1197→            >
+  1198→              DAAWA
+  1199→            </p>
+  1200→          </motion.div>
+  1201→        </div>
+  1202→      </motion.section>
+  1203→    </div>
+  1204→  );
+  1205→}
+  1206→
