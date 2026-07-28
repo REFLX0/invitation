@@ -1,0 +1,942 @@
+     1→'use client';
+     2→
+     3→import { useState, useCallback, useMemo } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import { ArrowLeft, ArrowRight, Sparkles, Check, Loader2, ExternalLink, PartyPopper, Search } from 'lucide-react';
+     6→import {
+     7→  Dialog,
+     8→  DialogContent,
+     9→  DialogTitle,
+    10→  DialogDescription,
+    11→} from '@/components/ui/dialog';
+    12→import { Button } from '@/components/ui/button';
+    13→import { Input } from '@/components/ui/input';
+    14→import { Label } from '@/components/ui/label';
+    15→import { cn } from '@/lib/utils';
+    16→import {
+    17→  TEMPLATES as REGISTRY_TEMPLATES,
+    18→  ALL_CATEGORIES,
+    19→  type Category,
+    20→} from '@/components/daawa/templates/template-registry';
+    21→
+    22→/* -------------------------------------------------------------------------- */
+    23→/*  Types                                                                     */
+    24→/* -------------------------------------------------------------------------- */
+    25→
+    26→interface Template {
+    27→  id: string;
+    28→  name: string;
+    29→  tier: string;
+    30→  price: number;
+    31→  gradient: string;
+    32→  textColor: string;
+    33→  subtextColor: string;
+    34→  category: string;
+    35→  isDark: boolean;
+    36→}
+    37→
+    38→interface FormData {
+    39→  partner1Name: string;
+    40→  partner2Name: string;
+    41→  eventDate: string;
+    42→  venueName: string;
+    43→  venueAddress: string;
+    44→}
+    45→
+    46→interface WizardModalProps {
+    47→  open: boolean;
+    48→  onOpenChange: (open: boolean) => void;
+    49→}
+    50→
+    51→/* -------------------------------------------------------------------------- */
+    52→/*  Constants — derived from the central registry                             */
+    53→/* -------------------------------------------------------------------------- */
+    54→
+    55→// Map each registry template to the wizard-friendly Template shape.
+    56→const TEMPLATES: Template[] = REGISTRY_TEMPLATES.map((t) => ({
+    57→  id: t.id,
+    58→  name: t.name,
+    59→  tier: t.tier,
+    60→  price: t.price,
+    61→  gradient: t.previewGradient,
+    62→  textColor: t.isDark ? 'text-white' : 'text-ink',
+    63→  subtextColor: t.isDark ? 'text-white/60' : 'text-ink/50',
+    64→  category: t.category,
+    65→  isDark: t.isDark,
+    66→}));
+    67→
+    68→const STEP_COUNT = 4;
+    69→
+    70→const STEP_TITLES = [
+    71→  'Choisissez votre style',
+    72→  'Vos details',
+    73→  'Apercu de votre invitation',
+    74→  'Confirmation',
+    75→] as const;
+    76→
+    77→const STEP_DESCRIPTIONS = [
+    78→  'Selectionnez un modele qui vous ressemble',
+    79→  'Renseignez les informations du mariage',
+    80→  'Voici a quoi ressemblera votre invitation',
+    81→  'Votre invitation est prete a etre partagee',
+    82→] as const;
+    83→
+    84→const FRENCH_DAYS = [
+    85→  'Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi',
+    86→];
+    87→
+    88→const FRENCH_MONTHS = [
+    89→  'Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin',
+    90→  'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre',
+    91→];
+    92→
+    93→/* -------------------------------------------------------------------------- */
+    94→/*  Helpers                                                                   */
+    95→/* -------------------------------------------------------------------------- */
+    96→
+    97→function formatDateFrench(dateStr: string): string {
+    98→  const date = new Date(dateStr + 'T00:00:00');
+    99→  if (isNaN(date.getTime())) return dateStr;
+   100→  const day = FRENCH_DAYS[date.getDay()];
+   101→  const num = date.getDate();
+   102→  const month = FRENCH_MONTHS[date.getMonth()];
+   103→  const year = date.getFullYear();
+   104→  return `${day} ${num} ${month} ${year}`;
+   105→}
+   106→
+   107→/* -------------------------------------------------------------------------- */
+   108→/*  Animation variants                                                        */
+   109→/* -------------------------------------------------------------------------- */
+   110→
+   111→const slideVariants = {
+   112→  enter: (direction: number) => ({
+   113→    x: direction > 0 ? 300 : -300,
+   114→    opacity: 0,
+   115→  }),
+   116→  center: {
+   117→    x: 0,
+   118→    opacity: 1,
+   119→  },
+   120→  exit: (direction: number) => ({
+   121→    x: direction > 0 ? -300 : 300,
+   122→    opacity: 0,
+   123→  }),
+   124→};
+   125→
+   126→const slideTransition = {
+   127→  type: 'spring' as const,
+   128→  stiffness: 300,
+   129→  damping: 30,
+   130→};
+   131→
+   132→/* -------------------------------------------------------------------------- */
+   133→/*  Component                                                                 */
+   134→/* -------------------------------------------------------------------------- */
+   135→
+   136→export function WizardModal({ open, onOpenChange }: WizardModalProps) {
+   137→  const [step, setStep] = useState(0);
+   138→  const [direction, setDirection] = useState(0);
+   139→  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+   140→  const [formData, setFormData] = useState<FormData>({
+   141→    partner1Name: '',
+   142→    partner2Name: '',
+   143→    eventDate: '',
+   144→    venueName: '',
+   145→    venueAddress: '',
+   146→  });
+   147→  const [isSubmitting, setIsSubmitting] = useState(false);
+   148→  const [submitError, setSubmitError] = useState<string | null>(null);
+   149→  const [createdSlug, setCreatedSlug] = useState<string | null>(null);
+   150→
+   151→  /* ---- Reset on close ---- */
+   152→  const handleClose = useCallback(
+   153→    (value: boolean) => {
+   154→      if (!value) {
+   155→        // Reset state after animation completes
+   156→        setTimeout(() => {
+   157→          setStep(0);
+   158→          setDirection(0);
+   159→          setSelectedTemplate(null);
+   160→          setFormData({
+   161→            partner1Name: '',
+   162→            partner2Name: '',
+   163→            eventDate: '',
+   164→            venueName: '',
+   165→            venueAddress: '',
+   166→          });
+   167→          setIsSubmitting(false);
+   168→          setSubmitError(null);
+   169→          setCreatedSlug(null);
+   170→        }, 200);
+   171→      }
+   172→      onOpenChange(value);
+   173→    },
+   174→    [onOpenChange],
+   175→  );
+   176→
+   177→  /* ---- Navigation ---- */
+   178→  const goNext = () => {
+   179→    if (step < STEP_COUNT - 1) {
+   180→      setDirection(1);
+   181→      setStep((s) => s + 1);
+   182→    }
+   183→  };
+   184→
+   185→  const goBack = () => {
+   186→    if (step > 0) {
+   187→      setDirection(-1);
+   188→      setStep((s) => s - 1);
+   189→    }
+   190→  };
+   191→
+   192→  /* ---- Validation ---- */
+   193→  const isStepValid = (): boolean => {
+   194→    switch (step) {
+   195→      case 0:
+   196→        return selectedTemplate !== null;
+   197→      case 1:
+   198→        return (
+   199→          formData.partner1Name.trim() !== '' &&
+   200→          formData.partner2Name.trim() !== '' &&
+   201→          formData.eventDate !== ''
+   202→        );
+   203→      case 2:
+   204→        return true;
+   205→      case 3:
+   206→        return createdSlug !== null;
+   207→      default:
+   208→        return false;
+   209→    }
+   210→  };
+   211→
+   212→  /* ---- Submit ---- */
+   213→  const handleSubmit = async () => {
+   214→    setIsSubmitting(true);
+   215→    setSubmitError(null);
+   216→
+   217→    try {
+   218→      const isoDate = new Date(formData.eventDate + 'T12:00:00').toISOString();
+   219→
+   220→      const res = await fetch('/api/events', {
+   221→        method: 'POST',
+   222→        headers: { 'Content-Type': 'application/json' },
+   223→        body: JSON.stringify({
+   224→          ...formData,
+   225→          eventDate: isoDate,
+   226→          templateId: selectedTemplate!.id,
+   227→          type: 'WEDDING',
+   228→        }),
+   229→      });
+   230→
+   231→      if (!res.ok) {
+   232→        const body = await res.json().catch(() => ({}));
+   233→        throw new Error(body.error ?? `Erreur ${res.status}`);
+   234→      }
+   235→
+   236→      const event = await res.json();
+   237→      setCreatedSlug(event.slug);
+   238→
+   239→      // Persist edit token in localStorage so the owner can later manage their
+   240→      // invitation(s) from the dashboard. The token is returned ONCE by the API.
+   241→      if (event.editToken && typeof window !== 'undefined') {
+   242→        try {
+   243→          const key = 'daawa:events';
+   244→          const existing = JSON.parse(localStorage.getItem(key) ?? '[]') as Array<{
+   245→            slug: string;
+   246→            editToken: string;
+   247→            partner1Name: string;
+   248→            partner2Name: string;
+   249→            createdAt: string;
+   250→          }>;
+   251→          existing.push({
+   252→            slug: event.slug,
+   253→            editToken: event.editToken,
+   254→            partner1Name: formData.partner1Name,
+   255→            partner2Name: formData.partner2Name,
+   256→            createdAt: new Date().toISOString(),
+   257→          });
+   258→          localStorage.setItem(key, JSON.stringify(existing));
+   259→        } catch {
+   260→          // localStorage may be unavailable (private mode, etc.) — non-fatal
+   261→        }
+   262→      }
+   263→    } catch (err) {
+   264→      setSubmitError(
+   265→        err instanceof Error ? err.message : 'Une erreur inattendue est survenue',
+   266→      );
+   267→    } finally {
+   268→      setIsSubmitting(false);
+   269→    }
+   270→  };
+   271→
+   272→  /* ---- WhatsApp share ---- */
+   273→  const shareWhatsApp = () => {
+   274→    if (!createdSlug) return;
+   275→    const url = `${window.location.origin}/${createdSlug}`;
+   276→    const message = `Vous etes invite(e) au mariage de ${formData.partner1Name} & ${formData.partner2Name} !\n\n${url}`;
+   277→    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+   278→  };
+   279→
+   280→  /* ---- Form change handler ---- */
+   281→  const updateField = (field: keyof FormData, value: string) => {
+   282→    setFormData((prev) => ({ ...prev, [field]: value }));
+   283→  };
+   284→
+   285→  /* ====================================================================== */
+   286→  /*  RENDER                                                                */
+   287→  /* ====================================================================== */
+   288→
+   289→  return (
+   290→    <Dialog open={open} onOpenChange={handleClose}>
+   291→      <DialogContent
+   292→        showCloseButton={step !== 3 || !createdSlug}
+   293→        className="
+   294→          fixed inset-0 top-0 left-0 z-50 flex items-center justify-center
+   295→          max-w-full h-full w-full max-h-full
+   296→          translate-x-0 translate-y-0
+   297→          rounded-none border-0 p-0
+   298→          bg-cream
+   299→          data-[state=open]:zoom-in-[1] data-[state=closed]:zoom-out-[1]
+   300→        "
+   301→      >
+   302→        {/* Accessibility: hidden titles for screen readers */}
+   303→        <DialogTitle className="sr-only">
+   304→          {STEP_TITLES[step]} — Daawa
+   305→        </DialogTitle>
+   306→        <DialogDescription className="sr-only">
+   307→          {STEP_DESCRIPTIONS[step]}
+   308→        </DialogDescription>
+   309→
+   310→        <div className="flex h-full w-full flex-col overflow-hidden">
+   311→          {/* ---- Header ---- */}
+   312→          <header className="shrink-0 border-b border-line bg-cream px-6 py-4">
+   313→            {/* Logo row */}
+   314→            <div className="flex items-center justify-between">
+   315→              <div className="flex items-center gap-3">
+   316→                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-burgundy">
+   317→                  <Sparkles className="h-4 w-4 text-gold" />
+   318→                </div>
+   319→                <span className="font-display text-sm font-semibold tracking-wider text-burgundy uppercase">
+   320→                  Daawa
+   321→                </span>
+   322→              </div>
+   323→              <span className="text-xs font-medium uppercase tracking-widest text-ink/40">
+   324→                Etape {step + 1} / {STEP_COUNT}
+   325→              </span>
+   326→            </div>
+   327→
+   328→            {/* Step title */}
+   329→            <div className="mt-3">
+   330→              <h2 className="font-display text-xl font-semibold tracking-wide text-burgundy">
+   331→                {STEP_TITLES[step]}
+   332→              </h2>
+   333→              <p className="mt-0.5 font-serif text-sm italic text-ink/50">
+   334→                {STEP_DESCRIPTIONS[step]}
+   335→              </p>
+   336→            </div>
+   337→
+   338→            {/* Step indicators */}
+   339→            <div className="mt-4 flex items-center gap-2">
+   340→              {Array.from({ length: STEP_COUNT }, (_, i) => (
+   341→                <div
+   342→                  key={i}
+   343→                  className={cn(
+   344→                    'h-2 rounded-full transition-all duration-300',
+   345→                    i <= step
+   346→                      ? 'bg-burgundy w-8'
+   347→                      : 'bg-line w-2',
+   348→                  )}
+   349→                />
+   350→              ))}
+   351→            </div>
+   352→          </header>
+   353→
+   354→          {/* ---- Step Content (scrollable) ---- */}
+   355→          <div className="relative flex-1 overflow-y-auto">
+   356→            <AnimatePresence initial={false} custom={direction} mode="wait">
+   357→              <motion.div
+   358→                key={step}
+   359→                custom={direction}
+   360→                variants={slideVariants}
+   361→                initial="enter"
+   362→                animate="center"
+   363→                exit="exit"
+   364→                transition={slideTransition}
+   365→                className="absolute inset-0 overflow-y-auto px-6 py-8"
+   366→              >
+   367→                {step === 0 && <StepChooseTemplate selected={selectedTemplate} onSelect={setSelectedTemplate} />}
+   368→                {step === 1 && <StepYourDetails data={formData} onChange={updateField} />}
+   369→                {step === 2 && selectedTemplate && <StepPreview template={selectedTemplate} data={formData} />}
+   370→                {step === 3 && (
+   371→                  <StepConfirmation
+   372→                    data={formData}
+   373→                    template={selectedTemplate}
+   374→                    createdSlug={createdSlug}
+   375→                    isSubmitting={isSubmitting}
+   376→                    error={submitError}
+   377→                    onSubmit={handleSubmit}
+   378→                    onShareWhatsApp={shareWhatsApp}
+   379→                  />
+   380→                )}
+   381→              </motion.div>
+   382→            </AnimatePresence>
+   383→          </div>
+   384→
+   385→          {/* ---- Footer / Navigation ---- */}
+   386→          <footer className="shrink-0 border-t border-line bg-cream px-6 py-4">
+   387→            <div className="flex items-center justify-between">
+   388→              <Button
+   389→                variant="ghost"
+   390→                onClick={goBack}
+   391→                disabled={step === 0 || isSubmitting}
+   392→                className="gap-2 text-ink/60 hover:text-burgundy"
+   393→              >
+   394→                <ArrowLeft className="h-4 w-4" />
+   395→                Retour
+   396→              </Button>
+   397→
+   398→              {/* Conditional next / submit button */}
+   399→              {step < STEP_COUNT - 1 ? (
+   400→                <Button
+   401→                  onClick={goNext}
+   402→                  disabled={!isStepValid()}
+   403→                  className="
+   404→                    gap-2 rounded-full bg-burgundy px-6
+   405→                    text-sm font-semibold uppercase tracking-wider text-white
+   406→                    shadow-lg shadow-burgundy/20
+   407→                    hover:bg-burgundy-light hover:shadow-xl
+   408→                    disabled:opacity-40 disabled:shadow-none
+   409→                  "
+   410→                >
+   411→                  Suivant
+   412→                  <ArrowRight className="h-4 w-4" />
+   413→                </Button>
+   414→              ) : step === 3 && !createdSlug && !isSubmitting ? (
+   415→                <Button
+   416→                  onClick={handleSubmit}
+   417→                  disabled={isSubmitting}
+   418→                  className="
+   419→                    gap-2 rounded-full bg-burgundy px-6
+   420→                    text-sm font-semibold uppercase tracking-wider text-white
+   421→                    shadow-lg shadow-burgundy/20
+   422→                    hover:bg-burgundy-light hover:shadow-xl
+   423→                    disabled:opacity-40 disabled:shadow-none
+   424→                  "
+   425→                >
+   426→                  Creer mon invitation
+   427→                  <Sparkles className="h-4 w-4" />
+   428→                </Button>
+   429→              ) : null}
+   430→            </div>
+   431→          </footer>
+   432→        </div>
+   433→      </DialogContent>
+   434→    </Dialog>
+   435→  );
+   436→}
+   437→
+   438→/* ========================================================================= */
+   439→/*  Step 1 — Choose Template                                                 */
+   440→/* ========================================================================= */
+   441→
+   442→function StepChooseTemplate({
+   443→  selected,
+   444→  onSelect,
+   445→}: {
+   446→  selected: Template | null;
+   447→  onSelect: (t: Template) => void;
+   448→}) {
+   449→  const [query, setQuery] = useState('');
+   450→  const [activeCategory, setActiveCategory] = useState<Category | 'Tous'>('Tous');
+   451→
+   452→  const filtered = useMemo(() => {
+   453→    const q = query.trim().toLowerCase();
+   454→    return TEMPLATES.filter((t) => {
+   455→      if (activeCategory !== 'Tous' && t.category !== activeCategory) return false;
+   456→      if (q && !t.name.toLowerCase().includes(q) && !t.id.toLowerCase().includes(q)) return false;
+   457→      return true;
+   458→    });
+   459→  }, [query, activeCategory]);
+   460→
+   461→  return (
+   462→    <div className="flex flex-col gap-4">
+   463→      {/* Search + count */}
+   464→      <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+   465→        <div className="relative w-full sm:max-w-xs">
+   466→          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40 pointer-events-none" />
+   467→          <input
+   468→            type="text"
+   469→            value={query}
+   470→            onChange={(e) => setQuery(e.target.value)}
+   471→            placeholder="Rechercher un modèle…"
+   472→            className="w-full rounded-full border border-line bg-white py-2 pl-9 pr-4 text-xs text-ink placeholder:text-ink/40 focus:outline-none focus:border-burgundy/40"
+   473→          />
+   474→        </div>
+   475→        <p className="text-[11px] uppercase tracking-wider text-ink/40">
+   476→          {filtered.length} / {TEMPLATES.length} modèles
+   477→        </p>
+   478→      </div>
+   479→
+   480→      {/* Category pills */}
+   481→      <div className="-mx-1 flex gap-1.5 overflow-x-auto scrollbar-hide px-1 py-0.5">
+   482→        {ALL_CATEGORIES.map((cat) => (
+   483→          <button
+   484→            key={cat}
+   485→            type="button"
+   486→            onClick={() => setActiveCategory(cat)}
+   487→            className={cn(
+   488→              'whitespace-nowrap rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-wider transition-colors',
+   489→              activeCategory === cat
+   490→                ? 'bg-burgundy text-white'
+   491→                : 'border border-line text-ink/50 hover:border-burgundy/40 hover:text-burgundy',
+   492→            )}
+   493→          >
+   494→            {cat}
+   495→          </button>
+   496→        ))}
+   497→      </div>
+   498→
+   499→      {/* Template grid (scrollable when many) */}
+   500→      <div className="max-h-[55vh] overflow-y-auto scrollbar-hide -mx-1 px-1">
+   501→        {filtered.length === 0 ? (
+   502→          <div className="py-12 text-center">
+   503→            <p className="text-sm text-ink/40">Aucun modèle ne correspond à votre recherche.</p>
+   504→          </div>
+   505→        ) : (
+   506→          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+   507→            {filtered.map((template) => {
+   508→              const isSelected = selected?.id === template.id;
+   509→              return (
+   510→                <motion.button
+   511→                  key={template.id}
+   512→                  type="button"
+   513→                  whileHover={{ y: -2 }}
+   514→                  whileTap={{ scale: 0.98 }}
+   515→                  onClick={() => onSelect(template)}
+   516→                  className={cn(
+   517→                    'group relative flex flex-col overflow-hidden rounded-xl border-2 transition-colors duration-200 text-left',
+   518→                    isSelected
+   519→                      ? 'border-burgundy shadow-lg shadow-burgundy/10'
+   520→                      : 'border-transparent hover:border-line',
+   521→                  )}
+   522→                >
+   523→                  {/* Card preview area */}
+   524→                  <div
+   525→                    className={cn(
+   526→                      'relative flex h-36 flex-col items-center justify-center gap-1.5 bg-gradient-to-br p-3',
+   527→                      template.gradient,
+   528→                    )}
+   529→                  >
+   530→                    {/* Corner ornaments */}
+   531→                    <div className="pointer-events-none absolute top-2 left-2 h-3 w-3 border-t border-l border-gold/30" />
+   532→                    <div className="pointer-events-none absolute top-2 right-2 h-3 w-3 border-t border-r border-gold/30" />
+   533→                    <div className="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-gold/30" />
+   534→                    <div className="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-gold/30" />
+   535→
+   536→                    {/* Couple names preview */}
+   537→                    <p className={cn('font-script text-base leading-tight', template.textColor)}>
+   538→                      Ahmed &amp; Yasmine
+   539→                    </p>
+   540→                    <p className={cn('text-[9px] uppercase tracking-widest', template.subtextColor)}>
+   541→                      15 Sept 2026
+   542→                    </p>
+   543→
+   544→                    {/* Selected checkmark */}
+   545→                    {isSelected && (
+   546→                      <motion.div
+   547→                        initial={{ scale: 0 }}
+   548→                        animate={{ scale: 1 }}
+   549→                        className="absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-burgundy"
+   550→                      >
+   551→                        <Check className="h-3 w-3 text-white" />
+   552→                      </motion.div>
+   553→                    )}
+   554→                  </div>
+   555→
+   556→                  {/* Card info */}
+   557→                  <div className="flex items-center justify-between bg-white p-2.5">
+   558→                    <div className="min-w-0">
+   559→                      <p className="truncate text-xs font-semibold text-ink/80 leading-tight">
+   560→                        {template.name}
+   561→                      </p>
+   562→                      <p className="mt-0.5 text-[9px] uppercase tracking-wider text-ink/40">
+   563→                        {template.tier} · {template.category}
+   564→                      </p>
+   565→                    </div>
+   566→                    <span className={cn(
+   567→                      'shrink-0 text-xs font-bold',
+   568→                      template.tier === 'Luxe' ? 'text-gold' : template.tier === 'Premium' ? 'text-burgundy' : 'text-ink/60',
+   569→                    )}>
+   570→                      {template.price} DT
+   571→                    </span>
+   572→                  </div>
+   573→                </motion.button>
+   574→              );
+   575→            })}
+   576→          </div>
+   577→        )}
+   578→      </div>
+   579→    </div>
+   580→  );
+   581→}
+   582→
+   583→/* ========================================================================= */
+   584→/*  Step 2 — Your Details                                                    */
+   585→/* ========================================================================= */
+   586→
+   587→function StepYourDetails({
+   588→  data,
+   589→  onChange,
+   590→}: {
+   591→  data: FormData;
+   592→  onChange: (field: keyof FormData, value: string) => void;
+   593→}) {
+   594→  const fields: { key: keyof FormData; label: string; type?: string; placeholder: string }[] = [
+   595→    { key: 'partner1Name', label: 'Votre nom', placeholder: 'Ahmed' },
+   596→    { key: 'partner2Name', label: "Nom de votre partenaire", placeholder: 'Yasmine' },
+   597→    { key: 'eventDate', label: "Date de l'evenement", type: 'text', placeholder: '2026-09-15' },
+   598→    { key: 'venueName', label: 'Nom du lieu', placeholder: 'Dar El Marsa' },
+   599→    { key: 'venueAddress', label: 'Adresse', placeholder: 'Route de La Marsa, Tunis' },
+   600→  ];
+   601→
+   602→  return (
+   603→    <div className="mx-auto max-w-md space-y-5">
+   604→      {fields.map((field, i) => (
+   605→        <motion.div
+   606→          key={field.key}
+   607→          initial={{ opacity: 0, y: 12 }}
+   608→          animate={{ opacity: 1, y: 0 }}
+   609→          transition={{ delay: i * 0.06 }}
+   610→          className="space-y-1.5"
+   611→        >
+   612→          <Label
+   613→            htmlFor={`wizard-${field.key}`}
+   614→            className="text-xs font-semibold uppercase tracking-wider text-ink/60"
+   615→          >
+   616→            {field.label}
+   617→          </Label>
+   618→          <Input
+   619→            id={`wizard-${field.key}`}
+   620→            type={field.type ?? 'text'}
+   621→            placeholder={field.placeholder}
+   622→            value={data[field.key]}
+   623→            onChange={(e) => onChange(field.key, e.target.value)}
+   624→            className="
+   625→              h-11 rounded-lg border-line bg-white/80
+   626→              font-body text-sm text-ink
+   627→              placeholder:text-ink/30
+   628→              focus-visible:border-burgundy/50 focus-visible:ring-burgundy/20
+   629→            "
+   630→          />
+   631→        </motion.div>
+   632→      ))}
+   633→    </div>
+   634→  );
+   635→}
+   636→
+   637→/* ========================================================================= */
+   638→/*  Step 3 — Live Preview                                                    */
+   639→/* ========================================================================= */
+   640→
+   641→function StepPreview({
+   642→  template,
+   643→  data,
+   644→}: {
+   645→  template: Template;
+   646→  data: FormData;
+   647→}) {
+   648→  const displayPartner1 = data.partner1Name || 'Ahmed';
+   649→  const displayPartner2 = data.partner2Name || 'Yasmine';
+   650→  const displayDate = data.eventDate
+   651→    ? formatDateFrench(data.eventDate)
+   652→    : 'Samedi 15 Septembre 2026';
+   653→  const displayVenue = data.venueName || 'Dar El Marsa';
+   654→  const displayAddress = data.venueAddress || 'Route de La Marsa, Tunis';
+   655→
+   656→  const isDark =
+   657→    template.id === 'le-beldi' ||
+   658→    template.id === 'l-imperiale' ||
+   659→    template.id === 'cafe-des-delices';
+   660→
+   661→  return (
+   662→    <div className="flex flex-col items-center">
+   663→      {/* Preview card */}
+   664→      <div
+   665→        className={cn(
+   666→          'relative w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br shadow-2xl',
+   667→          template.gradient,
+   668→        )}
+   669→      >
+   670→        {/* Corner ornaments */}
+   671→        <div className={cn(
+   672→          'pointer-events-none absolute top-4 left-4 h-8 w-8 border-t-2 border-l-2',
+   673→          isDark ? 'border-gold/25' : 'border-gold/40',
+   674→        )} />
+   675→        <div className={cn(
+   676→          'pointer-events-none absolute top-4 right-4 h-8 w-8 border-t-2 border-r-2',
+   677→          isDark ? 'border-gold/25' : 'border-gold/40',
+   678→        )} />
+   679→        <div className={cn(
+   680→          'pointer-events-none absolute bottom-4 left-4 h-8 w-8 border-b-2 border-l-2',
+   681→          isDark ? 'border-gold/25' : 'border-gold/40',
+   682→        )} />
+   683→        <div className={cn(
+   684→          'pointer-events-none absolute bottom-4 right-4 h-8 w-8 border-b-2 border-r-2',
+   685→          isDark ? 'border-gold/25' : 'border-gold/40',
+   686→        )} />
+   687→
+   688→        <div className="flex flex-col items-center px-8 py-10 text-center">
+   689→          {/* Template name */}
+   690→          <p className={cn(
+   691→            'text-[10px] font-bold uppercase tracking-[0.2em]',
+   692→            template.subtextColor,
+   693→          )}>
+   694→            {template.name}
+   695→          </p>
+   696→
+   697→          {/* Gold separator */}
+   698→          <div className="my-4 h-px w-16 bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
+   699→
+   700→          {/* Couple names */}
+   701→          <p className={cn('font-script text-4xl leading-tight', template.textColor)}>
+   702→            {displayPartner1}
+   703→          </p>
+   704→          <p
+   705→            className={cn(
+   706→              'my-1 font-display text-xs font-medium uppercase tracking-[0.3em]',
+   707→              template.subtextColor,
+   708→            )}
+   709→          >
+   710→            &amp;
+   711→          </p>
+   712→          <p className={cn('font-script text-4xl leading-tight', template.textColor)}>
+   713→            {displayPartner2}
+   714→          </p>
+   715→
+   716→          {/* Gold separator */}
+   717→          <div className="my-5 h-px w-24 bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
+   718→
+   719→          {/* Date */}
+   720→          <p className={cn('font-serif text-sm italic', template.textColor)}>
+   721→            {displayDate}
+   722→          </p>
+   723→
+   724→          {/* Venue */}
+   725→          <div className="mt-4 space-y-0.5">
+   726→            <p className={cn('font-display text-xs font-semibold uppercase tracking-wider', template.textColor)}>
+   727→              {displayVenue}
+   728→            </p>
+   729→            <p className={cn('text-[11px]', template.subtextColor)}>
+   730→              {displayAddress}
+   731→            </p>
+   732→          </div>
+   733→
+   734→          {/* Fake RSVP button */}
+   735→          <button
+   736→            type="button"
+   737→            className={cn(
+   738→              'mt-8 rounded-full border px-6 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors',
+   739→              isDark
+   740→                ? 'border-gold/40 text-gold/80 hover:bg-gold/10'
+   741→                : 'border-burgundy/40 text-burgundy/80 hover:bg-burgundy/5',
+   742→            )}
+   743→          >
+   744→            Repondre a l'invitation
+   745→          </button>
+   746→        </div>
+   747→      </div>
+   748→
+   749→      <p className="mt-4 text-center text-[11px] text-ink/30 italic">
+   750→        Apercu non interactif — votre invitation finale sera encore plus belle
+   751→      </p>
+   752→    </div>
+   753→  );
+   754→}
+   755→
+   756→/* ========================================================================= */
+   757→/*  Step 4 — Confirmation                                                    */
+   758→/* ========================================================================= */
+   759→
+   760→function StepConfirmation({
+   761→  data,
+   762→  template,
+   763→  createdSlug,
+   764→  isSubmitting,
+   765→  error,
+   766→  onSubmit,
+   767→  onShareWhatsApp,
+   768→}: {
+   769→  data: FormData;
+   770→  template: Template | null;
+   771→  createdSlug: string | null;
+   772→  isSubmitting: boolean;
+   773→  error: string | null;
+   774→  onSubmit: () => void;
+   775→  onShareWhatsApp: () => void;
+   776→}) {
+   777→  const shareUrl = createdSlug
+   778→    ? `${typeof window !== 'undefined' ? window.location.origin : ''}/${createdSlug}`
+   779→    : '';
+   780→
+   781→  /* ---- Still submitting / not yet created ---- */
+   782→  if (!createdSlug) {
+   783→    return (
+   784→      <div className="mx-auto max-w-md">
+   785→        {/* Summary */}
+   786→        <div className="rounded-xl border border-line bg-white/60 p-6 space-y-4">
+   787→          <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-burgundy">
+   788→            Resume de votre invitation
+   789→          </h3>
+   790→
+   791→          <div className="space-y-3 text-sm">
+   792→            <SummaryRow label="Modele" value={template?.name ?? '—'} />
+   793→            <SummaryRow label="Mariés" value={`${data.partner1Name} & ${data.partner2Name}`} />
+   794→            <SummaryRow label="Date" value={data.eventDate ? formatDateFrench(data.eventDate) : '—'} />
+   795→            <SummaryRow label="Lieu" value={data.venueName || '—'} />
+   796→            <SummaryRow label="Adresse" value={data.venueAddress || '—'} />
+   797→            {template && (
+   798→              <SummaryRow
+   799→                label="Prix"
+   800→                value={`${template.price} DT`}
+   801→                valueClass="font-bold text-burgundy"
+   802→              />
+   803→            )}
+   804→          </div>
+   805→
+   806→          {/* Error message */}
+   807→          {error && (
+   808→            <motion.p
+   809→              initial={{ opacity: 0, y: -4 }}
+   810→              animate={{ opacity: 1, y: 0 }}
+   811→              className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 border border-red-200"
+   812→            >
+   813→              {error}
+   814→            </motion.p>
+   815→          )}
+   816→
+   817→          {/* Submit button */}
+   818→          <Button
+   819→            onClick={onSubmit}
+   820→            disabled={isSubmitting}
+   821→            className={cn(
+   822→              'w-full gap-2 rounded-full bg-burgundy py-3',
+   823→              'text-sm font-semibold uppercase tracking-wider text-white',
+   824→              'shadow-lg shadow-burgundy/20 hover:bg-burgundy-light hover:shadow-xl',
+   825→              'disabled:opacity-40 disabled:shadow-none',
+   826→            )}
+   827→          >
+   828→            {isSubmitting ? (
+   829→              <>
+   830→                <Loader2 className="h-4 w-4 animate-spin" />
+   831→                Creation en cours...
+   832→              </>
+   833→            ) : (
+   834→              <>
+   835→                Creer mon invitation
+   836→                <Sparkles className="h-4 w-4" />
+   837→              </>
+   838→            )}
+   839→          </Button>
+   840→        </div>
+   841→      </div>
+   842→    );
+   843→  }
+   844→
+   845→  /* ---- Success state ---- */
+   846→  return (
+   847→    <div className="mx-auto max-w-md text-center">
+   848→      <motion.div
+   849→        initial={{ opacity: 0, scale: 0.9 }}
+   850→        animate={{ opacity: 1, scale: 1 }}
+   851→        className="space-y-6"
+   852→      >
+   853→        {/* Success icon */}
+   854→        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-burgundy/10">
+   855→          <PartyPopper className="h-8 w-8 text-burgundy" />
+   856→        </div>
+   857→
+   858→        <div>
+   859→          <h3 className="font-display text-2xl font-semibold text-burgundy">
+   860→            Invitation creee !
+   861→          </h3>
+   862→          <p className="mt-1 font-serif text-sm italic text-ink/50">
+   863→            Votre fait-part numerique est pret a etre partage
+   864→          </p>
+   865→        </div>
+   866→
+   867→        {/* Share link */}
+   868→        <div className="rounded-xl border border-line bg-white/60 p-4">
+   869→          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-ink/40">
+   870→            Lien de votre invitation
+   871→          </p>
+   872→          <div className="flex items-center gap-2">
+   873→            <code className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-lg bg-cream px-3 py-2 text-xs font-medium text-burgundy">
+   874→              {shareUrl}
+   875→            </code>
+   876→            <Button
+   877→              variant="outline"
+   878→              size="sm"
+   879→              onClick={() => {
+   880→                navigator.clipboard.writeText(shareUrl);
+   881→              }}
+   882→              className="shrink-0 border-line text-ink/60 hover:text-burgundy hover:border-burgundy/30"
+   883→            >
+   884→              Copier
+   885→            </Button>
+   886→            <Button
+   887→              variant="outline"
+   888→              size="sm"
+   889→              asChild
+   890→              className="shrink-0 border-line text-ink/60 hover:text-burgundy hover:border-burgundy/30"
+   891→            >
+   892→              <a href={shareUrl} target="_blank" rel="noopener noreferrer">
+   893→                <ExternalLink className="h-3.5 w-3.5" />
+   894→              </a>
+   895→            </Button>
+   896→          </div>
+   897→        </div>
+   898→
+   899→        {/* WhatsApp button */}
+   900→        <Button
+   901→          onClick={onShareWhatsApp}
+   902→          className={
+   903→            'w-full gap-2 rounded-full bg-[#25D366] py-3'
+   904→            + ' text-sm font-semibold uppercase tracking-wider text-white'
+   905→            + ' shadow-lg shadow-[#25D366]/20 hover:bg-[#20BD5A] hover:shadow-xl'
+   906→          }
+   907→        >
+   908→          <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
+   909→            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+   910→          </svg>
+   911→          Partager sur WhatsApp
+   912→        </Button>
+   913→      </motion.div>
+   914→    </div>
+   915→  );
+   916→}
+   917→
+   918→/* -------------------------------------------------------------------------- */
+   919→/*  Shared summary row                                                        */
+   920→/* -------------------------------------------------------------------------- */
+   921→
+   922→function SummaryRow({
+   923→  label,
+   924→  value,
+   925→  valueClass,
+   926→}: {
+   927→  label: string;
+   928→  value: string;
+   929→  valueClass?: string;
+   930→}) {
+   931→  return (
+   932→    <div className="flex items-start justify-between gap-4">
+   933→      <span className="shrink-0 text-[11px] font-medium uppercase tracking-wider text-ink/40">
+   934→        {label}
+   935→      </span>
+   936→      <span className={cn('text-right text-sm text-ink/80', valueClass)}>
+   937→        {value}
+   938→      </span>
+   939→    </div>
+   940→  );
+   941→}
+   942→
