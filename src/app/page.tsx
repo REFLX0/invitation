@@ -9,6 +9,12 @@ import { Sparkles, Heart, Star, Crown } from 'lucide-react'
 export default function Home() {
   const [wizardOpen, setWizardOpen] = useState(false)
 
+  const tiers = [
+    { name: 'Classique', price: '89', icon: Heart, color: 'text-[var(--daawa-ink)]/60', border: 'border-[var(--daawa-ink)]/10', popular: false, features: ['5 designs elegants', "Video d'ouverture", 'RSVP & compte a rebours', 'Mises a jour illimitees'] },
+    { name: 'Premium', price: '149', icon: Star, color: 'text-[var(--daawa-burgundy)]', border: 'border-[var(--daawa-burgundy)]/20', popular: true, features: ['8 designs immersifs', 'Interactions exclusives', 'Musique de fond', '3 tours de revision'] },
+    { name: 'Luxe', price: '289', icon: Crown, color: 'text-[var(--daawa-gold)]', border: 'border-[var(--daawa-gold)]/30', popular: false, features: ['Traitement luxe complet', 'Monogrammes personnalises', 'AI photo backgrounds', 'Swatches dress code'] },
+  ] as const
+
   return (
     <div className="min-h-screen flex flex-col bg-[var(--daawa-cream)]/30">
       {/* Header */}
@@ -54,22 +60,48 @@ export default function Home() {
             <h2 className="text-center text-2xl font-bold mb-2" style={{ fontFamily: 'serif' }}>Nos formules</h2>
             <p className="text-center text-sm text-muted-foreground mb-10">Choisissez la formule qui vous correspond</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                { name: 'Classique', price: '89', icon: Heart, color: 'text-[var(--daawa-ink)]/60', border: 'border-[var(--daawa-ink)]/10', features: ["5 designs elegants", "Video d'ouverture", "RSVP & compte a rebours", "Mises a jour illimitees"] },
-                { name: 'Premium', price: '149', icon: Star, color: 'text-[var(--daawa-burgundy)]', border: 'border-[var(--daawa-burgundy)]/20', popular: true, features: ["8 designs immersifs", "Interactions exclusives", "Musique de fond", "3 tours de revision"] },
-                { name: 'Luxe', price: '289', icon: Crown, color: 'text-[var(--daawa-gold)]', border: 'border-[var(--daawa-gold)]/30', features: ["Traitement luxe complet", "Monogrammes personnalises", "AI photo backgrounds", "Swatches dress code"] },
-              ].map((tier) => (
-                <motion.div key={tier.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className={\`relative rounded-xl border ${tier.border} bg-background p-6 flex flex-col ${tier.popular ? 'ring-2 ring-[var(--daawa-burgundy)]/20' : ''}\`}>
-                  {tier.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--daawa-burgundy)] text-white text-[10px] font-semibold px-3 py-0.5 rounded-full">Populaire</div>}
-                  <tier.icon className={\`size-6 ${tier.color} mb-3\`} />
-                  <h3 className={\`text-lg font-semibold ${tier.color}\`}>{tier.name}</h3>
-                  <div className="mt-1 mb-4"><span className="text-3xl font-bold">{tier.price}</span><span className="text-sm text-muted-foreground"> DT</span></div>
-                  <ul className="space-y-2.5 flex-1">{tier.features.map((f) => (<li key={f} className="flex items-start gap-2 text-sm text-muted-foreground"><span className="mt-1.5 size-1.5 rounded-full bg-[var(--daawa-burgundy)]/40 shrink-0" />{f}</li>))}</ul>
-                  <Button onClick={() => setWizardOpen(true)} variant={tier.popular ? 'default' : 'outline'} className={\`mt-6 w-full ${tier.popular ? 'bg-[var(--daawa-burgundy)] hover:bg-[var(--daawa-burgundy)]/90' : ''}\`}>
-                    Choisir
-                  </Button>
-                </motion.div>
-              ))}
+              {tiers.map((tier) => {
+                const Icon = tier.icon
+                const ringClass = tier.popular ? 'ring-2 ring-[var(--daawa-burgundy)]/20' : ''
+                const btnClass = tier.popular ? 'bg-[var(--daawa-burgundy)] hover:bg-[var(--daawa-burgundy)]/90' : ''
+                return (
+                  <motion.div
+                    key={tier.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 }}
+                    className={`relative rounded-xl border ${tier.border} bg-background p-6 flex flex-col ${ringClass}`}
+                  >
+                    {tier.popular && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--daawa-burgundy)] text-white text-[10px] font-semibold px-3 py-0.5 rounded-full">
+                        Populaire
+                      </div>
+                    )}
+                    <Icon className={`size-6 ${tier.color} mb-3`} />
+                    <h3 className={`text-lg font-semibold ${tier.color}`}>{tier.name}</h3>
+                    <div className="mt-1 mb-4">
+                      <span className="text-3xl font-bold">{tier.price}</span>
+                      <span className="text-sm text-muted-foreground"> DT</span>
+                    </div>
+                    <ul className="space-y-2.5 flex-1">
+                      {tier.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <span className="mt-1.5 size-1.5 rounded-full bg-[var(--daawa-burgundy)]/40 shrink-0" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button
+                      onClick={() => setWizardOpen(true)}
+                      variant={tier.popular ? 'default' : 'outline'}
+                      className={`mt-6 w-full ${btnClass}`}
+                    >
+                      Choisir
+                    </Button>
+                  </motion.div>
+                )
+              })}
             </div>
           </div>
         </section>

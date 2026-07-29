@@ -143,9 +143,9 @@ export const TEMPLATES: Template[] = [
   { id: 'pr-6', name: 'Sahara Rose', tier: 'Premium', thumbnail: '/templates/pr-6.jpg', description: 'Tons roses du desert' },
   { id: 'pr-7', name: 'Oasis', tier: 'Premium', thumbnail: '/templates/pr-7.jpg', description: 'Fraicheur oasis mediterraneenne' },
   { id: 'pr-8', name: 'Medina', tier: 'Premium', thumbnail: '/templates/pr-8.jpg', description: 'Esprit medina traditionnelle' },
-  { id: 'lx-1', name: 'Royale', tier: 'Luxe', thumbnail: '/templates/lx-1.jpg', description: 'Le summum du luxe' },
-  { id: 'lx-2', name: 'Andalousie', tier: 'Luxe', thumbnail: '/templates/lx-2.jpg', description: 'Heritage andalous' },
-  { id: 'lx-3', name: 'Carthage', tier: 'Luxe', thumbnail: '/templates/lx-3.jpg', description: 'Grandeur carthaginoise' },
+  { id: 'lx-1', name: 'Noir et Or', tier: 'Luxe', thumbnail: '/templates/lx-1.jpg', description: 'Art deco noir et or' },
+  { id: 'lx-2', name: 'Lella Beya', tier: 'Luxe', thumbnail: '/templates/lx-2.jpg', description: 'Heritage ottoman tunisien' },
+  { id: 'lx-3', name: 'Carthage Or', tier: 'Luxe', thumbnail: '/templates/lx-3.jpg', description: 'Grandeur carthaginoise' },
 ]
 
 // --- Tier metadata ---
