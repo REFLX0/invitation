@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#F0E5D5"/>
+  <path d="M20,20 L20,280" stroke="#B8860B" stroke-width="0.8" opacity="0.15"/>
+  <path d="M380,20 L380,280" stroke="#B8860B" stroke-width="0.8" opacity="0.15"/>
+  <path d="M50,80 L200,40 L350,80" fill="none" stroke="#B8860B" stroke-width="1" opacity="0.2"/>
+  <rect x="100" y="60" width="8" height="40" fill="#B8860B" opacity="0.08"/>
+  <rect x="146" y="50" width="8" height="50" fill="#B8860B" opacity="0.08"/>
+  <rect x="246" y="50" width="8" height="50" fill="#B8860B" opacity="0.08"/>
+  <rect x="292" y="60" width="8" height="40" fill="#B8860B" opacity="0.08"/>
+  <text x="200" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#8B5E3C" opacity="0.7">Ahmed</text>
+  <text x="200" y="168" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#B8860B" opacity="0.5">&amp;</text>
+  <text x="200" y="192" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#8B5E3C" opacity="0.7">Fatima</text>
+  <text x="200" y="255" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#A07040" opacity="0.35">Medina</text>
+</svg>

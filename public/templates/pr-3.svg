@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#0F1B2D"/>
+  <circle cx="80" cy="50" r="1.5" fill="#FFF" opacity="0.4"/>
+  <circle cx="150" cy="30" r="1" fill="#FFF" opacity="0.3"/>
+  <circle cx="300" cy="45" r="1.5" fill="#FFF" opacity="0.35"/>
+  <circle cx="350" cy="80" r="1" fill="#FFF" opacity="0.25"/>
+  <circle cx="60" cy="120" r="1" fill="#FFF" opacity="0.3"/>
+  <circle cx="340" cy="150" r="1.2" fill="#FFF" opacity="0.3"/>
+  <circle cx="100" cy="200" r="0.8" fill="#FFF" opacity="0.2"/>
+  <circle cx="250" cy="60" r="1.5" fill="#FFF" opacity="0.35"/>
+  <circle cx="180" cy="90" r="0.8" fill="#FFF" opacity="0.25"/>
+  <circle cx="320" cy="230" r="1" fill="#FFF" opacity="0.2"/>
+  <circle cx="50" cy="250" r="1.2" fill="#FFF" opacity="0.25"/>
+  <circle cx="200" cy="40" r="12" fill="#E8D5A0" opacity="0.08"/>
+  <text x="200" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#C8D8E8" opacity="0.7">Ahmed</text>
+  <text x="200" y="168" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#A0B8D0" opacity="0.5">&amp;</text>
+  <text x="200" y="190" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#C8D8E8" opacity="0.7">Fatima</text>
+  <text x="200" y="255" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#8098B0" opacity="0.35">Nuit Etoilee</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="sahara" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5E0D0"/>
+      <stop offset="100%" stop-color="#E8C8B0"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#sahara)"/>
+  <circle cx="320" cy="60" r="30" fill="#D4956A" opacity="0.1"/>
+  <text x="200" y="140" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#A0604A" opacity="0.7">Ahmed</text>
+  <text x="200" y="162" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#C0806A" opacity="0.5">&amp;</text>
+  <text x="200" y="185" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#A0604A" opacity="0.7">Fatima</text>
+  <line x1="140" y1="210" x2="260" y2="210" stroke="#C0806A" stroke-width="0.8" opacity="0.2"/>
+  <text x="200" y="255" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#B07060" opacity="0.35">Sahara Rose</text>
+</svg>

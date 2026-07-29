@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <radialGradient id="aq1" cx="30%" cy="40%"><stop offset="0%" stop-color="#B8D4E3" stop-opacity="0.4"/><stop offset="100%" stop-color="#F0F4F8" stop-opacity="0"/></radialGradient>
+    <radialGradient id="aq2" cx="70%" cy="60%"><stop offset="0%" stop-color="#D4B8D8" stop-opacity="0.3"/><stop offset="100%" stop-color="#F0F4F8" stop-opacity="0"/></radialGradient>
+    <radialGradient id="aq3" cx="50%" cy="30%"><stop offset="0%" stop-color="#B8D8B8" stop-opacity="0.3"/><stop offset="100%" stop-color="#F0F4F8" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="400" height="300" fill="#F5F0EB"/>
+  <rect width="400" height="300" fill="url(#aq1)"/>
+  <rect width="400" height="300" fill="url(#aq2)"/>
+  <rect width="400" height="300" fill="url(#aq3)"/>
+  <circle cx="80" cy="80" r="30" fill="#C8A8D0" opacity="0.08"/>
+  <circle cx="320" cy="220" r="40" fill="#A8C8D8" opacity="0.08"/>
+  <text x="200" y="140" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#6B7B8D" opacity="0.7">Ahmed</text>
+  <text x="200" y="160" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#8B9BA8" opacity="0.5">&amp;</text>
+  <text x="200" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#6B7B8D" opacity="0.7">Fatima</text>
+  <text x="200" y="250" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#8B9BA8" opacity="0.35">Aquarelle</text>
+</svg>

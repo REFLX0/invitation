@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#F2E8D5"/>
+  <rect x="30" y="30" width="340" height="240" rx="2" fill="#EDDFC8" stroke="#C4A87C" stroke-width="1" opacity="0.5"/>
+  <line x1="50" y1="50" x2="50" y2="250" stroke="#C4A87C" stroke-width="0.5" opacity="0.15"/>
+  <line x1="350" y1="50" x2="350" y2="250" stroke="#C4A87C" stroke-width="0.5" opacity="0.15"/>
+  <text x="200" y="135" text-anchor="middle" font-family="Georgia,serif" font-size="26" fill="#6B4226" opacity="0.65">Ahmed</text>
+  <text x="200" y="158" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#8B6340" opacity="0.45">&amp;</text>
+  <text x="200" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="26" fill="#6B4226" opacity="0.65">Fatima</text>
+  <text x="200" y="245" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#8B6340" opacity="0.35">Parchemin</text>
+</svg>

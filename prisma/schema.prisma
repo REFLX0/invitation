@@ -41,4 +41,16 @@ model Event {
   tierConfig    String   @default("{}")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  rsvps         Rsvp[]
+}
+
+model Rsvp {
+  id            String   @id @default(cuid())
+  eventId       String
+  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  guestName     String
+  attending     Boolean
+  meal          String   @default("")
+  plusOne       String   @default("")
+  createdAt     DateTime @default(now())
 }

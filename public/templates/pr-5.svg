@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="velvet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4A1942"/>
+      <stop offset="100%" stop-color="#6B2D5B"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#velvet)"/>
+  <rect x="30" y="30" width="340" height="240" rx="4" fill="none" stroke="#C6A0C8" stroke-width="0.8" opacity="0.3"/>
+  <text x="200" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#E8D0E8" opacity="0.7">Ahmed</text>
+  <text x="200" y="168" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#D8B8D8" opacity="0.5">&amp;</text>
+  <text x="200" y="192" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#E8D0E8" opacity="0.7">Fatima</text>
+  <text x="200" y="255" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#C8A0C8" opacity="0.35">Soie &amp; Velours</text>
+</svg>

@@ -105,6 +105,7 @@ export function SpecializedLellaBeya({ event }: InvitationTemplateProps) {
   const rsvp = useRsvpForm(
     parseInt(config.maxGuests || '10'),
     config.mealChoices || [],
+    event.id,
   )
 
   const calligraphyFont = config.preferredCalligraphyFont || 'amiri'

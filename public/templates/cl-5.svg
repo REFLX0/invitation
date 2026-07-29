@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#FFFFFF"/>
+  <line x1="150" y1="100" x2="250" y2="100" stroke="#333" stroke-width="0.5" opacity="0.2"/>
+  <text x="200" y="148" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="24" fill="#333" opacity="0.6" font-weight="300">Ahmed</text>
+  <text x="200" y="168" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#999" opacity="0.5">&amp;</text>
+  <text x="200" y="192" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="24" fill="#333" opacity="0.6" font-weight="300">Fatima</text>
+  <line x1="150" y1="210" x2="250" y2="210" stroke="#333" stroke-width="0.5" opacity="0.2"/>
+  <text x="200" y="255" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#999" opacity="0.35" letter-spacing="3">MINIMALISTE</text>
+</svg>

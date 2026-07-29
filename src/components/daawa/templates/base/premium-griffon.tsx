@@ -11,6 +11,7 @@ import {
   ScheduleTimeline,
   RsvpSection,
 } from '../shared/atoms'
+import { ScratchCard, MusicPlayer } from '../shared/interactive'
 
 export function PremiumGriffon({ event }: InvitationTemplateProps) {
   const config: PremiumTierConfig = event.tierConfig
@@ -21,15 +22,23 @@ export function PremiumGriffon({ event }: InvitationTemplateProps) {
   const rsvp = useRsvpForm(
     parseInt(config.maxGuests || '5'),
     config.mealChoices || [],
+    event.id,
   )
 
   const accentColor = config.customColorAccent || 'var(--daawa-burgundy)'
 
   return (
     <div className="min-h-screen bg-[var(--daawa-cream)]/30">
-      {/* Hero — Premium has richer background + personal message */}
+      {/* Music player — floating */}
+      <div className="fixed top-4 right-4 z-50">
+        <MusicPlayer
+          enabled={config.backgroundMusicEnabled}
+          style={config.musicStyle || 'none'}
+        />
+      </div>
+
+      {/* Hero */}
       <Section className="min-h-[90vh] flex flex-col items-center justify-center px-6 text-center relative overflow-hidden">
-        {/* Background accent */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -44,7 +53,7 @@ export function PremiumGriffon({ event }: InvitationTemplateProps) {
         >
           <OrnamentalDivider variant="ornate" className="text-[var(--daawa-gold)]" />
           <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            {config.preferredLanguage === 'AR' ? 'بمناسبة زفافهما' : 'Vous sont cordialement invites'}
+            {config.preferredLanguage === 'AR' ? '\u0628\u0645\u0646\u0627\u0633\u0628\u0629 \u0632\u0641\u0627\u0641\u0647\u0645\u0627' : 'Vous sont cordialement invites'}
           </p>
           <h1
             className="text-4xl sm:text-5xl font-light leading-tight"
@@ -64,26 +73,25 @@ export function PremiumGriffon({ event }: InvitationTemplateProps) {
           </p>
           {config.guestPersonalMessage && (
             <p className="text-sm italic leading-relaxed mt-4" style={{ color: accentColor }}>
-              "{config.guestPersonalMessage}"
+              &ldquo;{config.guestPersonalMessage}&rdquo;
             </p>
           )}
           <OrnamentalDivider variant="ornate" className="text-[var(--daawa-gold)]" />
         </motion.div>
       </Section>
 
-      {/* Scratch Reveal Message */}
+      {/* Scratch Card Reveal */}
       {config.scratchRevealMessage && (
         <Section className="py-12 px-6 bg-background/50">
-          <div className="max-w-md mx-auto text-center space-y-4">
+          <div className="max-w-md mx-auto text-center space-y-6">
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Message secret</p>
-            <div
-              className="rounded-xl border p-6"
-              style={{
-                borderColor: `${accentColor}30`,
-                background: `linear-gradient(135deg, ${accentColor}08, ${accentColor}15)`,
-              }}
-            >
-              <p className="text-sm italic">{config.scratchRevealMessage}</p>
+            <div className="flex justify-center">
+              <ScratchCard
+                message={config.scratchRevealMessage}
+                revealColor={accentColor}
+                width={300}
+                height={100}
+              />
             </div>
           </div>
         </Section>
@@ -171,7 +179,7 @@ export function PremiumGriffon({ event }: InvitationTemplateProps) {
       <Section className="py-16 px-6" delay={0.4}>
         <div className="max-w-md mx-auto text-center space-y-6">
           <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            Repondez s'il vous plait
+            Repondez s&apos;il vous plait
           </p>
           {config.rsvpDeadline && (
             <p className="text-xs text-muted-foreground">

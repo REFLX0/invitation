@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { WizardModal } from '@/components/daawa/wizard-modal'
 import { Button } from '@/components/ui/button'
-import { Sparkles, Heart, Star, Crown } from 'lucide-react'
+import { Sparkles, Heart, Star, Crown, Palette, Share2, Clock, MessageCircle } from 'lucide-react'
 
 export default function Home() {
   const [wizardOpen, setWizardOpen] = useState(false)
@@ -106,6 +106,96 @@ export default function Home() {
           </div>
         </section>
       </main>
+
+      {/* How it Works */}
+      <section className="px-4 py-20 bg-background/50">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-center text-2xl font-bold mb-2" style={{ fontFamily: 'serif' }}>Comment ca marche</h2>
+          <p className="text-center text-sm text-muted-foreground mb-12">Trois etapes pour votre invitation parfaite</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { icon: Palette, step: '01', title: 'Choisissez votre modele', desc: 'Parcourez notre collection de 16 modeles exclusifs tunisiens, classes par formule : Classique, Premium ou Luxe.' },
+              { icon: MessageCircle, step: '02', title: 'Personnalisez les details', desc: 'Ajoutez vos noms, date, lieu, et personnalisez selon votre formule : musique, monogrammes, photos, code vestimentaire.' },
+              { icon: Share2, step: '03', title: 'Partagez avec vos invites', desc: 'Recevez un lien unique et partagez-le sur WhatsApp, Messenger ou par email. Suivez les RSVP en temps reel.' },
+            ].map((item) => {
+              const Icon = item.icon
+              return (
+                <motion.div
+                  key={item.step}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 }}
+                  className="text-center space-y-4"
+                >
+                  <div className="inline-flex items-center justify-center size-14 rounded-full border border-[var(--daawa-burgundy)]/15 bg-[var(--daawa-burgundy)]/5">
+                    <Icon className="size-6 text-[var(--daawa-burgundy)]" />
+                  </div>
+                  <span className="text-xs font-medium text-[var(--daawa-burgundy)]/50">{item.step}</span>
+                  <h3 className="text-lg font-semibold">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">{item.desc}</p>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="px-4 py-20">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-center text-2xl font-bold mb-2" style={{ fontFamily: 'serif' }}>Ce que disent nos couples</h2>
+          <p className="text-center text-sm text-muted-foreground mb-12">Des invitations qui font la difference</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { names: 'Yasmine & Karim', text: 'Nos invites etaient ravis ! Le modele Lella Beya correspondait parfaitement a notre theme. La personnalisation etait incroyablement facile.', tier: 'Luxe' },
+              { names: 'Amira & Nizar', text: 'On a choisi la formule Premium et le resultat etait magnifique. Le RSVP en ligne nous a fait gagner enormement de temps.', tier: 'Premium' },
+              { names: 'Rania & Fares', text: 'Simple, elegant et abordable. On a recu notre invitation en quelques minutes et nos invites l\'ont adoree.', tier: 'Classique' },
+            ].map((t) => (
+              <motion.div
+                key={t.names}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="rounded-xl border border-border p-6 space-y-4"
+              >
+                <p className="text-sm text-muted-foreground italic leading-relaxed">&ldquo;{t.text}&rdquo;</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">{t.names}</p>
+                  <span className="text-[10px] text-[var(--daawa-burgundy)]/50 border border-[var(--daawa-burgundy)]/20 rounded-full px-2 py-0.5">{t.tier}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="px-4 py-20 bg-background/50">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-center text-2xl font-bold mb-2" style={{ fontFamily: 'serif' }}>Questions frequentes</h2>
+          <p className="text-center text-sm text-muted-foreground mb-12">Tout ce que vous devez savoir</p>
+          <div className="space-y-4">
+            {[
+              { q: 'Combien de temps faut-il pour creer une invitation ?', a: 'Moins de 5 minutes. Choisissez votre modele, remplissez vos informations, et votre invitation est prete a partager immediatement.' },
+              { q: 'Puis-je modifier mon invitation apres creation ?', a: 'Oui ! Avec les formules Premium et Luxe, vous pouvez modifier les details, ajouter des photos et ajuster le design autant que necessaire.' },
+              { q: 'Comment mes invites confirment leur presence ?', a: 'Chaque invitation inclut un formulaire RSVP integre. Vos invites confirment en un clic et vous recevez les reponses en temps reel.' },
+              { q: 'Quels modes de paiement acceptez-vous ?', a: 'Nous acceptons les paiements par carte bancaire, D17 et virement bancaire. Le paiement est securise et se fait en une seule etape.' },
+            ].map((faq) => (
+              <details key={faq.q} className="group rounded-lg border border-border">
+                <summary className="flex items-center justify-between cursor-pointer px-5 py-4 text-sm font-medium">
+                  {faq.q}
+                  <span className="text-muted-foreground group-open:rotate-180 transition-transform text-xs">&#9662;</span>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed">
+                  {faq.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="border-t border-border bg-background mt-auto">

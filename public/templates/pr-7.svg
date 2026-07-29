@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#EEF5F0"/>
+  <path d="M0,280 Q100,240 200,260 Q300,280 400,240 L400,300 L0,300Z" fill="#5A9B7A" opacity="0.1"/>
+  <ellipse cx="200" cy="100" rx="30" ry="25" fill="none" stroke="#4A8B6A" stroke-width="1" opacity="0.15"/>
+  <text x="200" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#3A7B5A" opacity="0.7">Ahmed</text>
+  <text x="200" y="168" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#5A9B7A" opacity="0.5">&amp;</text>
+  <text x="200" y="192" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#3A7B5A" opacity="0.7">Fatima</text>
+  <text x="200" y="255" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#5A9B7A" opacity="0.35">Oasis</text>
+</svg>

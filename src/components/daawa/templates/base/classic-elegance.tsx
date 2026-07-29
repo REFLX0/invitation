@@ -21,6 +21,7 @@ export function ClassicElegance({ event }: InvitationTemplateProps) {
   const rsvp = useRsvpForm(
     parseInt(config.maxGuests || '5'),
     config.mealChoices || [],
+    event.id,
   )
 
   return (

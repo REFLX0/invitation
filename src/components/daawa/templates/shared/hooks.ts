@@ -40,7 +40,7 @@ interface RsvpGuest {
   plusOne: string
 }
 
-export function useRsvpForm(maxGuests: number, mealChoices: string[]) {
+export function useRsvpForm(maxGuests: number, mealChoices: string[], eventId?: string) {
   const [guests, setGuests] = useState<RsvpGuest[]>([
     { name: '', attending: null, meal: mealChoices[0] || '', plusOne: '' },
   ])
@@ -76,14 +76,32 @@ export function useRsvpForm(maxGuests: number, mealChoices: string[]) {
     if (!canSubmit) return
     setSubmitting(true)
     try {
-      await new Promise((r) => setTimeout(r, 1200))
+      if (eventId) {
+        const res = await fetch('/api/rsvp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId,
+            guests: guests.map((g) => ({
+              name: g.name,
+              attending: g.attending === true,
+              meal: g.meal,
+              plusOne: g.plusOne,
+            })),
+          }),
+        })
+        if (!res.ok) throw new Error('Server error')
+      } else {
+        // Fallback for when eventId is not available
+        await new Promise((r) => setTimeout(r, 1200))
+      }
       setSubmitted(true)
     } catch {
       setMessage("Erreur lors de l'envoi. Veuillez reessayer.")
     } finally {
       setSubmitting(false)
     }
-  }, [canSubmit])
+  }, [canSubmit, eventId, guests])
 
   const reset = useCallback(() => {
     setGuests([{ name: '', attending: null, meal: mealChoices[0] || '', plusOne: '' }])

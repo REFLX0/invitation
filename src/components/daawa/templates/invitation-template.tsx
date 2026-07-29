@@ -23,7 +23,7 @@ export interface InvitationTemplateProps {
   }
 }
 
-// Component map — specialized templates get their own renderers, others fall back to tier base
+// Component map
 const COMPONENT_MAP: Record<string, React.ComponentType<InvitationTemplateProps>> = {
   'specialized-noir-et-or': SpecializedNoirEtOr,
   'specialized-lella-beya': SpecializedLellaBeya,
@@ -43,12 +43,45 @@ const COMPONENT_MAP: Record<string, React.ComponentType<InvitationTemplateProps>
   'premium-medina': PremiumGriffon,
 }
 
+// Font overrides per template
+const FONT_MAP: Record<string, string> = {
+  'classic-elegance': '"Cormorant Garamond", serif',
+  'classic-fleur': '"Great Vibes", cursive',
+  'classic-aquarelle': '"Montserrat", sans-serif',
+  'classic-parchemin': '"Amiri", serif',
+  'classic-minimal': '"Montserrat", sans-serif',
+  'premium-griffon': '"Cinzel", serif',
+  'premium-jardin': '"Great Vibes", cursive',
+  'premium-nuit': '"Montserrat", sans-serif',
+  'premium-mosaic': '"Cormorant Garamond", serif',
+  'premium-soie': '"Dancing Script", cursive',
+  'premium-sahara': '"Amiri", serif',
+  'premium-oasis': '"Montserrat", sans-serif',
+  'premium-medina': '"Cormorant Garamond", serif',
+}
+
 export function InvitationTemplate({ event }: InvitationTemplateProps) {
-  const Component = useMemo(() => {
+  const { Component, themeColors, headingFont } = useMemo(() => {
     const reg = TEMPLATE_REGISTRY.find((t) => t.id === event.templateId)
     const layoutKey = reg?.layoutComponent || 'classic-elegance'
-    return COMPONENT_MAP[layoutKey] || ClassicElegance
+    const Component = COMPONENT_MAP[layoutKey] || ClassicElegance
+    const themeColors = reg?.themeColors || { bg: '#FBF7F2', text: '#8B2252', accent: '#8B2252' }
+    const headingFont = FONT_MAP[layoutKey] || 'serif'
+    return { Component, themeColors, headingFont }
   }, [event.templateId])
 
-  return <Component event={event} />
+  return (
+    <div
+      style={
+        {
+          '--tpl-bg': themeColors.bg,
+          '--tpl-text': themeColors.text,
+          '--tpl-accent': themeColors.accent,
+          '--tpl-heading-font': headingFont,
+        } as React.CSSProperties
+      }
+    >
+      <Component event={event} />
+    </div>
+  )
 }

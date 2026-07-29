@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#0A0A0A"/>
+  <path d="M20,20 L30,20 L30,22 L22,22 L22,30 L20,30Z" fill="#C6A664" opacity="0.5"/>
+  <path d="M380,20 L370,20 L370,22 L378,22 L378,30 L380,30Z" fill="#C6A664" opacity="0.5" transform="rotate(0,380,20)"/>
+  <path d="M20,280 L30,280 L30,278 L22,278 L22,270 L20,270Z" fill="#C6A664" opacity="0.5"/>
+  <path d="M380,280 L370,280 L370,278 L378,278 L378,270 L380,270Z" fill="#C6A664" opacity="0.5"/>
+  <line x1="80" y1="150" x2="160" y2="150" stroke="#C6A664" stroke-width="0.5" opacity="0.3"/>
+  <circle cx="200" cy="150" r="3" fill="#C6A664" opacity="0.4"/>
+  <line x1="240" y1="150" x2="320" y2="150" stroke="#C6A664" stroke-width="0.5" opacity="0.3"/>
+  <text x="200" y="120" text-anchor="middle" font-family="Georgia,serif" font-size="30" fill="#C6A664" opacity="0.65">Ahmed</text>
+  <text x="200" y="185" text-anchor="middle" font-family="Georgia,serif" font-size="30" fill="#C6A664" opacity="0.65">Fatima</text>
+  <text x="200" y="255" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#C6A664" opacity="0.3">Noir et Or</text>
+</svg>

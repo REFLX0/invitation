@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#FFF8F0"/>
+  <path d="M50,280 Q50,40 200,40 Q350,40 350,280" fill="none" stroke="#8B5E3C" stroke-width="1" opacity="0.25"/>
+  <circle cx="200" cy="35" r="3" fill="#8B5E3C" opacity="0.25"/>
+  <g opacity="0.06">
+    <rect x="60" y="60" width="20" height="20" fill="none" stroke="#8B5E3C" stroke-width="0.5"/>
+    <circle cx="70" cy="70" r="5" fill="none" stroke="#8B5E3C" stroke-width="0.3"/>
+    <rect x="320" y="220" width="20" height="20" fill="none" stroke="#8B5E3C" stroke-width="0.5"/>
+    <circle cx="330" cy="230" r="5" fill="none" stroke="#8B5E3C" stroke-width="0.3"/>
+  </g>
+  <text x="200" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#2C1810" opacity="0.65">Ahmed</text>
+  <text x="200" y="155" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#8B5E3C" opacity="0.45">&amp;</text>
+  <text x="200" y="178" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#2C1810" opacity="0.65">Fatima</text>
+  <text x="200" y="255" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#8B5E3C" opacity="0.35">Lella Beya</text>
+</svg>

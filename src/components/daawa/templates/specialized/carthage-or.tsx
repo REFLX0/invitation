@@ -126,6 +126,7 @@ export function SpecializedCarthageOr({ event }: InvitationTemplateProps) {
   const rsvp = useRsvpForm(
     parseInt(config.maxGuests || '10'),
     config.mealChoices || [],
+    event.id,
   )
 
   const calligraphyFont = config.preferredCalligraphyFont || 'cinzel'

@@ -15,6 +15,7 @@ import {
   type Tier, type TierConfig, type Template,
   TEMPLATES, TIER_META, getDefaultConfig,
 } from './wizard/tier-config-types'
+import { TEMPLATE_REGISTRY } from './templates/template-registry'
 import { ClassicForm } from './wizard/tier-forms/classic-form'
 import { PremiumForm } from './wizard/tier-forms/premium-form'
 import { LuxeForm } from './wizard/tier-forms/luxe-form'
@@ -181,8 +182,9 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
                         const isSelected = selectedTemplate?.id === template.id
                         return (
                           <button key={template.id} type="button" onClick={() => handleTemplateSelect(template)} className={`group relative flex flex-col rounded-xl border-2 overflow-hidden transition-all text-left ${isSelected ? 'border-[var(--daawa-burgundy)] ring-2 ring-[var(--daawa-burgundy)]/20' : 'border-border hover:border-foreground/20'}`}>
-                            <div className={`aspect-[4/3] w-full flex items-center justify-center ${template.tier === 'Luxe' ? 'bg-gradient-to-br from-[var(--daawa-gold)]/20 to-[var(--daawa-burgundy)]/10' : template.tier === 'Premium' ? 'bg-gradient-to-br from-[var(--daawa-burgundy)]/10 to-[var(--daawa-cream)]/30' : 'bg-[var(--daawa-cream)]/20'}`}>
-                              <Palette className={`size-8 ${template.tier === 'Luxe' ? 'text-[var(--daawa-gold)]/50' : template.tier === 'Premium' ? 'text-[var(--daawa-burgundy)]/30' : 'text-[var(--daawa-ink)]/20'}`} />
+                            <div className="aspect-[4/3] w-full overflow-hidden bg-muted/30">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={TEMPLATE_REGISTRY.find(r => r.id === template.id)?.thumbnail || ''} alt={template.name} className="w-full h-full object-cover" loading="lazy" />
                             </div>
                             <div className="p-2.5 space-y-1">
                               <p className="text-xs font-medium truncate">{template.name}</p>
