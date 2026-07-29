@@ -1,0 +1,882 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect, useMemo, useCallback } from 'react';
+     4→import { motion, type Variants } from 'framer-motion';
+     5→import {
+     6→  ChevronDown, MapPin, Heart, Clock, X, Check, Sparkles, AlertCircle,
+     7→} from 'lucide-react';
+     8→import { Button } from '@/components/ui/button';
+     9→import { Input } from '@/components/ui/input';
+    10→import { Textarea } from '@/components/ui/textarea';
+    11→import type { InvitationData } from '../invitation-template';
+    12→import type { TemplateStyle } from '../template-registry';
+    13→import { cn } from '@/lib/utils';
+    14→
+    15→// ═══════════════════════════════════════════════════════════════════════════════
+    16→//  Types
+    17→// ═══════════════════════════════════════════════════════════════════════════════
+    18→interface SpecializedTemplateProps {
+    19→  template: TemplateStyle;
+    20→  data: InvitationData;
+    21→  mode?: 'preview' | 'live';
+    22→  onClose?: () => void;
+    23→  eventSlug?: string;
+    24→}
+    25→
+    26→// ═══════════════════════════════════════════════════════════════════════════════
+    27→//  Noir et Or Color Palette
+    28→// ═══════════════════════════════════════════════════════════════════════════════
+    29→const COLORS = {
+    30→  black: '#0A0A0A',
+    31→  gold: '#C9A84C',
+    32→  cream: '#F0E6D3',
+    33→  burgundy: '#4A1528',
+    34→  goldLight: 'rgba(201, 168, 76, 0.15)',
+    35→  goldFaint: 'rgba(201, 168, 76, 0.06)',
+    36→  creamMuted: 'rgba(240, 230, 211, 0.5)',
+    37→  creamFaint: 'rgba(240, 230, 211, 0.25)',
+    38→} as const;
+    39→
+    40→// ═══════════════════════════════════════════════════════════════════════════════
+    41→//  French Locale Helpers
+    42→// ═══════════════════════════════════════════════════════════════════════════════
+    43→const MOIS_FR = [
+    44→  'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+    45→  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
+    46→];
+    47→const JOURS_FR = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    48→
+    49→function formatDateFr(iso: string) {
+    50→  const d = new Date(iso);
+    51→  return `${JOURS_FR[d.getDay()]} ${d.getDate()} ${MOIS_FR[d.getMonth()]} ${d.getFullYear()}`;
+    52→}
+    53→
+    54→function getTimeUntil(target: Date) {
+    55→  const diff = Math.max(0, target.getTime() - Date.now());
+    56→  return {
+    57→    jours: Math.floor(diff / 86400000),
+    58→    heures: Math.floor((diff / 3600000) % 24),
+    59→    minutes: Math.floor((diff / 60000) % 60),
+    60→    secondes: Math.floor((diff / 1000) % 60),
+    61→  };
+    62→}
+    63→
+    64→// ═══════════════════════════════════════════════════════════════════════════════
+    65→//  Animation Variants
+    66→// ═══════════════════════════════════════════════════════════════════════════════
+    67→const fadeInUp: Variants = {
+    68→  hidden: { opacity: 0, y: 30 },
+    69→  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } },
+    70→};
+    71→const stagger: Variants = {
+    72→  hidden: {},
+    73→  visible: { transition: { staggerChildren: 0.12 } },
+    74→};
+    75→const scaleIn: Variants = {
+    76→  hidden: { opacity: 0, scale: 0.8 },
+    77→  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } },
+    78→};
+    79→const fadeOnly: Variants = {
+    80→  hidden: { opacity: 0 },
+    81→  visible: { opacity: 1, transition: { duration: 0.8 } },
+    82→};
+    83→
+    84→// ═══════════════════════════════════════════════════════════════════════════════
+    85→//  Inline SVG Ornaments
+    86→// ═══════════════════════════════════════════════════════════════════════════════
+    87→
+    88→/** Geometric Art Deco border frame — lines, arcs, stepped corners */
+    89→function ArtDecoFrame({ className, gold }: { className?: string; gold: string }) {
+    90→  return (
+    91→    <svg
+    92→      className={cn('w-full h-full', className)}
+    93→      viewBox="0 0 400 600"
+    94→      fill="none"
+    95→      xmlns="http://www.w3.org/2000/svg"
+    96→      preserveAspectRatio="none"
+    97→    >
+    98→      {/* Outer rect */}
+    99→      <rect x="8" y="8" width="384" height="584" stroke={gold} strokeWidth="1" opacity="0.4" />
+   100→      {/* Inner rect */}
+   101→      <rect x="20" y="20" width="360" height="560" stroke={gold} strokeWidth="0.5" opacity="0.25" />
+   102→      {/* Top-left stepped corner */}
+   103→      <path d="M8 48 L8 8 L48 8" stroke={gold} strokeWidth="2" opacity="0.7" />
+   104→      <path d="M16 40 L16 16 L40 16" stroke={gold} strokeWidth="1" opacity="0.5" />
+   105→      {/* Top-right stepped corner */}
+   106→      <path d="M352 8 L392 8 L392 48" stroke={gold} strokeWidth="2" opacity="0.7" />
+   107→      <path d="M360 16 L384 16 L384 40" stroke={gold} strokeWidth="1" opacity="0.5" />
+   108→      {/* Bottom-left stepped corner */}
+   109→      <path d="M8 552 L8 592 L48 592" stroke={gold} strokeWidth="2" opacity="0.7" />
+   110→      <path d="M16 560 L16 584 L40 584" stroke={gold} strokeWidth="1" opacity="0.5" />
+   111→      {/* Bottom-right stepped corner */}
+   112→      <path d="M352 592 L392 592 L392 552" stroke={gold} strokeWidth="2" opacity="0.7" />
+   113→      <path d="M360 584 L384 584 L384 560" stroke={gold} strokeWidth="1" opacity="0.5" />
+   114→      {/* Top center fan arcs */}
+   115→      <path d="M160 8 Q200 40 240 8" stroke={gold} strokeWidth="0.75" opacity="0.5" />
+   116→      <path d="M175 8 Q200 28 225 8" stroke={gold} strokeWidth="0.5" opacity="0.35" />
+   117→      {/* Bottom center fan arcs */}
+   118→      <path d="M160 592 Q200 560 240 592" stroke={gold} strokeWidth="0.75" opacity="0.5" />
+   119→      <path d="M175 592 Q200 572 225 592" stroke={gold} strokeWidth="0.5" opacity="0.35" />
+   120→      {/* Side accents */}
+   121→      <line x1="8" y1="290" x2="28" y2="290" stroke={gold} strokeWidth="1" opacity="0.4" />
+   122→      <line x1="372" y1="290" x2="392" y2="290" stroke={gold} strokeWidth="1" opacity="0.4" />
+   123→      {/* Diamond accents at midpoints */}
+   124→      <path d="M197 2 L200 6 L203 2 L200 -2 Z" fill={gold} opacity="0.4" />
+   125→      <path d="M197 598 L200 594 L203 598 L200 602 Z" fill={gold} opacity="0.4" />
+   126→    </svg>
+   127→  );
+   128→}
+   129→
+   130→/** Art Deco corner ornament for section headers */
+   131→function DecoCorner({ className, gold }: { className?: string; gold: string }) {
+   132→  return (
+   133→    <svg
+   134→      className={cn('w-12 h-12 sm:w-16 sm:h-16', className)}
+   135→      viewBox="0 0 64 64"
+   136→      fill="none"
+   137→      xmlns="http://www.w3.org/2000/svg"
+   138→    >
+   139→      <path d="M0 24 L0 4 L20 4" stroke={gold} strokeWidth="1.5" opacity="0.7" />
+   140→      <path d="M0 32 L0 0 L32 0" stroke={gold} strokeWidth="0.75" opacity="0.35" />
+   141→      <path d="M4 28 L4 8 L24 8" stroke={gold} strokeWidth="1" opacity="0.5" />
+   142→      <line x1="0" y1="16" x2="16" y2="0" stroke={gold} strokeWidth="0.5" opacity="0.25" />
+   143→      <path d="M8 8 L12 8 L8 12 Z" fill={gold} opacity="0.4" />
+   144→      <circle cx="4" cy="4" r="1.5" fill={gold} opacity="0.5" />
+   145→    </svg>
+   146→  );
+   147→}
+   148→
+   149→/** Horizontal gold line with diamond center */
+   150→function GoldDivider({ className, gold, width = 200 }: { className?: string; gold: string; width?: number }) {
+   151→  return (
+   152→    <svg
+   153→      className={className}
+   154→      width={width}
+   155→      height="16"
+   156→      viewBox={`0 0 ${width} 16`}
+   157→      fill="none"
+   158→      xmlns="http://www.w3.org/2000/svg"
+   159→    >
+   160→      <line x1="0" y1="8" x2={String(width / 2 - 10)} y2="8" stroke={gold} strokeWidth="0.75" opacity="0.6" />
+   161→      <line x1={String(width / 2 + 10)} y1="8" x2={String(width)} y2="8" stroke={gold} strokeWidth="0.75" opacity="0.6" />
+   162→      <path
+   163→        d={`M${width / 2} 2 L${width / 2 + 8} 8 L${width / 2} 14 L${width / 2 - 8} 8 Z`}
+   164→        stroke={gold}
+   165→        strokeWidth="0.75"
+   166→        fill="none"
+   167→        opacity="0.7"
+   168→      />
+   169→      <circle cx={String(width / 2)} cy="8" r="2" fill={gold} opacity="0.5" />
+   170→    </svg>
+   171→  );
+   172→}
+   173→
+   174→/** Stylized crown SVG for the cover */
+   175→function CrownMonogram({ monogram, gold }: { monogram: string; gold: string }) {
+   176→  return (
+   177→    <svg width="120" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+   178→      {/* Crown base */}
+   179→      <path d="M20 70 L100 70 L95 85 L25 85 Z" stroke={gold} strokeWidth="1" opacity="0.5" fill={gold} fillOpacity="0.08" />
+   180→      {/* Crown peaks */}
+   181→      <path d="M20 70 L10 40 L30 55 L45 25 L60 50 L75 25 L90 55 L110 40 L100 70" stroke={gold} strokeWidth="1.2" opacity="0.7" fill={gold} fillOpacity="0.05" />
+   182→      {/* Crown jewels */}
+   183→      <circle cx="45" cy="28" r="2.5" fill={gold} opacity="0.6" />
+   184→      <circle cx="60" cy="48" r="3" fill={gold} opacity="0.7" />
+   185→      <circle cx="75" cy="28" r="2.5" fill={gold} opacity="0.6" />
+   186→      {/* Base decorative line */}
+   187→      <line x1="30" y1="78" x2="90" y2="78" stroke={gold} strokeWidth="0.5" opacity="0.3" />
+   188→      {/* Monogram below crown */}
+   189→      <text
+   190→        x="60" y="96"
+   191→        textAnchor="middle"
+   192→        fontFamily="serif"
+   193→        fontSize="14"
+   194→        fill={gold}
+   195→        opacity="0.8"
+   196→        letterSpacing="4"
+   197→      >
+   198→        {monogram}
+   199→      </text>
+   200→    </svg>
+   201→  );
+   202→}
+   203→
+   204→// ═══════════════════════════════════════════════════════════════════════════════
+   205→//  Main Component
+   206→// ═══════════════════════════════════════════════════════════════════════════════
+   207→export function NoirEtOrTemplate({ template: t, data, mode = 'preview', onClose, eventSlug }: SpecializedTemplateProps) {
+   208→  const targetDate = useMemo(() => new Date(data.eventDate), [data.eventDate]);
+   209→  const [countdown, setCountdown] = useState(getTimeUntil(targetDate));
+   210→  const [rsvpName, setRsvpName] = useState('');
+   211→  const [rsvpGuests, setRsvpGuests] = useState('1');
+   212→  const [rsvpNote, setRsvpNote] = useState('');
+   213→  const [rsvpStatus, setRsvpStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+   214→  const [rsvpError, setRsvpError] = useState<string | null>(null);
+   215→
+   216→  // Gold color from template or fallback
+   217→  const gold = t.goldColor ?? COLORS.gold;
+   218→  const cream = COLORS.cream;
+   219→
+   220→  // Countdown — update every second
+   221→  useEffect(() => {
+   222→    const iv = setInterval(() => setCountdown(getTimeUntil(targetDate)), 1000);
+   223→    return () => clearInterval(iv);
+   224→  }, [targetDate]);
+   225→
+   226→  // Monogram
+   227→  const monogram = data.partner1Name[0] + '&' + data.partner2Name[0];
+   228→
+   229→  // RSVP handler
+   230→  const handleRsvp = useCallback(async (e: React.FormEvent) => {
+   231→    e.preventDefault();
+   232→    if (mode === 'preview') {
+   233→      setRsvpStatus('loading');
+   234→      setTimeout(() => setRsvpStatus('success'), 800);
+   235→      return;
+   236→    }
+   237→    if (!eventSlug) {
+   238→      setRsvpStatus('error');
+   239→      setRsvpError("Slug de l'événement manquant");
+   240→      return;
+   241→    }
+   242→    setRsvpStatus('loading');
+   243→    setRsvpError(null);
+   244→    try {
+   245→      const res = await fetch(`/api/events/${eventSlug}/rsvp`, {
+   246→        method: 'POST',
+   247→        headers: { 'Content-Type': 'application/json' },
+   248→        body: JSON.stringify({
+   249→          name: rsvpName,
+   250→          plusOnes: parseInt(rsvpGuests, 10) - 1,
+   251→          note: rsvpNote,
+   252→        }),
+   253→      });
+   254→      if (!res.ok) {
+   255→        const body = await res.json().catch(() => ({}));
+   256→        throw new Error(body.error ?? `Erreur ${res.status}`);
+   257→      }
+   258→      setRsvpStatus('success');
+   259→    } catch (err) {
+   260→      setRsvpStatus('error');
+   261→      setRsvpError(err instanceof Error ? err.message : 'Une erreur est survenue');
+   262→    }
+   263→  }, [mode, eventSlug, rsvpName, rsvpGuests, rsvpNote]);
+   264→
+   265→  return (
+   266→    <div className="min-h-screen" style={{ background: COLORS.black, fontFamily: 'Georgia, serif' }}>
+   267→      {/* ─── Close Button (preview) ────────────────────────────────────── */}
+   268→      {mode === 'preview' && onClose && (
+   269→        <div className="fixed top-4 right-4 z-50">
+   270→          <button
+   271→            onClick={onClose}
+   272→            className="flex items-center justify-center rounded-full p-2 backdrop-blur-sm transition-all hover:opacity-80"
+   273→            style={{ background: 'rgba(201, 168, 76, 0.15)', border: `1px solid ${gold}30` }}
+   274→            aria-label="Fermer"
+   275→          >
+   276→            <X className="h-5 w-5" style={{ color: cream }} />
+   277→          </button>
+   278→        </div>
+   279→      )}
+   280→
+   281→      {/* ══════════════════════════════════════════════════════════════════
+   282→          SECTION 1 — COVER
+   283→          ══════════════════════════════════════════════════════════════════ */}
+   284→      <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
+   285→        {/* Background layers */}
+   286→        <div className="absolute inset-0" style={{ background: COLORS.black }} />
+   287→        {/* Subtle gold radial gradient overlay */}
+   288→        <div
+   289→          className="absolute inset-0"
+   290→          style={{
+   291→            background: `radial-gradient(ellipse at center, rgba(201,168,76,0.08) 0%, transparent 70%)`,
+   292→          }}
+   293→        />
+   294→        {/* Art Deco frame */}
+   295→        <div className="absolute inset-4 sm:inset-8 pointer-events-none">
+   296→          <ArtDecoFrame gold={gold} />
+   297→        </div>
+   298→
+   299→        <div className="relative z-10 flex flex-col items-center justify-center px-6 text-center">
+   300→          {/* Crown monogram */}
+   301→          <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }}>
+   302→            <CrownMonogram monogram={monogram} gold={gold} />
+   303→          </motion.div>
+   304→
+   305→          {/* Names */}
+   306→          <motion.div initial="hidden" animate="visible" variants={stagger} className="mt-6 flex flex-col items-center">
+   307→            <motion.p
+   308→              variants={fadeInUp}
+   309→              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl italic"
+   310→              style={{ color: cream, textShadow: `0 0 40px ${gold}20` }}
+   311→            >
+   312→              {data.partner1Name}
+   313→            </motion.p>
+   314→            <motion.div variants={scaleIn} className="my-3 flex items-center gap-3">
+   315→              <div className="h-px w-10 sm:w-16" style={{ background: `${gold}60` }} />
+   316→              <span className="text-2xl sm:text-3xl italic" style={{ color: gold }}>&amp;</span>
+   317→              <div className="h-px w-10 sm:w-16" style={{ background: `${gold}60` }} />
+   318→            </motion.div>
+   319→            <motion.p
+   320→              variants={fadeInUp}
+   321→              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl italic"
+   322→              style={{ color: cream, textShadow: `0 0 40px ${gold}20` }}
+   323→            >
+   324→              {data.partner2Name}
+   325→            </motion.p>
+   326→          </motion.div>
+   327→
+   328→          {/* Gold divider */}
+   329→          <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 0.8 }} className="mt-8">
+   330→            <GoldDivider gold={gold} width={180} />
+   331→          </motion.div>
+   332→
+   333→          {/* Date */}
+   334→          <motion.p
+   335→            initial={{ opacity: 0, y: 10 }}
+   336→            animate={{ opacity: 1, y: 0 }}
+   337→            transition={{ duration: 0.6, delay: 1 }}
+   338→            className="mt-4 text-sm sm:text-base tracking-widest uppercase"
+   339→            style={{ color: COLORS.creamMuted }}
+   340→          >
+   341→            {formatDateFr(data.eventDate)}
+   342→          </motion.p>
+   343→
+   344→          {/* Scroll indicator */}
+   345→          <motion.div
+   346→            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+   347→            animate={{ y: [0, 8, 0] }}
+   348→            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+   349→          >
+   350→            <ChevronDown className="h-6 w-6" style={{ color: gold, opacity: 0.4 }} strokeWidth={1.5} />
+   351→          </motion.div>
+   352→        </div>
+   353→      </section>
+   354→
+   355→      {/* ══════════════════════════════════════════════════════════════════
+   356→          SECTION 2 — COUNTDOWN
+   357→          ══════════════════════════════════════════════════════════════════ */}
+   358→      <section className="relative flex min-h-screen flex-col items-center justify-center" style={{ background: COLORS.black }}>
+   359→        {/* Subtle top/bottom border lines */}
+   360→        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${gold}40, transparent)` }} />
+   361→        <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${gold}40, transparent)` }} />
+   362→
+   363→        <motion.div
+   364→          variants={stagger}
+   365→          initial="hidden"
+   366→          whileInView="visible"
+   367→          viewport={{ once: true, margin: '-60px' }}
+   368→          className="w-full max-w-lg px-6 text-center"
+   369→        >
+   370→          <motion.p variants={fadeInUp} className="text-xs uppercase tracking-[0.3em] mb-2" style={{ color: gold }}>
+   371→            Compte à rebours
+   372→          </motion.p>
+   373→          <motion.div variants={scaleIn} className="mb-10">
+   374→            <GoldDivider gold={gold} width={120} />
+   375→          </motion.div>
+   376→
+   377→          <motion.div variants={stagger} className="grid grid-cols-4 gap-3 sm:gap-5">
+   378→            {[
+   379→              { value: countdown.jours, label: 'Jours' },
+   380→              { value: countdown.heures, label: 'Heures' },
+   381→              { value: countdown.minutes, label: 'Minutes' },
+   382→              { value: countdown.secondes, label: 'Secondes' },
+   383→            ].map((unit) => (
+   384→              <motion.div key={unit.label} variants={scaleIn}>
+   385→                <div
+   386→                  className="flex flex-col items-center p-3 sm:p-4"
+   387→                  style={{
+   388→                    border: `1px solid ${gold}30`,
+   389→                    background: `linear-gradient(135deg, ${gold}08, ${gold}03)`,
+   390→                  }}
+   391→                >
+   392→                  <div
+   393→                    className="flex items-center justify-center w-full h-full pb-2"
+   394→                    style={{ border: `1px solid ${gold}15` }}
+   395→                  >
+   396→                    <span
+   397→                      className="text-2xl sm:text-3xl md:text-4xl tabular-nums"
+   398→                      style={{ color: gold }}
+   399→                    >
+   400→                      {String(unit.value).padStart(2, '0')}
+   401→                    </span>
+   402→                  </div>
+   403→                  <span className="mt-2 text-[10px] uppercase tracking-[0.2em]" style={{ color: COLORS.creamFaint }}>
+   404→                    {unit.label}
+   405→                  </span>
+   406→                </div>
+   407→              </motion.div>
+   408→            ))}
+   409→          </motion.div>
+   410→        </motion.div>
+   411→      </section>
+   412→
+   413→      {/* ══════════════════════════════════════════════════════════════════
+   414→          SECTION 3 — INVITATION TEXT
+   415→          ══════════════════════════════════════════════════════════════════ */}
+   416→      <section className="relative flex min-h-screen flex-col items-center justify-center px-6" style={{ background: `linear-gradient(180deg, ${COLORS.black} 0%, ${COLORS.burgundy} 50%, ${COLORS.black} 100%)` }}>
+   417→        <div className="max-w-md w-full text-center">
+   418→          <motion.div
+   419→            variants={stagger}
+   420→            initial="hidden"
+   421→            whileInView="visible"
+   422→            viewport={{ once: true, margin: '-60px' }}
+   423→          >
+   424→            {/* Section heading with deco corners */}
+   425→            <motion.div variants={fadeInUp} className="relative">
+   426→              <DecoCorner gold={gold} className="absolute -top-2 -left-2 rotate-0" />
+   427→              <DecoCorner gold={gold} className="absolute -top-2 -right-2 -scale-x-100" />
+   428→              <p className="text-xs uppercase tracking-[0.3em] mb-1" style={{ color: gold }}>
+   429→                Vous êtes invités
+   430→              </p>
+   431→            </motion.div>
+   432→
+   433→            <motion.div variants={scaleIn} className="my-8">
+   434→              <GoldDivider gold={gold} width={160} />
+   435→            </motion.div>
+   436→
+   437→            {data.message && (
+   438→              <motion.p variants={fadeInUp} className="text-base italic leading-relaxed" style={{ color: COLORS.creamMuted }}>
+   439→                « {data.message} »
+   440→              </motion.p>
+   441→            )}
+   442→
+   443→            {data.parents && (
+   444→              <motion.p variants={fadeInUp} className="mt-4 text-xs uppercase tracking-wider" style={{ color: COLORS.creamFaint }}>
+   445→                {data.parents}
+   446→              </motion.p>
+   447→            )}
+   448→
+   449→            {/* Venue details */}
+   450→            {data.venueName && (
+   451→              <motion.div variants={fadeInUp} className="mt-10">
+   452→                <p className="text-2xl italic" style={{ color: cream, opacity: 0.9 }}>
+   453→                  {data.venueName}
+   454→                </p>
+   455→              </motion.div>
+   456→            )}
+   457→
+   458→            {data.venueAddress && (
+   459→              <motion.div variants={fadeInUp} className="mt-3 flex items-center justify-center gap-2">
+   460→                <MapPin className="h-4 w-4" style={{ color: gold, opacity: 0.6 }} />
+   461→                <span className="text-sm" style={{ color: COLORS.creamMuted }}>
+   462→                  {data.venueAddress}
+   463→                </span>
+   464→              </motion.div>
+   465→            )}
+   466→
+   467→            {data.eventTime && (
+   468→              <motion.div variants={fadeInUp} className="mt-3 flex items-center justify-center gap-2">
+   469→                <Clock className="h-4 w-4" style={{ color: gold, opacity: 0.6 }} />
+   470→                <span className="text-sm" style={{ color: COLORS.creamMuted }}>
+   471→                  {data.eventTime}
+   472→                </span>
+   473→              </motion.div>
+   474→            )}
+   475→
+   476→            {data.dressCode && (
+   477→              <motion.div variants={fadeInUp} className="mt-3 flex items-center justify-center gap-2">
+   478→                <Sparkles className="h-4 w-4" style={{ color: gold, opacity: 0.6 }} />
+   479→                <span className="text-sm" style={{ color: COLORS.creamMuted }}>
+   480→                  {data.dressCode}
+   481→                </span>
+   482→              </motion.div>
+   483→            )}
+   484→          </motion.div>
+   485→        </div>
+   486→      </section>
+   487→
+   488→      {/* ══════════════════════════════════════════════════════════════════
+   489→          SECTION 4 — SCHEDULE / TIMELINE
+   490→          ══════════════════════════════════════════════════════════════════ */}
+   491→      <section className="relative flex min-h-screen flex-col items-center justify-center px-6" style={{ background: COLORS.black }}>
+   492→        <div className="max-w-sm w-full text-center">
+   493→          <motion.div
+   494→            variants={stagger}
+   495→            initial="hidden"
+   496→            whileInView="visible"
+   497→            viewport={{ once: true, margin: '-60px' }}
+   498→          >
+   499→            <motion.p variants={fadeInUp} className="text-xs uppercase tracking-[0.3em] mb-2" style={{ color: gold }}>
+   500→              Programme de la soirée
+   501→            </motion.p>
+   502→            <motion.div variants={scaleIn} className="mb-10">
+   503→              <GoldDivider gold={gold} width={140} />
+   504→            </motion.div>
+   505→
+   506→            {data.schedule && data.schedule.length > 0 ? (
+   507→              <motion.div variants={stagger} className="space-y-0 text-left">
+   508→                {data.schedule.map((item, i) => (
+   509→                  <motion.div
+   510→                    key={i}
+   511→                    variants={fadeInUp}
+   512→                    className="relative flex items-start gap-4 py-5"
+   513→                    style={{
+   514→                      borderBottom: i < data.schedule!.length - 1 ? `1px solid ${gold}15` : 'none',
+   515→                    }}
+   516→                  >
+   517→                    {/* Timeline dot and line */}
+   518→                    <div className="flex flex-col items-center pt-1">
+   519→                      <div
+   520→                        className="h-3 w-3 rounded-full"
+   521→                        style={{
+   522→                          border: `1.5px solid ${gold}`,
+   523→                          background: i === 0 ? gold : 'transparent',
+   524→                          boxShadow: i === 0 ? `0 0 12px ${gold}60` : 'none',
+   525→                        }}
+   526→                      />
+   527→                      {i < data.schedule!.length - 1 && (
+   528→                        <div className="w-px flex-1 mt-2" style={{ background: `${gold}20` }} />
+   529→                      )}
+   530→                    </div>
+   531→                    {/* Content */}
+   532→                    <div className="flex-1 -mt-1">
+   533→                      <p className="text-xs uppercase tracking-wider" style={{ color: gold }}>
+   534→                        {item.time}
+   535→                      </p>
+   536→                      <p className="mt-1 text-sm" style={{ color: COLORS.creamMuted }}>
+   537→                        {item.label}
+   538→                      </p>
+   539→                    </div>
+   540→                  </motion.div>
+   541→                ))}
+   542→              </motion.div>
+   543→            ) : (
+   544→              <motion.p variants={fadeInUp} className="text-sm italic" style={{ color: COLORS.creamFaint }}>
+   545→                Le programme sera bientôt disponible.
+   546→              </motion.p>
+   547→            )}
+   548→          </motion.div>
+   549→        </div>
+   550→      </section>
+   551→
+   552→      {/* ══════════════════════════════════════════════════════════════════
+   553→          SECTION 5 — RSVP
+   554→          ══════════════════════════════════════════════════════════════════ */}
+   555→      <section
+   556→        className="relative flex min-h-screen flex-col items-center justify-center px-6"
+   557→        style={{ background: `linear-gradient(180deg, ${COLORS.black} 0%, ${COLORS.burgundy} 50%, ${COLORS.black} 100%)` }}
+   558→      >
+   559→        <div className="max-w-sm w-full text-center">
+   560→          <motion.div
+   561→            variants={stagger}
+   562→            initial="hidden"
+   563→            whileInView="visible"
+   564→            viewport={{ once: true, margin: '-60px' }}
+   565→          >
+   566→            <motion.p variants={fadeInUp} className="text-xs uppercase tracking-[0.3em] mb-2" style={{ color: gold }}>
+   567→              Confirmez votre présence
+   568→            </motion.p>
+   569→            <motion.div variants={scaleIn} className="mb-8">
+   570→              <GoldDivider gold={gold} width={140} />
+   571→            </motion.div>
+   572→
+   573→            {rsvpStatus === 'success' ? (
+   574→              <motion.div
+   575→                initial={{ opacity: 0, scale: 0.8 }}
+   576→                animate={{ opacity: 1, scale: 1 }}
+   577→                className="flex flex-col items-center gap-3 py-8"
+   578→              >
+   579→                <div
+   580→                  className="flex h-16 w-16 items-center justify-center rounded-full"
+   581→                  style={{ background: `${gold}15`, border: `1px solid ${gold}30` }}
+   582→                >
+   583→                  <Check className="h-7 w-7" style={{ color: gold }} />
+   584→                </div>
+   585→                <p className="text-xl italic" style={{ color: cream, opacity: 0.9 }}>Merci !</p>
+   586→                <p className="text-sm" style={{ color: COLORS.creamMuted }}>
+   587→                  Votre réponse a été enregistrée.
+   588→                </p>
+   589→              </motion.div>
+   590→            ) : (
+   591→              <motion.div variants={fadeInUp}>
+   592→                {rsvpStatus === 'error' && (
+   593→                  <motion.div
+   594→                    initial={{ opacity: 0, y: -8 }}
+   595→                    animate={{ opacity: 1, y: 0 }}
+   596→                    className="mb-4 flex items-start gap-2 rounded-lg px-4 py-3 text-left text-sm"
+   597→                    style={{
+   598→                      background: 'rgba(180, 40, 60, 0.15)',
+   599→                      border: `1px solid rgba(180, 40, 60, 0.3)`,
+   600→                      color: '#F5B0B0',
+   601→                    }}
+   602→                  >
+   603→                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+   604→                    <span>{rsvpError ?? 'Une erreur est survenue. Réessayez.'}</span>
+   605→                  </motion.div>
+   606→                )}
+   607→
+   608→                <form
+   609→                  onSubmit={handleRsvp}
+   610→                  className="space-y-5 text-left"
+   611→                  style={{
+   612→                    border: `1px solid ${gold}25`,
+   613→                    background: `linear-gradient(135deg, rgba(201,168,76,0.04), rgba(201,168,76,0.01))`,
+   614→                    padding: '1.5rem',
+   615→                    borderRadius: '0.25rem',
+   616→                  }}
+   617→                >
+   618→                  <div>
+   619→                    <label className="mb-1.5 block text-[11px] uppercase tracking-wider" style={{ color: COLORS.creamMuted }}>
+   620→                      Nom complet
+   621→                    </label>
+   622→                    <Input
+   623→                      required
+   624→                      value={rsvpName}
+   625→                      onChange={(e) => setRsvpName(e.target.value)}
+   626→                      placeholder="Votre nom"
+   627→                      className="border-gray-700 bg-transparent placeholder:text-gray-600 focus-visible:border-yellow-700 focus-visible:ring-yellow-700/30"
+   628→                      style={{ color: cream }}
+   629→                    />
+   630→                  </div>
+   631→
+   632→                  <div>
+   633→                    <label className="mb-1.5 block text-[11px] uppercase tracking-wider" style={{ color: COLORS.creamMuted }}>
+   634→                      Nombre de convives
+   635→                    </label>
+   636→                    <select
+   637→                      required
+   638→                      value={rsvpGuests}
+   639→                      onChange={(e) => setRsvpGuests(e.target.value)}
+   640→                      className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none"
+   641→                      style={{ color: cream, borderColor: `${gold}30` }}
+   642→                    >
+   643→                      {[1, 2, 3, 4, 5].map((n) => (
+   644→                        <option key={n} value={n} style={{ background: COLORS.black, color: cream }}>
+   645→                          {n}
+   646→                        </option>
+   647→                      ))}
+   648→                    </select>
+   649→                  </div>
+   650→
+   651→                  <div>
+   652→                    <label className="mb-1.5 block text-[11px] uppercase tracking-wider" style={{ color: COLORS.creamMuted }}>
+   653→                      Allergies ou régime spécial
+   654→                    </label>
+   655→                    <Textarea
+   656→                      value={rsvpNote}
+   657→                      onChange={(e) => setRsvpNote(e.target.value)}
+   658→                      placeholder="Optionnel"
+   659→                      className="border-gray-700 bg-transparent placeholder:text-gray-600 min-h-[60px] focus-visible:border-yellow-700 focus-visible:ring-yellow-700/30"
+   660→                      style={{ color: cream }}
+   661→                    />
+   662→                  </div>
+   663→
+   664→                  <Button
+   665→                    type="submit"
+   666→                    disabled={rsvpStatus === 'loading'}
+   667→                    className="w-full rounded-none py-5 text-xs font-semibold uppercase tracking-[0.2em] text-black transition-all hover:opacity-90"
+   668→                    style={{
+   669→                      background: gold,
+   670→                      boxShadow: `0 8px 30px ${gold}30`,
+   671→                    }}
+   672→                  >
+   673→                    {rsvpStatus === 'loading' ? (
+   674→                      <span className="flex items-center justify-center gap-2">
+   675→                        <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black/20 border-t-black" />
+   676→                        Envoi en cours...
+   677→                      </span>
+   678→                    ) : (
+   679→                      'Confirmer'
+   680→                    )}
+   681→                  </Button>
+   682→                </form>
+   683→              </motion.div>
+   684→            )}
+   685→          </motion.div>
+   686→        </div>
+   687→      </section>
+   688→
+   689→      {/* ══════════════════════════════════════════════════════════════════
+   690→          SECTION 6 — GALLERY
+   691→          ══════════════════════════════════════════════════════════════════ */}
+   692→      <section className="relative flex min-h-screen flex-col items-center justify-center px-6" style={{ background: COLORS.black }}>
+   693→        <div className="max-w-md w-full text-center">
+   694→          <motion.div
+   695→            variants={stagger}
+   696→            initial="hidden"
+   697→            whileInView="visible"
+   698→            viewport={{ once: true, margin: '-60px' }}
+   699→          >
+   700→            <motion.p variants={fadeInUp} className="text-xs uppercase tracking-[0.3em] mb-2" style={{ color: gold }}>
+   701→              Nos moments
+   702→            </motion.p>
+   703→            <motion.div variants={scaleIn} className="mb-10">
+   704→              <GoldDivider gold={gold} width={120} />
+   705→            </motion.div>
+   706→
+   707→            <motion.div variants={stagger} className="grid grid-cols-2 gap-4">
+   708→              {(data.galleryImages && data.galleryImages.length > 0
+   709→                ? data.galleryImages
+   710→                : Array.from({ length: 4 }, (_, i) => null)
+   711→              ).map((src, i) => (
+   712→                <motion.div
+   713→                  key={i}
+   714→                  variants={scaleIn}
+   715→                  className="aspect-[3/4] relative overflow-hidden"
+   716→                  style={{
+   717→                    border: `1px solid ${gold}30`,
+   718→                    background: `linear-gradient(135deg, ${gold}06, ${gold}02)`,
+   719→                  }}
+   720→                >
+   721→                  {src ? (
+   722→                    <img
+   723→                      src={src}
+   724→                      alt={`Galerie ${i + 1}`}
+   725→                      className="h-full w-full object-cover"
+   726→                      style={{ filter: 'sepia(0.15) contrast(1.05)' }}
+   727→                    />
+   728→                  ) : (
+   729→                    <div className="flex h-full w-full items-center justify-center">
+   730→                      <svg
+   731→                        width="48"
+   732→                        height="48"
+   733→                        viewBox="0 0 48 48"
+   734→                        fill="none"
+   735→                        xmlns="http://www.w3.org/2000/svg"
+   736→                      >
+   737→                        <rect
+   738→                          x="4" y="4"
+   739→                          width="40" height="40"
+   740→                          stroke={gold}
+   741→                          strokeWidth="0.5"
+   742→                          opacity="0.3"
+   743→                          fill="none"
+   744→                        />
+   745→                        <circle cx="16" cy="16" r="4" stroke={gold} strokeWidth="0.5" opacity="0.3" fill="none" />
+   746→                        <path d="M4 34 L16 22 L24 30 L32 20 L44 34" stroke={gold} strokeWidth="0.5" opacity="0.2" fill="none" />
+   747→                      </svg>
+   748→                    </div>
+   749→                  )}
+   750→                  {/* Gold inner frame accent */}
+   751→                  <div
+   752→                    className="absolute inset-2 pointer-events-none"
+   753→                    style={{ border: `0.5px solid ${gold}15` }}
+   754→                  />
+   755→                </motion.div>
+   756→              ))}
+   757→            </motion.div>
+   758→          </motion.div>
+   759→        </div>
+   760→      </section>
+   761→
+   762→      {/* ══════════════════════════════════════════════════════════════════
+   763→          SECTION 7 — DIRECTIONS
+   764→          ══════════════════════════════════════════════════════════════════ */}
+   765→      <section
+   766→        className="relative flex min-h-screen flex-col items-center justify-center px-6"
+   767→        style={{ background: `linear-gradient(180deg, ${COLORS.black} 0%, ${COLORS.burgundy} 50%, ${COLORS.black} 100%)` }}
+   768→      >
+   769→        <div className="max-w-md w-full text-center">
+   770→          <motion.div
+   771→            variants={stagger}
+   772→            initial="hidden"
+   773→            whileInView="visible"
+   774→            viewport={{ once: true, margin: '-60px' }}
+   775→          >
+   776→            <motion.p variants={fadeInUp} className="text-xs uppercase tracking-[0.3em] mb-2" style={{ color: gold }}>
+   777→              Comment nous trouver
+   778→            </motion.p>
+   779→            <motion.div variants={scaleIn} className="mb-8">
+   780→              <GoldDivider gold={gold} width={140} />
+   781→            </motion.div>
+   782→
+   783→            {/* Map placeholder */}
+   784→            <motion.div
+   785→              variants={fadeInUp}
+   786→              className="relative mb-8 aspect-video w-full overflow-hidden"
+   787→              style={{
+   788→                border: `1px solid ${gold}30`,
+   789→                background: `linear-gradient(135deg, rgba(201,168,76,0.06), rgba(201,168,76,0.02))`,
+   790→              }}
+   791→            >
+   792→              <div className="flex h-full w-full flex-col items-center justify-center gap-3">
+   793→                <MapPin className="h-8 w-8" style={{ color: gold, opacity: 0.4 }} />
+   794→                <p className="text-xs uppercase tracking-wider" style={{ color: COLORS.creamFaint }}>
+   795→                  {data.venueName ?? 'Lieu de la cérémonie'}
+   796→                </p>
+   797→                {data.venueAddress && (
+   798→                  <p className="text-[11px]" style={{ color: `${COLORS.creamFaint}` }}>
+   799→                    {data.venueAddress}
+   800→                  </p>
+   801→                )}
+   802→              </div>
+   803→              {/* Corner ornaments on the map frame */}
+   804→              <DecoCorner gold={gold} className="absolute top-1 left-1 w-8 h-8" />
+   805→              <DecoCorner gold={gold} className="absolute top-1 right-1 w-8 h-8 -scale-x-100" />
+   806→              <DecoCorner gold={gold} className="absolute bottom-1 left-1 w-8 h-8 -scale-y-100" />
+   807→              <DecoCorner gold={gold} className="absolute bottom-1 right-1 w-8 h-8 -scale-x-100 -scale-y-100" />
+   808→            </motion.div>
+   809→
+   810→            {/* Directions text */}
+   811→            <motion.div variants={fadeInUp} className="space-y-3 text-left">
+   812→              <div className="flex items-start gap-3 p-3" style={{ borderLeft: `2px solid ${gold}40` }}>
+   813→                <p className="text-sm leading-relaxed" style={{ color: COLORS.creamMuted }}>
+   814→                  {data.venueName && (
+   815→                    <>
+   816→                      <span className="font-semibold" style={{ color: cream }}>{data.venueName}</span>
+   817→                      <br />
+   818→                    </>
+   819→                  )}
+   820→                  {data.venueAddress ?? 'L\'adresse complète sera communiquée prochainement.'}
+   821→                </p>
+   822→              </div>
+   823→              <p className="text-xs italic" style={{ color: COLORS.creamFaint }}>
+   824→                Un plan détaillé sera envoyé avec votre invitation.
+   825→              </p>
+   826→            </motion.div>
+   827→          </motion.div>
+   828→        </div>
+   829→      </section>
+   830→
+   831→      {/* ══════════════════════════════════════════════════════════════════
+   832→          SECTION 8 — FOOTER
+   833→          ══════════════════════════════════════════════════════════════════ */}
+   834→      <section className="relative flex min-h-screen flex-col items-center justify-center px-6" style={{ background: COLORS.black }}>
+   835→        {/* Subtle radial glow */}
+   836→        <div
+   837→          className="absolute inset-0"
+   838→          style={{ background: `radial-gradient(ellipse at center, ${gold}06 0%, transparent 60%)` }}
+   839→        />
+   840→        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${gold}40, transparent)` }} />
+   841→
+   842→        <motion.div
+   843→          variants={stagger}
+   844→          initial="hidden"
+   845→          whileInView="visible"
+   846→          viewport={{ once: true, margin: '-60px' }}
+   847→          className="relative z-10 text-center"
+   848→        >
+   849→          <motion.div variants={scaleIn}>
+   850→            <GoldDivider gold={gold} width={160} />
+   851→          </motion.div>
+   852→
+   853→          <motion.div variants={fadeInUp} className="mt-10 flex flex-col items-center gap-4">
+   854→            <div
+   855→              className="flex h-16 w-16 items-center justify-center rounded-full"
+   856→              style={{ border: `1px solid ${gold}30`, background: `${gold}08` }}
+   857→            >
+   858→              <Heart className="h-7 w-7" style={{ color: gold, opacity: 0.7 }} fill={gold} fillOpacity={0.3} strokeWidth={1.5} />
+   859→            </div>
+   860→
+   861→            <p className="text-3xl sm:text-4xl italic" style={{ color: cream, opacity: 0.9 }}>
+   862→              Merci
+   863→            </p>
+   864→
+   865→            <p className="text-sm" style={{ color: COLORS.creamMuted }}>
+   866→              Avec tout notre amour,
+   867→              <br />
+   868→              <span className="italic" style={{ color: cream, opacity: 0.85 }}>{data.partner1Name} &amp; {data.partner2Name}</span>
+   869→            </p>
+   870→          </motion.div>
+   871→
+   872→          <motion.div variants={fadeOnly} className="mt-16">
+   873→            <p className="text-[10px] uppercase tracking-[0.25em]" style={{ color: `${gold}50` }}>
+   874→              Créé avec Daawa
+   875→            </p>
+   876→          </motion.div>
+   877→        </motion.div>
+   878→      </section>
+   879→    </div>
+   880→  );
+   881→}
+   882→
