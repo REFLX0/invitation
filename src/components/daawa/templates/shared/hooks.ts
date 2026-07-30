@@ -62,7 +62,7 @@ export function useRsvpForm(maxGuests: number, mealChoices: string[], eventId?: 
   }, [])
 
   const updateGuest = useCallback(
-    (index: number, field: keyof RsvpGuest, value: string | boolean | null) => {
+    (index: number, field: string, value: string | boolean | null) => {
       setGuests((prev) =>
         prev.map((g, i) => (i === index ? { ...g, [field]: value } : g)),
       )

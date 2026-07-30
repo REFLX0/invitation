@@ -104,7 +104,7 @@ export function PremiumForm({ config, onChange }: PremiumFormProps) {
                   className="size-8 rounded-full shadow-sm ring-2 ring-offset-2 ring-offset-background transition-all"
                   style={{
                     backgroundColor: c.value,
-                    ringColor: config.waxSealColor === c.value ? c.value : 'transparent',
+                    boxShadow: config.waxSealColor === c.value ? `0 0 0 2px var(--background), 0 0 0 4px ${c.value}` : 'none',
                   }}
                 />
                 <span className="text-[10px] text-muted-foreground">{c.name}</span>

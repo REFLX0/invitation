@@ -12,7 +12,7 @@ import {
   Palette, LayoutTemplate, User, Gift, Eye, PartyPopper,
 } from 'lucide-react'
 import {
-  type Tier, type TierConfig, type Template,
+  type Tier, type TierConfig, type Template, type PremiumTierConfig, type LuxeTierConfig,
   TEMPLATES, TIER_META, getDefaultConfig,
 } from './wizard/tier-config-types'
 import { TEMPLATE_REGISTRY } from './templates/template-registry'
@@ -230,8 +230,8 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
                 {step === 2 && selectedTemplate && (
                   <div className="max-h-[calc(85vh-260px)] overflow-y-auto pr-1">
                     {currentTier === 'Classique' && <ClassicForm config={tierConfig} onChange={updateTierConfig} />}
-                    {currentTier === 'Premium' && <PremiumForm config={tierConfig} onChange={updateTierConfig} />}
-                    {currentTier === 'Luxe' && <LuxeForm config={tierConfig} onChange={updateTierConfig} />}
+                    {currentTier === 'Premium' && <PremiumForm config={tierConfig as PremiumTierConfig} onChange={updateTierConfig} />}
+                    {currentTier === 'Luxe' && <LuxeForm config={tierConfig as LuxeTierConfig} onChange={updateTierConfig} />}
                   </div>
                 )}
 
@@ -249,11 +249,11 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
                         <div className="flex justify-between text-sm"><span className="text-muted-foreground">Formule</span><span className={TIER_META[currentTier].color + ' font-medium'}>{TIER_META[currentTier].label}</span></div>
                         <div className="flex justify-between text-sm"><span className="text-muted-foreground">Lieu</span><span className="font-medium text-right max-w-[60%] truncate">{venueName}</span></div>
                         <div className="flex justify-between text-sm"><span className="text-muted-foreground">Adresse</span><span className="font-medium text-right max-w-[60%] truncate">{venueAddress}</span></div>
-                        {(tierConfig as Record<string, string>).ceremonyTime && (
-                          <div className="flex justify-between text-sm"><span className="text-muted-foreground">Ceremonie</span><span className="font-medium">{(tierConfig as Record<string, string>).ceremonyTime}</span></div>
+                        {(tierConfig as unknown as Record<string, string>).ceremonyTime && (
+                          <div className="flex justify-between text-sm"><span className="text-muted-foreground">Ceremonie</span><span className="font-medium">{(tierConfig as unknown as Record<string, string>).ceremonyTime}</span></div>
                         )}
-                        {(tierConfig as Record<string, string>).receptionTime && (
-                          <div className="flex justify-between text-sm"><span className="text-muted-foreground">Reception</span><span className="font-medium">{(tierConfig as Record<string, string>).receptionTime}</span></div>
+                        {(tierConfig as unknown as Record<string, string>).receptionTime && (
+                          <div className="flex justify-between text-sm"><span className="text-muted-foreground">Reception</span><span className="font-medium">{(tierConfig as unknown as Record<string, string>).receptionTime}</span></div>
                         )}
                       </div>
                     </div>
