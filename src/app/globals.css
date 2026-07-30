@@ -8,6 +8,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-cormorant);
+  --font-script: var(--font-great-vibes);
+  --font-display: var(--font-cinzel);
+  --font-arabic: var(--font-amiri);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -44,72 +48,89 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --radius: 0.75rem;
+  --background: oklch(0.98 0.005 80);
+  --foreground: oklch(0.22 0.02 30);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.22 0.02 30);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.22 0.02 30);
+  --primary: oklch(0.38 0.12 15);
+  --primary-foreground: oklch(0.98 0.005 80);
+  --secondary: oklch(0.96 0.008 80);
+  --secondary-foreground: oklch(0.22 0.02 30);
+  --muted: oklch(0.96 0.008 80);
+  --muted-foreground: oklch(0.50 0.01 30);
+  --accent: oklch(0.96 0.008 80);
+  --accent-foreground: oklch(0.22 0.02 30);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.90 0.01 80);
+  --input: oklch(0.90 0.01 80);
+  --ring: oklch(0.70 0.05 30);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.985 0.005 80);
+  --sidebar-foreground: oklch(0.22 0.02 30);
+  --sidebar-primary: oklch(0.38 0.12 15);
+  --sidebar-primary-foreground: oklch(0.98 0.005 80);
+  --sidebar-accent: oklch(0.96 0.008 80);
+  --sidebar-accent-foreground: oklch(0.22 0.02 30);
+  --sidebar-border: oklch(0.90 0.01 80);
+  --sidebar-ring: oklch(0.70 0.05 30);
+
+  /* ── Daawa brand tokens ──────────────────────────── */
+  --daawa-burgundy: #722F37;
+  --daawa-gold: #D4AF37;
+  --daawa-cream: #F5F0EB;
+  --daawa-ink: #2C1810;
+  --daawa-rose: #C17767;
+  --daawa-sage: #8FA89A;
+  --daawa-blush: #F0E0D6;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: oklch(0.18 0.015 30);
+  --foreground: oklch(0.94 0.008 80);
+  --card: oklch(0.22 0.018 30);
+  --card-foreground: oklch(0.94 0.008 80);
+  --popover: oklch(0.22 0.018 30);
+  --popover-foreground: oklch(0.94 0.008 80);
+  --primary: oklch(0.70 0.12 15);
+  --primary-foreground: oklch(0.18 0.015 30);
+  --secondary: oklch(0.28 0.02 30);
+  --secondary-foreground: oklch(0.94 0.008 80);
+  --muted: oklch(0.28 0.02 30);
+  --muted-foreground: oklch(0.65 0.015 80);
+  --accent: oklch(0.28 0.02 30);
+  --accent-foreground: oklch(0.94 0.008 80);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: oklch(0.35 0.02 30);
+  --input: oklch(0.35 0.02 30);
+  --ring: oklch(0.55 0.06 30);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: oklch(0.22 0.018 30);
+  --sidebar-foreground: oklch(0.94 0.008 80);
+  --sidebar-primary: oklch(0.70 0.12 15);
+  --sidebar-primary-foreground: oklch(0.18 0.015 30);
+  --sidebar-accent: oklch(0.28 0.02 30);
+  --sidebar-accent-foreground: oklch(0.94 0.008 80);
+  --sidebar-border: oklch(0.35 0.02 30);
+  --sidebar-ring: oklch(0.55 0.06 30);
+
+  --daawa-burgundy: #B8636B;
+  --daawa-gold: #E8C84A;
+  --daawa-cream: #3D3530;
+  --daawa-ink: #F5F0EB;
+  --daawa-rose: #D49488;
+  --daawa-sage: #A3BFB0;
+  --daawa-blush: #5A4540;
 }
 
 @layer base {
@@ -117,20 +138,58 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[var(--daawa-cream)]/30 text-foreground;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+  }
+
+  /* Smooth scroll everywhere */
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Beautiful serif headings */
+  h1, h2, h3 {
+    font-family: var(--font-cormorant), Georgia, serif;
+    letter-spacing: -0.01em;
   }
 }
 
-:root {
-  --daawa-burgundy: #722F37;
-  --daawa-gold: #D4AF37;
-  --daawa-cream: #F5F0EB;
-  --daawa-ink: #2C1810;
+/* ── Custom scrollbar ────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(0.70 0.03 30 / 25%);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.55 0.05 30 / 40%);
 }
 
-.dark {
-  --daawa-burgundy: #B8636B;
-  --daawa-gold: #E8C84A;
-  --daawa-cream: #3D3530;
-  --daawa-ink: #F5F0EB;
+/* ── Selection styling ──────────────────────────────── */
+::selection {
+  background: oklch(0.70 0.12 15 / 20%);
+  color: oklch(0.22 0.02 30);
+}
+
+/* ── Ornamental line utility ─────────────────────────── */
+.daawa-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: center;
+  color: var(--daawa-burgundy);
+  opacity: 0.3;
+}
+.daawa-divider::before,
+.daawa-divider::after {
+  content: "";
+  height: 1px;
+  width: 3rem;
+  background: currentColor;
 }
