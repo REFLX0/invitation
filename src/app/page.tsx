@@ -119,7 +119,7 @@ const FAQ_DATA = [
   { q: 'Quels modes de paiement acceptez-vous ?', a: "Nous acceptons les paiements par carte bancaire, D17 et virement bancaire. Le paiement est securise et se fait en une seule etape." },
 ]
 
-export default function Home() {
+function HomeContent() {
   const searchParams = useSearchParams()
   const [wizardOpen, setWizardOpen] = useState(false)
   const [initialTemplateId, setInitialTemplateId] = useState<string | null>(null)
@@ -417,6 +417,14 @@ export default function Home() {
 
       <WizardModal open={wizardOpen} onOpenChange={setWizardOpen} initialTemplateId={initialTemplateId} />
     </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen" />}>
+      <HomeContent />
+    </Suspense>
   )
 }
 

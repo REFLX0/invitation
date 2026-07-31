@@ -3,7 +3,9 @@
 import { useMemo } from 'react'
 import { TEMPLATE_REGISTRY } from './template-registry'
 import { ClassicElegance } from './base/classic-elegance'
+import { ClassicFloral } from './base/classic-floral'
 import { PremiumGriffon } from './base/premium-griffon'
+import { PremiumDark } from './base/premium-dark'
 import { SpecializedNoirEtOr } from './specialized/noir-et-or'
 import { SpecializedLellaBeya } from './specialized/lella-beya'
 import { SpecializedCarthageOr } from './specialized/carthage-or'
@@ -14,10 +16,10 @@ export interface InvitationTemplateProps {
 
 const COMPONENT_MAP: Record<string, React.ComponentType<InvitationTemplateProps>> = {
   'specialized-noir-et-or': SpecializedNoirEtOr, 'specialized-lella-beya': SpecializedLellaBeya, 'specialized-carthage-or': SpecializedCarthageOr,
-  'classic-elegance': ClassicElegance, 'classic-fleur': ClassicElegance, 'classic-aquarelle': ClassicElegance,
-  'classic-parchemin': ClassicElegance, 'classic-minimal': ClassicElegance,
-  'premium-griffon': PremiumGriffon, 'premium-jardin': PremiumGriffon, 'premium-nuit': PremiumGriffon,
-  'premium-mosaic': PremiumGriffon, 'premium-soie': PremiumGriffon, 'premium-sahara': PremiumGriffon,
+  'classic-elegance': ClassicElegance, 'classic-fleur': ClassicFloral, 'classic-aquarelle': ClassicFloral,
+  'classic-parchemin': ClassicElegance, 'classic-minimal': ClassicFloral,
+  'premium-griffon': PremiumGriffon, 'premium-jardin': PremiumGriffon, 'premium-nuit': PremiumDark,
+  'premium-mosaic': PremiumGriffon, 'premium-soie': PremiumDark, 'premium-sahara': PremiumGriffon,
   'premium-oasis': PremiumGriffon, 'premium-medina': PremiumGriffon,
 }
 
