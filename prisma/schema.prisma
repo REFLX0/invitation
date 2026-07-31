@@ -10,22 +10,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Rsvp {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
+  eventId   String
+  guestName String
+  attending Boolean
+  meal      String   @default(" ")
+  plusOne   String   @default(" ")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
 
-model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Event {
@@ -41,16 +36,6 @@ model Event {
   tierConfig    String   @default("{}")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  rsvps         Rsvp[]
-}
 
-model Rsvp {
-  id            String   @id @default(cuid())
-  eventId       String
-  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  guestName     String
-  attending     Boolean
-  meal          String   @default("")
-  plusOne       String   @default("")
-  createdAt     DateTime @default(now())
+  rsvps Rsvp[]
 }

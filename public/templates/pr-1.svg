@@ -1,11 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
   <rect width="400" height="300" fill="#1A1A2E"/>
-  <rect x="20" y="20" width="360" height="260" rx="2" fill="none" stroke="#C6A664" stroke-width="1.2" opacity="0.4"/>
-  <rect x="28" y="28" width="344" height="244" rx="1" fill="none" stroke="#C6A664" stroke-width="0.5" opacity="0.2"/>
-  <polygon points="200,75 205,95 225,95 209,106 215,126 200,115 185,126 191,106 175,95 195,95" fill="#C6A664" opacity="0.3"/>
-  <text x="200" y="150" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#C6A664" opacity="0.7">Ahmed</text>
-  <text x="200" y="170" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#C6A664" opacity="0.5">&amp;</text>
-  <text x="200" y="192" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#C6A664" opacity="0.7">Fatima</text>
-  <line x1="120" y1="220" x2="280" y2="220" stroke="#C6A664" stroke-width="0.5" opacity="0.2"/>
-  <text x="200" y="255" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#C6A664" opacity="0.35">Griffon d'Or</text>
+  <!-- Gold radial glow -->
+  <radialGradient id="glow" cx="50%" cy="40%"><stop offset="0%" stop-color="#C6A664" stop-opacity="0.15"/><stop offset="100%" stop-color="#C6A664" stop-opacity="0"/></radialGradient>
+  <circle cx="200" cy="130" r="150" fill="url(#glow)"/>
+  <!-- Art deco frame -->
+  <rect x="25" y="25" width="350" height="250" fill="none" stroke="#C6A664" stroke-width="1" opacity="0.25"/>
+  <rect x="35" y="35" width="330" height="230" fill="none" stroke="#C6A664" stroke-width="0.5" opacity="0.15"/>
+  <!-- Corner accents -->
+  <path d="M25,50 L25,25 L50,25" fill="none" stroke="#C6A664" stroke-width="1.5" opacity="0.4"/>
+  <path d="M375,50 L375,25 L350,25" fill="none" stroke="#C6A664" stroke-width="1.5" opacity="0.4"/>
+  <path d="M25,250 L25,275 L50,275" fill="none" stroke="#C6A664" stroke-width="1.5" opacity="0.4"/>
+  <path d="M375,250 L375,275 L350,275" fill="none" stroke="#C6A664" stroke-width="1.5" opacity="0.4"/>
+  <!-- Griffin crown icon (simplified) -->
+  <text x="200" y="85" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#C6A664" opacity="0.6">&#9813;</text>
+  <!-- Names -->
+  <text x="200" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-weight="300" fill="#C6A664">Ahmed</text>
+  <text x="200" y="155" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#C6A664">&amp;</text>
+  <text x="200" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-weight="300" fill="#C6A664">Fatima</text>
+  <!-- Date -->
+  <text x="200" y="225" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#C6A664" opacity="0.4">15 Juin 2025</text>
+  <!-- Star divider -->
+  <text x="200" y="250" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#C6A664" opacity="0.3">&#10045;</text>
 </svg>

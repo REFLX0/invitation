@@ -1,19 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
   <rect width="400" height="300" fill="#0F1B2D"/>
-  <circle cx="80" cy="50" r="1.5" fill="#FFF" opacity="0.4"/>
-  <circle cx="150" cy="30" r="1" fill="#FFF" opacity="0.3"/>
-  <circle cx="300" cy="45" r="1.5" fill="#FFF" opacity="0.35"/>
-  <circle cx="350" cy="80" r="1" fill="#FFF" opacity="0.25"/>
-  <circle cx="60" cy="120" r="1" fill="#FFF" opacity="0.3"/>
-  <circle cx="340" cy="150" r="1.2" fill="#FFF" opacity="0.3"/>
-  <circle cx="100" cy="200" r="0.8" fill="#FFF" opacity="0.2"/>
-  <circle cx="250" cy="60" r="1.5" fill="#FFF" opacity="0.35"/>
-  <circle cx="180" cy="90" r="0.8" fill="#FFF" opacity="0.25"/>
-  <circle cx="320" cy="230" r="1" fill="#FFF" opacity="0.2"/>
-  <circle cx="50" cy="250" r="1.2" fill="#FFF" opacity="0.25"/>
-  <circle cx="200" cy="40" r="12" fill="#E8D5A0" opacity="0.08"/>
-  <text x="200" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#C8D8E8" opacity="0.7">Ahmed</text>
-  <text x="200" y="168" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#A0B8D0" opacity="0.5">&amp;</text>
-  <text x="200" y="190" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#C8D8E8" opacity="0.7">Fatima</text>
-  <text x="200" y="255" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#8098B0" opacity="0.35">Nuit Etoilee</text>
+  <!-- Stars -->
+  <circle cx="40" cy="30" r="1.2" fill="#A0B8D0" opacity="0.2"/><circle cx="80" cy="55" r="0.8" fill="#A0B8D0" opacity="0.30000000000000004"/><circle cx="120" cy="20" r="0.8" fill="#A0B8D0" opacity="0.4"/><circle cx="180" cy="40" r="1.2" fill="#A0B8D0" opacity="0.5"/><circle cx="220" cy="25" r="0.8" fill="#A0B8D0" opacity="0.2"/><circle cx="260" cy="50" r="0.8" fill="#A0B8D0" opacity="0.30000000000000004"/><circle cx="310" cy="35" r="1.2" fill="#A0B8D0" opacity="0.4"/><circle cx="350" cy="20" r="0.8" fill="#A0B8D0" opacity="0.5"/><circle cx="60" cy="70" r="0.8" fill="#A0B8D0" opacity="0.2"/><circle cx="150" cy="65" r="1.2" fill="#A0B8D0" opacity="0.30000000000000004"/><circle cx="250" cy="60" r="0.8" fill="#A0B8D0" opacity="0.4"/><circle cx="330" cy="75" r="0.8" fill="#A0B8D0" opacity="0.5"/><circle cx="100" cy="85" r="1.2" fill="#A0B8D0" opacity="0.2"/><circle cx="200" cy="80" r="0.8" fill="#A0B8D0" opacity="0.30000000000000004"/><circle cx="350" cy="45" r="0.8" fill="#A0B8D0" opacity="0.4"/>
+  <!-- Moon crescent -->
+  <circle cx="340" cy="50" r="18" fill="#A0B8D0" opacity="0.1"/>
+  <circle cx="348" cy="46" r="15" fill="#0F1B2D"/>
+  <!-- Names -->
+  <text x="200" y="135" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="24" font-weight="200" fill="#C8D8E8">Ahmed</text>
+  <text x="200" y="160" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="#A0B8D0">&amp;</text>
+  <text x="200" y="185" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="24" font-weight="200" fill="#C8D8E8">Fatima</text>
+  <!-- Date -->
+  <text x="200" y="230" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#C8D8E8" opacity="0.4">15 Juin 2025</text>
+  <!-- Shooting star -->
+  <line x1="50" y1="250" x2="90" y2="240" stroke="#A0B8D0" stroke-width="0.5" opacity="0.3"/>
 </svg>

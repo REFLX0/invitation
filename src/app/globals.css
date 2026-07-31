@@ -81,7 +81,6 @@
   --sidebar-border: oklch(0.90 0.01 80);
   --sidebar-ring: oklch(0.70 0.05 30);
 
-  /* ── Daawa brand tokens ──────────────────────────── */
   --daawa-burgundy: #722F37;
   --daawa-gold: #D4AF37;
   --daawa-cream: #F5F0EB;
@@ -141,43 +140,27 @@
     @apply bg-[var(--daawa-cream)]/30 text-foreground;
     font-family: var(--font-geist-sans), system-ui, sans-serif;
   }
-
-  /* Smooth scroll everywhere */
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-
-  /* Beautiful serif headings */
   h1, h2, h3 {
     font-family: var(--font-cormorant), Georgia, serif;
     letter-spacing: -0.01em;
   }
 }
 
-/* ── Custom scrollbar ────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: oklch(0.70 0.03 30 / 25%);
-  border-radius: 999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.55 0.05 30 / 40%);
-}
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: oklch(0.70 0.03 30 / 25%); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: oklch(0.55 0.05 30 / 40%); }
 
-/* ── Selection styling ──────────────────────────────── */
 ::selection {
   background: oklch(0.70 0.12 15 / 20%);
   color: oklch(0.22 0.02 30);
 }
 
-/* ── Ornamental line utility ─────────────────────────── */
 .daawa-divider {
   display: flex;
   align-items: center;

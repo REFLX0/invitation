@@ -1,9 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
   <rect width="400" height="300" fill="#EEF5F0"/>
-  <path d="M0,280 Q100,240 200,260 Q300,280 400,240 L400,300 L0,300Z" fill="#5A9B7A" opacity="0.1"/>
-  <ellipse cx="200" cy="100" rx="30" ry="25" fill="none" stroke="#4A8B6A" stroke-width="1" opacity="0.15"/>
-  <text x="200" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#3A7B5A" opacity="0.7">Ahmed</text>
-  <text x="200" y="168" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#5A9B7A" opacity="0.5">&amp;</text>
-  <text x="200" y="192" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#3A7B5A" opacity="0.7">Fatima</text>
-  <text x="200" y="255" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#5A9B7A" opacity="0.35">Oasis</text>
+  <!-- Palm leaves -->
+  <g opacity="0.1">
+    <path d="M360,0 Q340,40 370,70" fill="#3A7B5A" stroke="none"/>
+    <path d="M380,0 Q360,35 385,65" fill="#3A7B5A" stroke="none"/>
+    <path d="M345,5 Q325,40 350,65" fill="#3A7B5A" stroke="none"/>
+  </g>
+  <g opacity="0.08">
+    <path d="M40,0 Q20,40 45,70" fill="#3A7B5A" stroke="none"/>
+    <path d="M60,5 Q35,35 55,65" fill="#3A7B5A" stroke="none"/>
+  </g>
+  <!-- Water line -->
+  <path d="M0,270 Q200,255 400,270" fill="none" stroke="#5A9B7A" stroke-width="0.8" opacity="0.15"/>
+  <path d="M0,278 Q200,263 400,278" fill="none" stroke="#5A9B7A" stroke-width="0.5" opacity="0.1"/>
+  <!-- Names -->
+  <text x="200" y="130" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="22" font-weight="300" fill="#3A7B5A">Ahmed</text>
+  <text x="200" y="155" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="#5A9B7A">&amp;</text>
+  <text x="200" y="178" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="22" font-weight="300" fill="#3A7B5A">Fatima</text>
+  <text x="200" y="215" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#3A7B5A" opacity="0.4">15 Juin 2025</text>
 </svg>

@@ -1,17 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
-  <defs>
-    <radialGradient id="aq1" cx="30%" cy="40%"><stop offset="0%" stop-color="#B8D4E3" stop-opacity="0.4"/><stop offset="100%" stop-color="#F0F4F8" stop-opacity="0"/></radialGradient>
-    <radialGradient id="aq2" cx="70%" cy="60%"><stop offset="0%" stop-color="#D4B8D8" stop-opacity="0.3"/><stop offset="100%" stop-color="#F0F4F8" stop-opacity="0"/></radialGradient>
-    <radialGradient id="aq3" cx="50%" cy="30%"><stop offset="0%" stop-color="#B8D8B8" stop-opacity="0.3"/><stop offset="100%" stop-color="#F0F4F8" stop-opacity="0"/></radialGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
   <rect width="400" height="300" fill="#F5F0EB"/>
-  <rect width="400" height="300" fill="url(#aq1)"/>
-  <rect width="400" height="300" fill="url(#aq2)"/>
-  <rect width="400" height="300" fill="url(#aq3)"/>
-  <circle cx="80" cy="80" r="30" fill="#C8A8D0" opacity="0.08"/>
-  <circle cx="320" cy="220" r="40" fill="#A8C8D8" opacity="0.08"/>
-  <text x="200" y="140" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#6B7B8D" opacity="0.7">Ahmed</text>
-  <text x="200" y="160" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#8B9BA8" opacity="0.5">&amp;</text>
-  <text x="200" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#6B7B8D" opacity="0.7">Fatima</text>
-  <text x="200" y="250" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#8B9BA8" opacity="0.35">Aquarelle</text>
+  <!-- Watercolor blobs -->
+  <ellipse cx="60" cy="80" rx="50" ry="35" fill="#8BAAC8" opacity="0.08"/>
+  <ellipse cx="330" cy="230" rx="45" ry="30" fill="#8BAAC8" opacity="0.06"/>
+  <ellipse cx="260" cy="120" rx="40" ry="50" fill="#6B7B8D" opacity="0.03"/>
+  <!-- Soft washes -->
+  <rect x="0" y="240" width="400" height="60" fill="#8BAAC8" opacity="0.05" rx="2"/>
+  <!-- Names - clean modern -->
+  <text x="200" y="125" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="22" font-weight="300" fill="#6B7B8D">Ahmed</text>
+  <text x="200" y="148" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="16" fill="#8BAAC8">&amp;</text>
+  <text x="200" y="172" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="22" font-weight="300" fill="#6B7B8D">Fatima</text>
+  <!-- Date -->
+  <text x="200" y="210" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#6B7B8D" opacity="0.4">15 Juin 2025</text>
+  <!-- Thin line -->
+  <line x1="160" y1="230" x2="240" y2="230" stroke="#8BAAC8" stroke-width="0.5" opacity="0.3"/>
 </svg>
