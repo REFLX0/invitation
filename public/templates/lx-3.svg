@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
+  <rect width="400" height="300" fill="#FDF6E3"/>
+  <!-- Gold gradient -->
+  <defs><linearGradient id="carthage-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D4AF37" stop-opacity="0.1"/><stop offset="100%" stop-color="#D4AF37" stop-opacity="0.02"/></linearGradient></defs>
+  <rect width="400" height="300" fill="url(#carthage-gold)"/>
+  <!-- Carthaginian columns -->
+  <g opacity="0.1">
+    <rect x="140" y="30" width="8" height="50" fill="#D4AF37" rx="2"/>
+    <rect x="186" y="30" width="8" height="50" fill="#D4AF37" rx="2"/>
+    <rect x="232" y="30" width="8" height="50" fill="#D4AF37" rx="2"/>
+    <!-- Capitals -->
+    <rect x="135" y="27" width="18" height="5" fill="#D4AF37" rx="1"/>
+    <rect x="181" y="27" width="18" height="5" fill="#D4AF37" rx="1"/>
+    <rect x="227" y="27" width="18" height="5" fill="#D4AF37" rx="1"/>
+    <!-- Base -->
+    <rect x="130" y="78" width="18" height="4" fill="#D4AF37" rx="1"/>
+    <rect x="176" y="78" width="18" height="4" fill="#D4AF37" rx="1"/>
+    <rect x="222" y="78" width="18" height="4" fill="#D4AF37" rx="1"/>
+  </g>
+  <!-- Wreath -->
+  <ellipse cx="200" cy="170" rx="80" ry="60" fill="none" stroke="#D4AF37" stroke-width="0.8" opacity="0.12"/>
+  <!-- Names -->
+  <text x="200" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-weight="300" fill="#1A0F00">Ahmed</text>
+  <text x="200" y="157" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#D4AF37">&amp;</text>
+  <text x="200" y="182" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-weight="300" fill="#1A0F00">Fatima</text>
+  <!-- Date -->
+  <text x="200" y="225" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#1A0F00" opacity="0.4">15 Juin 2025</text>
+  <!-- Laurel bottom -->
+  <g opacity="0.1">
+    <path d="M170,265 Q185,250 200,260" fill="#D4AF37"/>
+    <path d="M230,265 Q215,250 200,260" fill="#D4AF37"/>
+  </g>
+</svg>

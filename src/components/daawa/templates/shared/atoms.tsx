@@ -6,19 +6,19 @@ import { motion } from 'framer-motion'
 export const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: (i: number = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] as const } }) }
 export const fadeIn = { hidden: { opacity: 0 }, visible: (i: number = 0) => ({ opacity: 1, transition: { delay: i * 0.08, duration: 0.5 } as const }) }
 
-export function Section({ children, className = '', delay = 0, id }: { children: React.ReactNode; className?: string; delay?: number; id?: string }) {
+export function Section({ children, className = '', delay = 0, id, style }: { children: React.ReactNode; className?: string; delay?: number; id?: string; style?: React.CSSProperties }) {
   return (
-    <motion.section id={id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-40px' }} variants={fadeUp} custom={delay} className={className}>
+    <motion.section id={id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-40px' }} variants={fadeUp} custom={delay} className={className} style={style}>
       {children}
     </motion.section>
   )
 }
 
-export function OrnamentalDivider({ variant = 'classic', className = '' }: { variant?: 'classic' | 'gold' | 'minimal' | 'ornate'; className?: string }) {
+export function OrnamentalDivider({ variant = 'classic', className = '', style }: { variant?: 'classic' | 'gold' | 'minimal' | 'ornate'; className?: string; style?: React.CSSProperties }) {
   if (variant === 'minimal') {
-    return <div className={"flex items-center justify-center gap-3 ".concat(className)}><span className="h-px w-12 bg-current opacity-20" /><span className="text-[8px] opacity-40">&#9830;</span><span className="h-px w-12 bg-current opacity-20" /></div>
+    return <div className={"flex items-center justify-center gap-3 ".concat(className)} style={style}><span className="h-px w-12 bg-current opacity-20" /><span className="text-[8px] opacity-40">&#9830;</span><span className="h-px w-12 bg-current opacity-20" /></div>
   }
-  return <div className={"flex items-center justify-center gap-3 ".concat(className)}><span className="h-px w-16 bg-current opacity-20" /><span className="text-[10px] opacity-40">&#10045;</span><span className="h-px w-16 bg-current opacity-20" /></div>
+  return <div className={"flex items-center justify-center gap-3 ".concat(className)} style={style}><span className="h-px w-16 bg-current opacity-20" /><span className="text-[10px] opacity-40">&#10045;</span><span className="h-px w-16 bg-current opacity-20" /></div>
 }
 
 export function CountdownDisplay({ days, hours, minutes, seconds }: { days: number; hours: number; minutes: number; seconds: number }) {

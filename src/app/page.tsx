@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { WizardModal } from '@/components/daawa/wizard-modal'
 import { Button } from '@/components/ui/button'
@@ -119,7 +120,19 @@ const FAQ_DATA = [
 ]
 
 export default function Home() {
+  const searchParams = useSearchParams()
   const [wizardOpen, setWizardOpen] = useState(false)
+  const [initialTemplateId, setInitialTemplateId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const w = searchParams.get('wizard')
+    const t = searchParams.get('template')
+    if (w === 'true') {
+      if (t) setInitialTemplateId(t)
+      setWizardOpen(true)
+      window.history.replaceState({}, '', '/')
+    }
+  }, [searchParams])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -402,7 +415,7 @@ export default function Home() {
         </div>
       </footer>
 
-      <WizardModal open={wizardOpen} onOpenChange={setWizardOpen} />
+      <WizardModal open={wizardOpen} onOpenChange={setWizardOpen} initialTemplateId={initialTemplateId} />
     </div>
   )
 }

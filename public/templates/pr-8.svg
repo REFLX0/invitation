@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
+  <rect width="400" height="300" fill="#F0E5D5"/>
+  <!-- Arch shape (Islamic arch) -->
+  <path d="M100,300 L100,110 Q100,40 200,40 Q300,40 300,110 L300,300" fill="none" stroke="#B8860B" stroke-width="1" opacity="0.15"/>
+  <!-- Inner arch -->
+  <path d="M115,300 L115,115 Q115,55 200,55 Q285,55 285,115 L285,300" fill="none" stroke="#B8860B" stroke-width="0.5" opacity="0.1"/>
+  <!-- Geometric star -->
+  <g transform="translate(200,90)" opacity="0.12">
+    <polygon points="0,-12 3,-4 12,-4 5,2 7,10 0,5 -7,10 -5,2 -12,-4 -3,-4" fill="#B8860B"/>
+  </g>
+  <!-- Names -->
+  <text x="200" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#8B5E3C">Ahmed</text>
+  <text x="200" y="168" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#B8860B">&amp;</text>
+  <text x="200" y="190" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#8B5E3C">Fatima</text>
+  <text x="200" y="225" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#8B5E3C" opacity="0.4">15 Juin 2025</text>
+</svg>

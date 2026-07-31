@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
+  <rect width="400" height="300" fill="#F0EDE8"/>
+  <!-- Tunisian mosaic pattern top -->
+  <g opacity="0.08">
+    <rect x="20" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,35,35)"/>
+    <rect x="70" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,85,35)"/>
+    <rect x="120" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,135,35)"/>
+    <rect x="280" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,295,35)"/>
+    <rect x="330" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,345,35)"/>
+    <rect x="380" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,395,35)"/>
+  </g>
+  <!-- Mosaic border bottom -->
+  <g opacity="0.06">
+    <rect x="20" y="250" width="30" height="30" fill="#1A8B8B" transform="rotate(45,35,265)"/>
+    <rect x="70" y="250" width="30" height="30" fill="#1A8B8B" transform="rotate(45,85,265)"/>
+    <rect x="330" y="250" width="30" height="30" fill="#1A8B8B" transform="rotate(45,345,265)"/>
+    <rect x="380" y="250" width="30" height="30" fill="#1A8B8B" transform="rotate(45,395,265)"/>
+  </g>
+  <!-- Tile border -->
+  <rect x="15" y="15" width="370" height="270" fill="none" stroke="#1A8B8B" stroke-width="1" opacity="0.15" stroke-dasharray="4,4"/>
+  <!-- Names -->
+  <text x="200" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#2A6B6B">Ahmed</text>
+  <text x="200" y="155" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#1A8B8B">&amp;</text>
+  <text x="200" y="178" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#2A6B6B">Fatima</text>
+  <!-- Date -->
+  <text x="200" y="220" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#2A6B6B" opacity="0.4">15 Juin 2025</text>
+</svg>

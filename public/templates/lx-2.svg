@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
+  <rect width="400" height="300" fill="#FFF8F0"/>
+  <!-- Ottoman arch -->
+  <path d="M80,300 L80,100 Q80,20 200,20 Q320,20 320,100 L320,300" fill="none" stroke="#8B5E3C" stroke-width="1.2" opacity="0.15"/>
+  <!-- Inner arch -->
+  <path d="M95,300 L95,105 Q95,35 200,35 Q305,35 305,105 L305,300" fill="none" stroke="#8B5E3C" stroke-width="0.5" opacity="0.08"/>
+  <!-- Ottoman tile pattern -->
+  <g opacity="0.06">
+    <circle cx="200" cy="65" r="15" fill="#8B5E3C"/>
+    <circle cx="175" cy="65" r="10" fill="#8B5E3C"/>
+    <circle cx="225" cy="65" r="10" fill="#8B5E3C"/>
+  </g>
+  <!-- Arabic bismillah hint -->
+  <text x="200" y="90" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#8B5E3C" opacity="0.25">بسم الله الرحمن الرحيم</text>
+  <!-- Names -->
+  <text x="200" y="135" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#2C1810">Ahmed</text>
+  <text x="200" y="158" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#8B5E3C">&amp;</text>
+  <text x="200" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#2C1810">Fatima</text>
+  <text x="200" y="220" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#2C1810" opacity="0.4">15 Juin 2025</text>
+  <!-- Ottoman bottom ornament -->
+  <g opacity="0.08" transform="translate(200,270)">
+    <circle cx="0" cy="0" r="5" fill="#8B5E3C"/>
+    <line x1="-20" y1="0" x2="20" y2="0" stroke="#8B5E3C" stroke-width="0.5"/>
+  </g>
+</svg>

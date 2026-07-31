@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
+  <rect width="400" height="300" fill="#4A1942"/>
+  <!-- Velvet gradient overlay -->
+  <rect width="400" height="300" fill="url(#velvet)" opacity="0.3"/>
+  <defs><linearGradient id="velvet" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C6A0C8" stop-opacity="0.15"/><stop offset="50%" stop-color="#4A1942" stop-opacity="0"/><stop offset="100%" stop-color="#C6A0C8" stop-opacity="0.1"/></linearGradient></defs>
+  <!-- Silk ribbon -->
+  <path d="M120,60 Q200,40 280,60" fill="none" stroke="#C6A0C8" stroke-width="1.5" opacity="0.2"/>
+  <path d="M140,70 Q200,55 260,70" fill="none" stroke="#C6A0C8" stroke-width="0.5" opacity="0.15"/>
+  <!-- Names -->
+  <text x="200" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-style="italic" fill="#E8D0E8">Ahmed</text>
+  <text x="200" y="155" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#C6A0C8">&amp;</text>
+  <text x="200" y="178" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-style="italic" fill="#E8D0E8">Fatima</text>
+  <!-- Silk ribbon bottom -->
+  <path d="M120,240 Q200,260 280,240" fill="none" stroke="#C6A0C8" stroke-width="1.5" opacity="0.2"/>
+  <!-- Date -->
+  <text x="200" y="220" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#E8D0E8" opacity="0.4">15 Juin 2025</text>
+</svg>

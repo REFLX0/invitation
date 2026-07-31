@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
+  <rect width="400" height="300" fill="#EEF5F0"/>
+  <!-- Palm leaves -->
+  <g opacity="0.1">
+    <path d="M360,0 Q340,40 370,70" fill="#3A7B5A" stroke="none"/>
+    <path d="M380,0 Q360,35 385,65" fill="#3A7B5A" stroke="none"/>
+    <path d="M345,5 Q325,40 350,65" fill="#3A7B5A" stroke="none"/>
+  </g>
+  <g opacity="0.08">
+    <path d="M40,0 Q20,40 45,70" fill="#3A7B5A" stroke="none"/>
+    <path d="M60,5 Q35,35 55,65" fill="#3A7B5A" stroke="none"/>
+  </g>
+  <!-- Water line -->
+  <path d="M0,270 Q200,255 400,270" fill="none" stroke="#5A9B7A" stroke-width="0.8" opacity="0.15"/>
+  <path d="M0,278 Q200,263 400,278" fill="none" stroke="#5A9B7A" stroke-width="0.5" opacity="0.1"/>
+  <!-- Names -->
+  <text x="200" y="130" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="22" font-weight="300" fill="#3A7B5A">Ahmed</text>
+  <text x="200" y="155" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="#5A9B7A">&amp;</text>
+  <text x="200" y="178" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="22" font-weight="300" fill="#3A7B5A">Fatima</text>
+  <text x="200" y="215" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#3A7B5A" opacity="0.4">15 Juin 2025</text>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
+  <rect width="400" height="300" fill="#FFFFFF"/>
+  <!-- Single thin line -->
+  <line x1="170" y1="110" x2="230" y2="110" stroke="#999999" stroke-width="0.5"/>
+  <!-- Names - very clean -->
+  <text x="200" y="145" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="28" font-weight="100" fill="#333333" letter-spacing="4">AHMED</text>
+  <text x="200" y="170" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#999999" letter-spacing="8">&amp;</text>
+  <text x="200" y="195" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="28" font-weight="100" fill="#333333" letter-spacing="4">FATIMA</text>
+  <!-- Single thin line -->
+  <line x1="170" y1="215" x2="230" y2="215" stroke="#999999" stroke-width="0.5"/>
+  <!-- Date -->
+  <text x="200" y="250" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#333333" opacity="0.35" letter-spacing="2">15 . 06 . 2025</text>
+</svg>

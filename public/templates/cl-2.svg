@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
+  <rect width="400" height="300" fill="#FFF5F8"/>
+  <!-- Soft floral circles -->
+  <circle cx="80" cy="60" r="30" fill="#D4859A" opacity="0.06"/>
+  <circle cx="320" cy="240" r="25" fill="#D4859A" opacity="0.06"/>
+  <circle cx="200" cy="50" r="15" fill="#D4859A" opacity="0.08"/>
+  <!-- Flower petals -->
+  <g transform="translate(200,70)" opacity="0.15">
+    <ellipse cx="0" cy="-10" rx="4" ry="8" fill="#D4859A"/>
+    <ellipse cx="8" cy="-4" rx="4" ry="8" fill="#D4859A" transform="rotate(72)"/>
+    <ellipse cx="5" cy="6" rx="4" ry="8" fill="#D4859A" transform="rotate(144)"/>
+    <ellipse cx="-5" cy="6" rx="4" ry="8" fill="#D4859A" transform="rotate(216)"/>
+    <ellipse cx="-8" cy="-4" rx="4" ry="8" fill="#D4859A" transform="rotate(288)"/>
+  </g>
+  <!-- Names -->
+  <text x="200" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-style="italic" fill="#D4859A">Ahmed</text>
+  <text x="200" y="155" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#D4859A">&amp;</text>
+  <text x="200" y="175" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-style="italic" fill="#D4859A">Fatima</text>
+  <!-- Date -->
+  <text x="200" y="220" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#D4859A" opacity="0.5">15 Juin 2025</text>
+  <!-- More flowers -->
+  <g transform="translate(200,260)" opacity="0.1">
+    <ellipse cx="0" cy="-8" rx="3" ry="6" fill="#D4859A"/>
+    <ellipse cx="6" cy="-3" rx="3" ry="6" fill="#D4859A" transform="rotate(72)"/>
+    <ellipse cx="4" cy="5" rx="3" ry="6" fill="#D4859A" transform="rotate(144)"/>
+    <ellipse cx="-4" cy="5" rx="3" ry="6" fill="#D4859A" transform="rotate(216)"/>
+    <ellipse cx="-6" cy="-3" rx="3" ry="6" fill="#D4859A" transform="rotate(288)"/>
+  </g>
+</svg>

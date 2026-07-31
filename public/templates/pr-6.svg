@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
+  <rect width="400" height="300" fill="#F5E0D0"/>
+  <!-- Desert dunes -->
+  <path d="M0,260 Q100,230 200,250 Q300,270 400,245 L400,300 L0,300Z" fill="#D4956A" opacity="0.08"/>
+  <path d="M0,275 Q133,255 266,270 Q333,285 400,265 L400,300 L0,300Z" fill="#D4956A" opacity="0.06"/>
+  <!-- Sun -->
+  <circle cx="330" cy="55" r="20" fill="#D4956A" opacity="0.12"/>
+  <circle cx="330" cy="55" r="14" fill="#D4956A" opacity="0.08"/>
+  <!-- Names -->
+  <text x="200" y="125" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#A0604A">Ahmed</text>
+  <text x="200" y="150" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#D4956A">&amp;</text>
+  <text x="200" y="175" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#A0604A">Fatima</text>
+  <!-- Date -->
+  <text x="200" y="210" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#A0604A" opacity="0.4">15 Juin 2025</text>
+</svg>

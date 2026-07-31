@@ -128,24 +128,24 @@ export function getDefaultConfig(tier: Tier): TierConfig {
   }
 }
 
-// --- Templates ---
+// --- Templates (mirrors template-registry.ts) ---
 export const TEMPLATES: Template[] = [
-  { id: 'cl-1', name: 'Elegance', tier: 'Classique', thumbnail: '/templates/cl-1.jpg', description: 'Design classique et raffine' },
-  { id: 'cl-2', name: 'Fleur de Lys', tier: 'Classique', thumbnail: '/templates/cl-2.jpg', description: 'Motifs floraux delicats' },
-  { id: 'cl-3', name: 'Aquarelle', tier: 'Classique', thumbnail: '/templates/cl-3.jpg', description: 'Tons pastel aquarelles' },
-  { id: 'cl-4', name: 'Parchemin', tier: 'Classique', thumbnail: '/templates/cl-4.jpg', description: 'Style parchemin ancien' },
-  { id: 'cl-5', name: 'Minimaliste', tier: 'Classique', thumbnail: '/templates/cl-5.jpg', description: 'Ligne epuree et moderne' },
-  { id: 'pr-1', name: "Griffon d'Or", tier: 'Premium', thumbnail: '/templates/pr-1.jpg', description: 'Theme royal avec touches dorees' },
-  { id: 'pr-2', name: 'Jardin Secret', tier: 'Premium', thumbnail: '/templates/pr-2.jpg', description: 'Ambiance jardin romantique' },
-  { id: 'pr-3', name: 'Nuit Etoilee', tier: 'Premium', thumbnail: '/templates/pr-3.jpg', description: 'Ciel nocturne et etoiles' },
-  { id: 'pr-4', name: 'Mosaic', tier: 'Premium', thumbnail: '/templates/pr-4.jpg', description: 'Inspire de la mosaique tunisienne' },
-  { id: 'pr-5', name: 'Soie & Velours', tier: 'Premium', thumbnail: '/templates/pr-5.jpg', description: 'Textures riches et luxueuses' },
-  { id: 'pr-6', name: 'Sahara Rose', tier: 'Premium', thumbnail: '/templates/pr-6.jpg', description: 'Tons roses du desert' },
-  { id: 'pr-7', name: 'Oasis', tier: 'Premium', thumbnail: '/templates/pr-7.jpg', description: 'Fraicheur oasis mediterraneenne' },
-  { id: 'pr-8', name: 'Medina', tier: 'Premium', thumbnail: '/templates/pr-8.jpg', description: 'Esprit medina traditionnelle' },
-  { id: 'lx-1', name: 'Royale', tier: 'Luxe', thumbnail: '/templates/lx-1.jpg', description: 'Le summum du luxe' },
-  { id: 'lx-2', name: 'Andalousie', tier: 'Luxe', thumbnail: '/templates/lx-2.jpg', description: 'Heritage andalous' },
-  { id: 'lx-3', name: 'Carthage', tier: 'Luxe', thumbnail: '/templates/lx-3.jpg', description: 'Grandeur carthaginoise' },
+  { id: 'cl-1', name: 'Elegance', tier: 'Classique', thumbnail: '/templates/cl-1.svg', description: 'Design classique et raffine' },
+  { id: 'cl-2', name: 'Fleur de Lys', tier: 'Classique', thumbnail: '/templates/cl-2.svg', description: 'Motifs floraux delicats' },
+  { id: 'cl-3', name: 'Aquarelle', tier: 'Classique', thumbnail: '/templates/cl-3.svg', description: 'Tons pastel aquarelles' },
+  { id: 'cl-4', name: 'Parchemin', tier: 'Classique', thumbnail: '/templates/cl-4.svg', description: 'Style parchemin ancien' },
+  { id: 'cl-5', name: 'Minimaliste', tier: 'Classique', thumbnail: '/templates/cl-5.svg', description: 'Ligne epuree et moderne' },
+  { id: 'pr-1', name: "Griffon d'Or", tier: 'Premium', thumbnail: '/templates/pr-1.svg', description: 'Theme royal avec touches dorees' },
+  { id: 'pr-2', name: 'Jardin Secret', tier: 'Premium', thumbnail: '/templates/pr-2.svg', description: 'Ambiance jardin romantique' },
+  { id: 'pr-3', name: 'Nuit Etoilee', tier: 'Premium', thumbnail: '/templates/pr-3.svg', description: 'Ciel nocturne et etoiles' },
+  { id: 'pr-4', name: 'Mosaic', tier: 'Premium', thumbnail: '/templates/pr-4.svg', description: 'Inspire de la mosaique tunisienne' },
+  { id: 'pr-5', name: 'Soie & Velours', tier: 'Premium', thumbnail: '/templates/pr-5.svg', description: 'Textures riches et luxueuses' },
+  { id: 'pr-6', name: 'Sahara Rose', tier: 'Premium', thumbnail: '/templates/pr-6.svg', description: 'Tons roses du desert' },
+  { id: 'pr-7', name: 'Oasis', tier: 'Premium', thumbnail: '/templates/pr-7.svg', description: 'Fraicheur oasis mediterraneenne' },
+  { id: 'pr-8', name: 'Medina', tier: 'Premium', thumbnail: '/templates/pr-8.svg', description: 'Esprit medina traditionnelle' },
+  { id: 'lx-1', name: 'Noir et Or', tier: 'Luxe', thumbnail: '/templates/lx-1.svg', description: 'Art deco noir et or' },
+  { id: 'lx-2', name: 'Lella Beya', tier: 'Luxe', thumbnail: '/templates/lx-2.svg', description: 'Heritage ottoman tunisien' },
+  { id: 'lx-3', name: 'Carthage Or', tier: 'Luxe', thumbnail: '/templates/lx-3.svg', description: 'Grandeur carthaginoise' },
 ]
 
 // --- Tier metadata ---

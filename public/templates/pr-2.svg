@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+
+  <rect width="400" height="300" fill="#F0F5E8"/>
+  <!-- Garden leaves -->
+  <g opacity="0.12">
+    <path d="M0,0 Q30,40 60,20 Q40,60 0,300" fill="#4A6B3A"/>
+    <path d="M400,0 Q360,50 340,30 Q370,70 400,300" fill="#4A6B3A"/>
+  </g>
+  <!-- Branch -->
+  <path d="M120,40 Q200,100 280,40" fill="none" stroke="#4A6B3A" stroke-width="0.8" opacity="0.15"/>
+  <!-- Small flowers on branch -->
+  <circle cx="160" cy="55" r="3" fill="#D4859A" opacity="0.2"/>
+  <circle cx="200" cy="50" r="3" fill="#D4859A" opacity="0.25"/>
+  <circle cx="240" cy="55" r="3" fill="#D4859A" opacity="0.2"/>
+  <!-- Names -->
+  <text x="200" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-style="italic" fill="#4A6B3A">Ahmed</text>
+  <text x="200" y="153" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#D4859A">&amp;</text>
+  <text x="200" y="175" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-style="italic" fill="#4A6B3A">Fatima</text>
+  <!-- Date -->
+  <text x="200" y="215" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#4A6B3A" opacity="0.4">15 Juin 2025</text>
+  <!-- Bottom branch -->
+  <path d="M140,260 Q200,230 260,260" fill="none" stroke="#4A6B3A" stroke-width="0.8" opacity="0.15"/>
+</svg>

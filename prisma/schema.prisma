@@ -18,14 +18,17 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model Post {
+model Rsvp {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
+  eventId   String
+  guestName String
+  attending Boolean
+  meal      String   @default(" ")
+  plusOne   String   @default(" ")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Event {
@@ -41,4 +44,6 @@ model Event {
   tierConfig    String   @default("{}")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  rsvps Rsvp[]
 }

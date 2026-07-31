@@ -1,17 +1,6 @@
 import { db } from '@/lib/db'
 import { NextRequest, NextResponse } from 'next/server'
 
-const createEventSchema = {
-  templateId: true,
-  partner1Name: true,
-  partner2Name: true,
-  eventDate: true,
-  venueName: true,
-  venueAddress: true,
-  tier: false,
-  tierConfig: false,
-}
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
