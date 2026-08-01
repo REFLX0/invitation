@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { WizardModal } from '@/components/daawa/wizard-modal'
 import { Button } from '@/components/ui/button'
+import { DaawaLogo } from '@/components/layout/logo'
 import {
   Sparkles, Heart, Star, Crown, Palette, Share2,
   MessageCircle, ChevronDown, Check, ArrowRight, Play,
@@ -135,20 +136,18 @@ function HomeContent() {
   }, [searchParams])
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-theme-watercolor">
       {/* ── Header ─────────────────────────────────── */}
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="border-b border-[var(--daawa-cream)] bg-background/70 backdrop-blur-xl sticky top-0 z-50"
+        className="border-b border-[var(--daawa-cream)] bg-white/70 backdrop-blur-xl sticky top-0 z-50 shadow-sm"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Heart className="size-5 text-[var(--daawa-burgundy)] fill-[var(--daawa-burgundy)]/20" />
-            <span className="text-xl font-semibold tracking-tight" style={{ fontFamily: 'var(--font-cormorant)' }}>Daawa</span>
-            <span className="hidden sm:inline text-xs text-muted-foreground ml-1 tracking-wide uppercase">Invitations de mariage</span>
-          </div>
+          <a href="/" className="hover:opacity-80 transition-opacity">
+            <DaawaLogo />
+          </a>
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" className="hidden sm:flex text-muted-foreground hover:text-foreground text-sm" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>Tarifs</Button>
             <Button variant="ghost" size="sm" className="hidden sm:flex text-muted-foreground hover:text-foreground text-sm" onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>Comment ca marche</Button>
@@ -443,46 +442,6 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] as const }} className="overflow-hidden">
             <div className="px-6 pb-5 text-sm text-muted-foreground leading-relaxed border-t border-border/30 pt-4">{answer}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}
-
-/* ── FAQ Accordion Item ──────────────────────────────── */
-function FaqItem({ question, answer, index }: { question: string; answer: string; index: number }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <div
-      className="rounded-xl border border-border/60 bg-white/50 backdrop-blur-sm overflow-hidden transition-all duration-200"
-      style={{ animationDelay: `${index * 50}ms` }}
-    >
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full px-6 py-4 text-sm font-medium text-left hover:bg-muted/30 transition-colors"
-      >
-        <span>{question}</span>
-        <motion.span
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="text-muted-foreground ml-4 shrink-0"
-        >
-          <ChevronDown className="size-4" />
-        </motion.span>
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] as const }}
-            className="overflow-hidden"
-          >
-            <div className="px-6 pb-5 text-sm text-muted-foreground leading-relaxed border-t border-border/30 pt-4">
-              {answer}
-            </div>
           </motion.div>
         )}
       </AnimatePresence>

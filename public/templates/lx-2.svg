@@ -1,26 +1,98 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="400" height="560">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFF8F0"/>
+      <stop offset="100%" stop-color="#F5EAD8"/>
+    </linearGradient>
+    <pattern id="arabesque" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <!-- Simple arabesque pattern -->
+      <circle cx="20" cy="20" r="12" fill="none" stroke="#8B5E3C" stroke-width="0.4" opacity="0.2"/>
+      <circle cx="0" cy="0" r="8" fill="none" stroke="#8B5E3C" stroke-width="0.3" opacity="0.15"/>
+      <circle cx="40" cy="0" r="8" fill="none" stroke="#8B5E3C" stroke-width="0.3" opacity="0.15"/>
+      <circle cx="0" cy="40" r="8" fill="none" stroke="#8B5E3C" stroke-width="0.3" opacity="0.15"/>
+      <circle cx="40" cy="40" r="8" fill="none" stroke="#8B5E3C" stroke-width="0.3" opacity="0.15"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="560" fill="url(#bg)"/>
+  <rect width="400" height="560" fill="url(#arabesque)"/>
 
-  <rect width="400" height="300" fill="#FFF8F0"/>
-  <!-- Ottoman arch -->
-  <path d="M80,300 L80,100 Q80,20 200,20 Q320,20 320,100 L320,300" fill="none" stroke="#8B5E3C" stroke-width="1.2" opacity="0.15"/>
+  <!-- Ottoman arch structure top -->
+  <path d="M60 200 L60 100 Q60 40 200 40 Q340 40 340 100 L340 200" fill="none" stroke="#8B5E3C" stroke-width="1.5" opacity="0.4"/>
   <!-- Inner arch -->
-  <path d="M95,300 L95,105 Q95,35 200,35 Q305,35 305,105 L305,300" fill="none" stroke="#8B5E3C" stroke-width="0.5" opacity="0.08"/>
-  <!-- Ottoman tile pattern -->
-  <g opacity="0.06">
-    <circle cx="200" cy="65" r="15" fill="#8B5E3C"/>
-    <circle cx="175" cy="65" r="10" fill="#8B5E3C"/>
-    <circle cx="225" cy="65" r="10" fill="#8B5E3C"/>
+  <path d="M80 200 L80 108 Q80 60 200 60 Q320 60 320 108 L320 200" fill="none" stroke="#C4A87C" stroke-width="0.6" opacity="0.25"/>
+
+  <!-- Arch fill subtle -->
+  <path d="M60 200 L60 100 Q60 40 200 40 Q340 40 340 100 L340 200 Z" fill="#8B5E3C" opacity="0.04"/>
+
+  <!-- Ottoman crescent and star -->
+  <g transform="translate(200, 115)" opacity="0.65">
+    <!-- Crescent -->
+    <circle cx="0" cy="0" r="22" fill="#8B5E3C" opacity="0.6"/>
+    <circle cx="8" cy="-5" r="18" fill="#FFF8F0"/>
+    <!-- Star -->
+    <polygon points="18,-5 20,0 25,0 21,3 22,8 18,5 14,8 15,3 11,0 16,0" fill="#8B5E3C" opacity="0.7"/>
   </g>
-  <!-- Arabic bismillah hint -->
-  <text x="200" y="90" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#8B5E3C" opacity="0.25">بسم الله الرحمن الرحيم</text>
-  <!-- Names -->
-  <text x="200" y="135" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#2C1810">Ahmed</text>
-  <text x="200" y="158" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#8B5E3C">&amp;</text>
-  <text x="200" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#2C1810">Fatima</text>
-  <text x="200" y="220" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#2C1810" opacity="0.4">15 Juin 2025</text>
-  <!-- Ottoman bottom ornament -->
-  <g opacity="0.08" transform="translate(200,270)">
-    <circle cx="0" cy="0" r="5" fill="#8B5E3C"/>
-    <line x1="-20" y1="0" x2="20" y2="0" stroke="#8B5E3C" stroke-width="0.5"/>
+
+  <!-- Decorative tile band left/right -->
+  <g opacity="0.3">
+    <!-- Left vertical band -->
+    <rect x="20" y="20" width="28" height="520" fill="#8B5E3C" opacity="0.05"/>
+    <!-- Left ornamental diamonds -->
+    <polygon points="34,80 40,90 34,100 28,90" fill="#C4A87C" opacity="0.5"/>
+    <polygon points="34,140 40,150 34,160 28,150" fill="#C4A87C" opacity="0.5"/>
+    <polygon points="34,200 40,210 34,220 28,210" fill="#8B5E3C" opacity="0.5"/>
+    <polygon points="34,260 40,270 34,280 28,270" fill="#C4A87C" opacity="0.5"/>
+    <polygon points="34,320 40,330 34,340 28,330" fill="#8B5E3C" opacity="0.5"/>
+    <polygon points="34,380 40,390 34,400 28,390" fill="#C4A87C" opacity="0.5"/>
+    <polygon points="34,440 40,450 34,460 28,450" fill="#8B5E3C" opacity="0.5"/>
+    <!-- Right vertical band -->
+    <rect x="352" y="20" width="28" height="520" fill="#8B5E3C" opacity="0.05"/>
+    <polygon points="366,80 372,90 366,100 360,90" fill="#C4A87C" opacity="0.5"/>
+    <polygon points="366,140 372,150 366,160 360,150" fill="#C4A87C" opacity="0.5"/>
+    <polygon points="366,200 372,210 366,220 360,210" fill="#8B5E3C" opacity="0.5"/>
+    <polygon points="366,260 372,270 366,280 360,270" fill="#C4A87C" opacity="0.5"/>
+    <polygon points="366,320 372,330 366,340 360,330" fill="#8B5E3C" opacity="0.5"/>
+    <polygon points="366,380 372,390 366,400 360,390" fill="#C4A87C" opacity="0.5"/>
+    <polygon points="366,440 372,450 366,460 360,450" fill="#8B5E3C" opacity="0.5"/>
   </g>
+
+  <!-- Outer border lines -->
+  <rect x="20" y="20" width="360" height="520" fill="none" stroke="#8B5E3C" stroke-width="1" opacity="0.3"/>
+  <rect x="48" y="20" width="304" height="520" fill="none" stroke="#C4A87C" stroke-width="0.4" opacity="0.2"/>
+
+  <!-- Arabic invitation label -->
+  <text x="200" y="182" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="#8B5E3C" opacity="0.55" letter-spacing="3">LELLA BEYA · HERITAGE OTTOMAN</text>
+
+  <!-- Names in Ottoman style -->
+  <text x="200" y="243" text-anchor="middle" font-family="Georgia,serif" font-size="30" fill="#5A2C10" font-weight="300" font-style="italic" opacity="0.85">Mariem</text>
+  <text x="200" y="268" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#C4A87C" opacity="0.6" letter-spacing="5">&amp;</text>
+  <text x="200" y="304" text-anchor="middle" font-family="Georgia,serif" font-size="30" fill="#5A2C10" font-weight="300" font-style="italic" opacity="0.85">Sami</text>
+
+  <!-- Ottoman divider -->
+  <path d="M80 326 L155 326 L165 318 L200 323 L235 318 L245 326 L320 326" fill="none" stroke="#C4A87C" stroke-width="0.8" opacity="0.45"/>
+
+  <!-- Date -->
+  <text x="200" y="357" text-anchor="middle" font-family="Georgia,serif" font-size="10.5" fill="#5A2C10" opacity="0.65" letter-spacing="1">Dimanche 28 Septembre 2025</text>
+  <text x="200" y="380" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#8B5E3C" opacity="0.45">Palais Lella Beya, Tunis</text>
+
+  <!-- Countdown -->
+  <g transform="translate(200,428)" opacity="0.75">
+    <rect x="-110" y="-18" width="48" height="36" rx="4" fill="#8B5E3C" opacity="0.1"/>
+    <rect x="-55" y="-18" width="48" height="36" rx="4" fill="#C4A87C" opacity="0.12"/>
+    <rect x="7" y="-18" width="48" height="36" rx="4" fill="#8B5E3C" opacity="0.1"/>
+    <rect x="62" y="-18" width="48" height="36" rx="4" fill="#C4A87C" opacity="0.12"/>
+    <text x="-86" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#5A2C10" opacity="0.8">58</text>
+    <text x="-31" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#5A2C10" opacity="0.8">06</text>
+    <text x="31" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#5A2C10" opacity="0.8">33</text>
+    <text x="86" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#5A2C10" opacity="0.8">19</text>
+    <text x="-86" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#8B5E3C" opacity="0.45">J</text>
+    <text x="-31" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#8B5E3C" opacity="0.45">H</text>
+    <text x="31" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#8B5E3C" opacity="0.45">M</text>
+    <text x="86" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#8B5E3C" opacity="0.45">S</text>
+  </g>
+
+  <rect x="120" y="478" width="160" height="33" rx="3" fill="#8B5E3C" opacity="0.8"/>
+  <text x="200" y="498" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#FFF8F0" letter-spacing="3">CONFIRMER</text>
+
+  <text x="200" y="547" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#8B5E3C" opacity="0.3" letter-spacing="2">DAAWA · LELLA BEYA · LUXE</text>
 </svg>

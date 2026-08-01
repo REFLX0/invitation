@@ -1,28 +1,116 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="400" height="560">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#EEF3F0"/>
+      <stop offset="100%" stop-color="#E0ECE8"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="560" fill="url(#bg)"/>
 
-  <rect width="400" height="300" fill="#F0EDE8"/>
-  <!-- Tunisian mosaic pattern top -->
-  <g opacity="0.08">
-    <rect x="20" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,35,35)"/>
-    <rect x="70" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,85,35)"/>
-    <rect x="120" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,135,35)"/>
-    <rect x="280" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,295,35)"/>
-    <rect x="330" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,345,35)"/>
-    <rect x="380" y="20" width="30" height="30" fill="#1A8B8B" transform="rotate(45,395,35)"/>
+  <!-- Mosaic tile pattern top band -->
+  <g opacity="0.6">
+    <!-- Row 1 tiles -->
+    <rect x="0" y="0" width="40" height="40" fill="#1A8B8B" opacity="0.7"/>
+    <rect x="40" y="0" width="40" height="40" fill="#2A6B6B" opacity="0.7"/>
+    <rect x="80" y="0" width="40" height="40" fill="#0E7070" opacity="0.8"/>
+    <rect x="120" y="0" width="40" height="40" fill="#1A8B8B" opacity="0.65"/>
+    <rect x="160" y="0" width="40" height="40" fill="#3A9B9B" opacity="0.7"/>
+    <rect x="200" y="0" width="40" height="40" fill="#2A6B6B" opacity="0.75"/>
+    <rect x="240" y="0" width="40" height="40" fill="#1A8B8B" opacity="0.7"/>
+    <rect x="280" y="0" width="40" height="40" fill="#0E7070" opacity="0.65"/>
+    <rect x="320" y="0" width="40" height="40" fill="#3A9B9B" opacity="0.7"/>
+    <rect x="360" y="0" width="40" height="40" fill="#2A6B6B" opacity="0.75"/>
+    <!-- Row 2 tiles -->
+    <rect x="20" y="40" width="40" height="40" fill="#D4AF37" opacity="0.5"/>
+    <rect x="60" y="40" width="40" height="40" fill="#1A8B8B" opacity="0.5"/>
+    <rect x="100" y="40" width="40" height="40" fill="#B89030" opacity="0.45"/>
+    <rect x="140" y="40" width="40" height="40" fill="#2A6B6B" opacity="0.5"/>
+    <rect x="180" y="40" width="40" height="40" fill="#D4AF37" opacity="0.5"/>
+    <rect x="220" y="40" width="40" height="40" fill="#1A8B8B" opacity="0.5"/>
+    <rect x="260" y="40" width="40" height="40" fill="#B89030" opacity="0.45"/>
+    <rect x="300" y="40" width="40" height="40" fill="#2A6B6B" opacity="0.5"/>
+    <rect x="340" y="40" width="40" height="40" fill="#D4AF37" opacity="0.5"/>
+    <!-- Row 3 smaller tiles -->
+    <rect x="0" y="80" width="40" height="30" fill="#1A8B8B" opacity="0.35"/>
+    <rect x="40" y="80" width="40" height="30" fill="#D4AF37" opacity="0.3"/>
+    <rect x="80" y="80" width="40" height="30" fill="#2A6B6B" opacity="0.35"/>
+    <rect x="120" y="80" width="40" height="30" fill="#1A8B8B" opacity="0.3"/>
+    <rect x="160" y="80" width="40" height="30" fill="#D4AF37" opacity="0.35"/>
+    <rect x="200" y="80" width="40" height="30" fill="#2A6B6B" opacity="0.3"/>
+    <rect x="240" y="80" width="40" height="30" fill="#1A8B8B" opacity="0.35"/>
+    <rect x="280" y="80" width="40" height="30" fill="#D4AF37" opacity="0.3"/>
+    <rect x="320" y="80" width="40" height="30" fill="#2A6B6B" opacity="0.3"/>
+    <rect x="360" y="80" width="40" height="30" fill="#1A8B8B" opacity="0.35"/>
+    <!-- Grid lines -->
+    <rect x="0" y="0" width="400" height="110" fill="none" stroke="white" stroke-width="1" opacity="0.3"/>
+    <line x1="0" y1="40" x2="400" y2="40" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="0" y1="80" x2="400" y2="80" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="40" y1="0" x2="40" y2="110" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="80" y1="0" x2="80" y2="110" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="120" y1="0" x2="120" y2="110" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="160" y1="0" x2="160" y2="110" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="200" y1="0" x2="200" y2="110" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="240" y1="0" x2="240" y2="110" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="280" y1="0" x2="280" y2="110" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="320" y1="0" x2="320" y2="110" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="360" y1="0" x2="360" y2="110" stroke="white" stroke-width="0.8" opacity="0.3"/>
   </g>
-  <!-- Mosaic border bottom -->
-  <g opacity="0.06">
-    <rect x="20" y="250" width="30" height="30" fill="#1A8B8B" transform="rotate(45,35,265)"/>
-    <rect x="70" y="250" width="30" height="30" fill="#1A8B8B" transform="rotate(45,85,265)"/>
-    <rect x="330" y="250" width="30" height="30" fill="#1A8B8B" transform="rotate(45,345,265)"/>
-    <rect x="380" y="250" width="30" height="30" fill="#1A8B8B" transform="rotate(45,395,265)"/>
+
+  <!-- Bottom mosaic band -->
+  <g opacity="0.5" transform="translate(0, 460)">
+    <rect x="0" y="0" width="40" height="20" fill="#1A8B8B"/>
+    <rect x="40" y="0" width="40" height="20" fill="#D4AF37"/>
+    <rect x="80" y="0" width="40" height="20" fill="#2A6B6B"/>
+    <rect x="120" y="0" width="40" height="20" fill="#1A8B8B"/>
+    <rect x="160" y="0" width="40" height="20" fill="#D4AF37"/>
+    <rect x="200" y="0" width="40" height="20" fill="#2A6B6B"/>
+    <rect x="240" y="0" width="40" height="20" fill="#1A8B8B"/>
+    <rect x="280" y="0" width="40" height="20" fill="#D4AF37"/>
+    <rect x="320" y="0" width="40" height="20" fill="#2A6B6B"/>
+    <rect x="360" y="0" width="40" height="20" fill="#1A8B8B"/>
+    <line x1="0" y1="0" x2="400" y2="0" stroke="white" stroke-width="0.8" opacity="0.3"/>
   </g>
-  <!-- Tile border -->
-  <rect x="15" y="15" width="370" height="270" fill="none" stroke="#1A8B8B" stroke-width="1" opacity="0.15" stroke-dasharray="4,4"/>
+
+  <!-- Geometric star center ornament -->
+  <g transform="translate(200,145)" opacity="0.6">
+    <polygon points="0,-20 5,-5 20,-5 8,5 12,20 0,10 -12,20 -8,5 -20,-5 -5,-5" fill="#1A8B8B"/>
+  </g>
+
+  <!-- Invitation text -->
+  <text x="200" y="188" text-anchor="middle" font-family="Georgia,serif" font-size="7.5" fill="#2A6B6B" opacity="0.6" letter-spacing="3">MOSAÏQUE TUNISIENNE</text>
+
   <!-- Names -->
-  <text x="200" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#2A6B6B">Ahmed</text>
-  <text x="200" y="155" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#1A8B8B">&amp;</text>
-  <text x="200" y="178" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#2A6B6B">Fatima</text>
-  <!-- Date -->
-  <text x="200" y="220" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#2A6B6B" opacity="0.4">15 Juin 2025</text>
+  <text x="200" y="242" text-anchor="middle" font-family="Georgia,serif" font-size="31" fill="#2A6B6B" font-weight="300" font-style="italic" opacity="0.85">Inès</text>
+  <text x="200" y="268" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#1A8B8B" opacity="0.5" letter-spacing="4">&amp;</text>
+  <text x="200" y="304" text-anchor="middle" font-family="Georgia,serif" font-size="31" fill="#2A6B6B" font-weight="300" font-style="italic" opacity="0.85">Bilal</text>
+
+  <!-- Teal divider -->
+  <line x1="80" y1="326" x2="160" y2="326" stroke="#1A8B8B" stroke-width="0.8" opacity="0.4"/>
+  <rect x="194" y="322" width="12" height="8" fill="#1A8B8B" opacity="0.35" transform="rotate(45 200 326)"/>
+  <line x1="240" y1="326" x2="320" y2="326" stroke="#1A8B8B" stroke-width="0.8" opacity="0.4"/>
+
+  <!-- Date and venue -->
+  <text x="200" y="355" text-anchor="middle" font-family="Georgia,serif" font-size="10.5" fill="#2A6B6B" opacity="0.65" letter-spacing="1">Samedi 25 Octobre 2025</text>
+  <text x="200" y="378" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#2A6B6B" opacity="0.4">Palais Ennejma, Sidi Bou Said</text>
+
+  <!-- Countdown teal -->
+  <g transform="translate(200,425)" opacity="0.75">
+    <rect x="-110" y="-18" width="48" height="36" rx="3" fill="#1A8B8B" opacity="0.15"/>
+    <rect x="-55" y="-18" width="48" height="36" rx="3" fill="#D4AF37" opacity="0.15"/>
+    <rect x="7" y="-18" width="48" height="36" rx="3" fill="#1A8B8B" opacity="0.15"/>
+    <rect x="62" y="-18" width="48" height="36" rx="3" fill="#D4AF37" opacity="0.15"/>
+    <text x="-86" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#2A6B6B" opacity="0.8">90</text>
+    <text x="-31" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#2A6B6B" opacity="0.8">16</text>
+    <text x="31" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#2A6B6B" opacity="0.8">44</text>
+    <text x="86" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#2A6B6B" opacity="0.8">02</text>
+    <text x="-86" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#1A8B8B" opacity="0.45">JOURS</text>
+    <text x="-31" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#1A8B8B" opacity="0.45">HEURES</text>
+    <text x="31" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#1A8B8B" opacity="0.45">MIN</text>
+    <text x="86" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#1A8B8B" opacity="0.45">SEC</text>
+  </g>
+
+  <rect x="130" y="482" width="140" height="32" rx="3" fill="#1A8B8B" opacity="0.8"/>
+  <text x="200" y="502" text-anchor="middle" font-family="sans-serif" font-size="9.5" fill="white" letter-spacing="2">RSVP</text>
+
+  <text x="200" y="545" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#2A6B6B" opacity="0.3" letter-spacing="2">DAAWA · MOSAÏC</text>
 </svg>

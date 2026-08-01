@@ -1,18 +1,109 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="400" height="560">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3A1A3A"/>
+      <stop offset="50%" stop-color="#4A1942"/>
+      <stop offset="100%" stop-color="#2A0E2A"/>
+    </linearGradient>
+    <radialGradient id="silkSheen" cx="30%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="#8A608A" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <linearGradient id="velvetStripe" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6A3068" stop-opacity="0.4"/>
+      <stop offset="50%" stop-color="#9A5898" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#6A3068" stop-opacity="0.4"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="560" fill="url(#bg)"/>
+  <rect width="400" height="560" fill="url(#silkSheen)"/>
 
-  <rect width="400" height="300" fill="#4A1942"/>
-  <!-- Velvet gradient overlay -->
-  <rect width="400" height="300" fill="url(#velvet)" opacity="0.3"/>
-  <defs><linearGradient id="velvet" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C6A0C8" stop-opacity="0.15"/><stop offset="50%" stop-color="#4A1942" stop-opacity="0"/><stop offset="100%" stop-color="#C6A0C8" stop-opacity="0.1"/></linearGradient></defs>
-  <!-- Silk ribbon -->
-  <path d="M120,60 Q200,40 280,60" fill="none" stroke="#C6A0C8" stroke-width="1.5" opacity="0.2"/>
-  <path d="M140,70 Q200,55 260,70" fill="none" stroke="#C6A0C8" stroke-width="0.5" opacity="0.15"/>
-  <!-- Names -->
-  <text x="200" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-style="italic" fill="#E8D0E8">Ahmed</text>
-  <text x="200" y="155" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#C6A0C8">&amp;</text>
-  <text x="200" y="178" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-style="italic" fill="#E8D0E8">Fatima</text>
-  <!-- Silk ribbon bottom -->
-  <path d="M120,240 Q200,260 280,240" fill="none" stroke="#C6A0C8" stroke-width="1.5" opacity="0.2"/>
+  <!-- Velvet horizontal stripes texture -->
+  <g opacity="0.15">
+    <rect x="0" y="0" width="400" height="3" fill="url(#velvetStripe)"/>
+    <rect x="0" y="8" width="400" height="2" fill="url(#velvetStripe)"/>
+    <rect x="0" y="15" width="400" height="3" fill="url(#velvetStripe)"/>
+    <rect x="0" y="22" width="400" height="2" fill="url(#velvetStripe)"/>
+    <rect x="0" y="30" width="400" height="3" fill="url(#velvetStripe)"/>
+    <rect x="0" y="38" width="400" height="2" fill="url(#velvetStripe)"/>
+    <!-- Repeat pattern down -->
+    <rect x="0" y="100" width="400" height="2" fill="url(#velvetStripe)"/>
+    <rect x="0" y="110" width="400" height="1" fill="url(#velvetStripe)"/>
+    <rect x="0" y="200" width="400" height="2" fill="url(#velvetStripe)"/>
+    <rect x="0" y="300" width="400" height="2" fill="url(#velvetStripe)"/>
+    <rect x="0" y="400" width="400" height="2" fill="url(#velvetStripe)"/>
+    <rect x="0" y="500" width="400" height="2" fill="url(#velvetStripe)"/>
+  </g>
+
+  <!-- Gold/silver border -->
+  <rect x="16" y="16" width="368" height="528" fill="none" stroke="#C6A0C8" stroke-width="0.8" opacity="0.4"/>
+  <rect x="22" y="22" width="356" height="516" fill="none" stroke="#C6A0C8" stroke-width="0.3" opacity="0.2"/>
+
+  <!-- Corner diamond ornaments -->
+  <g fill="#C6A0C8" opacity="0.5">
+    <polygon points="16,16 24,20 20,24 12,20"/>
+    <polygon points="384,16 376,20 380,24 388,20"/>
+    <polygon points="16,544 24,540 20,536 12,540"/>
+    <polygon points="384,544 376,540 380,536 388,540"/>
+  </g>
+
+  <!-- Ornate fleur de lis top -->
+  <g transform="translate(200,70)" fill="#C6A0C8" opacity="0.5">
+    <ellipse cx="0" cy="-15" rx="6" ry="12"/>
+    <ellipse cx="-12" cy="-5" rx="5" ry="8" transform="rotate(-30 -12 -5)"/>
+    <ellipse cx="12" cy="-5" rx="5" ry="8" transform="rotate(30 12 -5)"/>
+    <rect x="-2" y="-8" width="4" height="18" rx="2"/>
+    <circle cx="0" cy="-22" r="4"/>
+  </g>
+
+  <!-- Top rule -->
+  <line x1="55" y1="112" x2="345" y2="112" stroke="#C6A0C8" stroke-width="0.7" opacity="0.35"/>
+
+  <!-- Invitation text -->
+  <text x="200" y="140" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="#E8D0E8" opacity="0.5" letter-spacing="4">SOIE &amp; VELOURS</text>
+
+  <!-- Names in lavender/pink -->
+  <text x="200" y="198" text-anchor="middle" font-family="Georgia,serif" font-size="32" fill="#E8D0E8" font-weight="300" font-style="italic" opacity="0.9">Salma</text>
+  <text x="200" y="224" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#C6A0C8" opacity="0.5" letter-spacing="5">&amp;</text>
+  <text x="200" y="262" text-anchor="middle" font-family="Georgia,serif" font-size="32" fill="#E8D0E8" font-weight="300" font-style="italic" opacity="0.9">Zied</text>
+
+  <!-- Divider line -->
+  <line x1="80" y1="285" x2="160" y2="285" stroke="#C6A0C8" stroke-width="0.7" opacity="0.35"/>
+  <circle cx="200" cy="285" r="4" fill="none" stroke="#C6A0C8" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="200" cy="285" r="2" fill="#C6A0C8" opacity="0.4"/>
+  <line x1="240" y1="285" x2="320" y2="285" stroke="#C6A0C8" stroke-width="0.7" opacity="0.35"/>
+
   <!-- Date -->
-  <text x="200" y="220" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#E8D0E8" opacity="0.4">15 Juin 2025</text>
+  <text x="200" y="315" text-anchor="middle" font-family="Georgia,serif" font-size="10.5" fill="#C6A0C8" opacity="0.7" letter-spacing="1">Samedi 15 Novembre 2025</text>
+  <text x="200" y="338" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#C6A0C8" opacity="0.4">Palais Velours, Tunis</text>
+
+  <!-- Silk ribbon decoration -->
+  <path d="M80 365 Q200 355 320 365" fill="none" stroke="#C6A0C8" stroke-width="0.8" opacity="0.25"/>
+  <path d="M80 368 Q200 358 320 368" fill="none" stroke="#9A70A0" stroke-width="0.4" opacity="0.15"/>
+
+  <!-- Countdown -->
+  <g transform="translate(200,418)" opacity="0.8">
+    <rect x="-110" y="-18" width="48" height="36" rx="6" fill="#C6A0C8" opacity="0.12"/>
+    <rect x="-55" y="-18" width="48" height="36" rx="6" fill="#C6A0C8" opacity="0.12"/>
+    <rect x="7" y="-18" width="48" height="36" rx="6" fill="#C6A0C8" opacity="0.12"/>
+    <rect x="62" y="-18" width="48" height="36" rx="6" fill="#C6A0C8" opacity="0.12"/>
+    <rect x="-110" y="-18" width="48" height="36" rx="6" fill="none" stroke="#C6A0C8" stroke-width="0.4" opacity="0.3"/>
+    <rect x="-55" y="-18" width="48" height="36" rx="6" fill="none" stroke="#C6A0C8" stroke-width="0.4" opacity="0.3"/>
+    <rect x="7" y="-18" width="48" height="36" rx="6" fill="none" stroke="#C6A0C8" stroke-width="0.4" opacity="0.3"/>
+    <rect x="62" y="-18" width="48" height="36" rx="6" fill="none" stroke="#C6A0C8" stroke-width="0.4" opacity="0.3"/>
+    <text x="-86" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#E8D0E8" opacity="0.85">44</text>
+    <text x="-31" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#E8D0E8" opacity="0.85">20</text>
+    <text x="31" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#E8D0E8" opacity="0.85">17</text>
+    <text x="86" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#E8D0E8" opacity="0.85">55</text>
+    <text x="-86" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#C6A0C8" opacity="0.4">J</text>
+    <text x="-31" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#C6A0C8" opacity="0.4">H</text>
+    <text x="31" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#C6A0C8" opacity="0.4">M</text>
+    <text x="86" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#C6A0C8" opacity="0.4">S</text>
+  </g>
+
+  <rect x="130" y="476" width="140" height="32" rx="16" fill="#C6A0C8" opacity="0.3"/>
+  <rect x="130" y="476" width="140" height="32" rx="16" fill="none" stroke="#C6A0C8" stroke-width="0.8" opacity="0.5"/>
+  <text x="200" y="496" text-anchor="middle" font-family="sans-serif" font-size="9.5" fill="#E8D0E8" letter-spacing="2">RSVP</text>
+
+  <text x="200" y="545" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#C6A0C8" opacity="0.2" letter-spacing="2">DAAWA · SOIE &amp; VELOURS</text>
 </svg>

@@ -1,23 +1,105 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="400" height="560">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#F2E8D5"/>
+      <stop offset="100%" stop-color="#E8D8BC"/>
+    </linearGradient>
+    <pattern id="parchment" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="8" y2="8" stroke="#C4A87C" stroke-width="0.2" opacity="0.15"/>
+      <line x1="8" y1="0" x2="0" y2="8" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/>
+    </pattern>
+    <filter id="aged">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise"/>
+      <feBlend in="SourceGraphic" in2="grayNoise" mode="multiply" result="blend"/>
+      <feComposite in="blend" in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+  <rect width="400" height="560" fill="url(#bg)"/>
+  <rect width="400" height="560" fill="url(#parchment)"/>
 
-  <rect width="400" height="300" fill="#F2E8D5"/>
-  <!-- Parchment texture lines -->
-  <line x1="0" y1="0" x2="400" y2="0" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="12" x2="400" y2="12" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="24" x2="400" y2="24" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="36" x2="400" y2="36" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="48" x2="400" y2="48" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="60" x2="400" y2="60" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="72" x2="400" y2="72" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="84" x2="400" y2="84" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="96" x2="400" y2="96" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="108" x2="400" y2="108" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="120" x2="400" y2="120" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="132" x2="400" y2="132" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="144" x2="400" y2="144" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="156" x2="400" y2="156" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="168" x2="400" y2="168" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="180" x2="400" y2="180" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="192" x2="400" y2="192" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="204" x2="400" y2="204" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="216" x2="400" y2="216" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="228" x2="400" y2="228" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="240" x2="400" y2="240" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="252" x2="400" y2="252" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="264" x2="400" y2="264" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="276" x2="400" y2="276" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/><line x1="0" y1="288" x2="400" y2="288" stroke="#C4A87C" stroke-width="0.2" opacity="0.08"/>
-  <!-- Aged edges -->
-  <rect x="5" y="5" width="390" height="290" rx="0" fill="none" stroke="#C4A87C" stroke-width="1.5" opacity="0.2"/>
-  <!-- Inner border -->
-  <rect x="15" y="15" width="370" height="270" rx="0" fill="none" stroke="#C4A87C" stroke-width="0.5" opacity="0.15"/>
-  <!-- Corner ornaments -->
-  <path d="M20,30 Q20,20 30,20" fill="none" stroke="#C4A87C" stroke-width="1" opacity="0.3"/>
-  <path d="M380,30 Q380,20 370,20" fill="none" stroke="#C4A87C" stroke-width="1" opacity="0.3"/>
-  <path d="M20,270 Q20,280 30,280" fill="none" stroke="#C4A87C" stroke-width="1" opacity="0.3"/>
-  <path d="M380,270 Q380,280 370,280" fill="none" stroke="#C4A87C" stroke-width="1" opacity="0.3"/>
-  <!-- Seal -->
-  <circle cx="200" cy="75" r="20" fill="none" stroke="#C4A87C" stroke-width="0.5" opacity="0.2"/>
-  <text x="200" y="80" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#C4A87C" opacity="0.4">A &amp; F</text>
-  <!-- Names -->
-  <text x="200" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="20" fill="#6B4226">Ahmed</text>
-  <text x="200" y="155" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#C4A87C">&amp;</text>
-  <text x="200" y="175" text-anchor="middle" font-family="Georgia,serif" font-size="20" fill="#6B4226">Fatima</text>
-  <text x="200" y="210" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6B4226" opacity="0.4">15 Juin 2025</text>
+  <!-- Aged paper vignette corners -->
+  <radialGradient id="vignette" cx="0" cy="0" r="1" gradientUnits="objectBoundingBox">
+    <stop offset="60%" stop-color="transparent"/>
+    <stop offset="100%" stop-color="#8B5E3A" stop-opacity="0.15"/>
+  </radialGradient>
+  <rect width="400" height="560" fill="url(#vignette)"/>
+
+  <!-- Double border frame -->
+  <rect x="18" y="18" width="364" height="524" fill="none" stroke="#C4A87C" stroke-width="1.2" opacity="0.5" rx="2"/>
+  <rect x="26" y="26" width="348" height="508" fill="none" stroke="#C4A87C" stroke-width="0.5" opacity="0.25" rx="1"/>
+
+  <!-- Corner wax seal embellishments -->
+  <g opacity="0.45">
+    <!-- TL corner flourish -->
+    <path d="M18 18 Q30 28 40 18" fill="none" stroke="#C4A87C" stroke-width="1.2"/>
+    <path d="M18 18 Q28 30 18 40" fill="none" stroke="#C4A87C" stroke-width="1.2"/>
+    <circle cx="18" cy="18" r="5" fill="#C4A87C" opacity="0.6"/>
+    <!-- TR corner -->
+    <path d="M382 18 Q370 28 360 18" fill="none" stroke="#C4A87C" stroke-width="1.2"/>
+    <path d="M382 18 Q372 30 382 40" fill="none" stroke="#C4A87C" stroke-width="1.2"/>
+    <circle cx="382" cy="18" r="5" fill="#C4A87C" opacity="0.6"/>
+    <!-- BL corner -->
+    <path d="M18 542 Q30 532 40 542" fill="none" stroke="#C4A87C" stroke-width="1.2"/>
+    <path d="M18 542 Q28 530 18 520" fill="none" stroke="#C4A87C" stroke-width="1.2"/>
+    <circle cx="18" cy="542" r="5" fill="#C4A87C" opacity="0.6"/>
+    <!-- BR corner -->
+    <path d="M382 542 Q370 532 360 542" fill="none" stroke="#C4A87C" stroke-width="1.2"/>
+    <path d="M382 542 Q372 530 382 520" fill="none" stroke="#C4A87C" stroke-width="1.2"/>
+    <circle cx="382" cy="542" r="5" fill="#C4A87C" opacity="0.6"/>
+  </g>
+
+  <!-- Wax seal top center -->
+  <circle cx="200" cy="72" r="32" fill="#C4A87C" opacity="0.85"/>
+  <circle cx="200" cy="72" r="26" fill="none" stroke="#F2E8D5" stroke-width="1.5" opacity="0.5"/>
+  <text x="200" y="78" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#F2E8D5" opacity="0.9" font-weight="bold" font-style="italic">P</text>
+
+  <!-- Horizontal dividers -->
+  <line x1="50" y1="118" x2="350" y2="118" stroke="#C4A87C" stroke-width="0.7" opacity="0.4"/>
+  <text x="200" y="122" text-anchor="middle" font-family="serif" font-size="8" fill="#C4A87C" opacity="0.5">❧ ❧ ❧</text>
+  <line x1="50" y1="126" x2="350" y2="126" stroke="#C4A87C" stroke-width="0.3" opacity="0.2"/>
+
+  <!-- Header text -->
+  <text x="200" y="152" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#6B4226" opacity="0.6" letter-spacing="3">PARCHEMIN D'HONNEUR</text>
+
+  <!-- Names — old-world style -->
+  <text x="200" y="210" text-anchor="middle" font-family="Georgia,serif" font-size="31" fill="#6B4226" font-weight="400" font-style="italic" opacity="0.85">Leila</text>
+  <text x="200" y="236" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#C4A87C" opacity="0.6" letter-spacing="4">— &amp; —</text>
+  <text x="200" y="272" text-anchor="middle" font-family="Georgia,serif" font-size="31" fill="#6B4226" font-weight="400" font-style="italic" opacity="0.85">Mehdi</text>
+
+  <!-- Middle divider -->
+  <line x1="70" y1="292" x2="330" y2="292" stroke="#C4A87C" stroke-width="0.6" opacity="0.35"/>
+  <text x="200" y="296" text-anchor="middle" font-family="serif" font-size="8" fill="#C4A87C" opacity="0.45">✦</text>
+  <line x1="70" y1="300" x2="330" y2="300" stroke="#C4A87C" stroke-width="0.3" opacity="0.2"/>
+
+  <!-- Old text block (like a scroll) -->
+  <text x="200" y="328" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="#6B4226" opacity="0.7" letter-spacing="0.5">Samedi 12 Juillet 2025</text>
+  <text x="200" y="350" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#8B6B4A" opacity="0.5">à 18h00 — Kairouan</text>
+  <text x="200" y="372" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#8B6B4A" opacity="0.4">Dar Chaabane, Médina</text>
+
+  <!-- Scroll line decoration -->
+  <path d="M60 395 Q200 385 340 395" fill="none" stroke="#C4A87C" stroke-width="0.8" opacity="0.3"/>
+
+  <!-- Countdown in antique style -->
+  <g transform="translate(200,435)" opacity="0.75">
+    <rect x="-110" y="-20" width="48" height="40" rx="3" fill="none" stroke="#C4A87C" stroke-width="0.8" opacity="0.5"/>
+    <rect x="-55" y="-20" width="48" height="40" rx="3" fill="none" stroke="#C4A87C" stroke-width="0.8" opacity="0.5"/>
+    <rect x="7" y="-20" width="48" height="40" rx="3" fill="none" stroke="#C4A87C" stroke-width="0.8" opacity="0.5"/>
+    <rect x="62" y="-20" width="48" height="40" rx="3" fill="none" stroke="#C4A87C" stroke-width="0.8" opacity="0.5"/>
+    <text x="-86" y="6" text-anchor="middle" font-family="Georgia,serif" font-size="15" fill="#6B4226" opacity="0.8">84</text>
+    <text x="-31" y="6" text-anchor="middle" font-family="Georgia,serif" font-size="15" fill="#6B4226" opacity="0.8">06</text>
+    <text x="31" y="6" text-anchor="middle" font-family="Georgia,serif" font-size="15" fill="#6B4226" opacity="0.8">30</text>
+    <text x="86" y="6" text-anchor="middle" font-family="Georgia,serif" font-size="15" fill="#6B4226" opacity="0.8">15</text>
+    <text x="-86" y="19" text-anchor="middle" font-family="serif" font-size="6" fill="#C4A87C" opacity="0.5">JOURS</text>
+    <text x="-31" y="19" text-anchor="middle" font-family="serif" font-size="6" fill="#C4A87C" opacity="0.5">HEURES</text>
+    <text x="31" y="19" text-anchor="middle" font-family="serif" font-size="6" fill="#C4A87C" opacity="0.5">MIN</text>
+    <text x="86" y="19" text-anchor="middle" font-family="serif" font-size="6" fill="#C4A87C" opacity="0.5">SEC</text>
+  </g>
+
+  <!-- RSVP parchment-style -->
+  <rect x="120" y="490" width="160" height="33" rx="3" fill="#C4A87C" opacity="0.75"/>
+  <rect x="122" y="492" width="156" height="29" rx="2" fill="none" stroke="#F2E8D5" stroke-width="0.5" opacity="0.4"/>
+  <text x="200" y="511" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#F2E8D5" letter-spacing="2">RÉPONDRE</text>
+
+  <text x="200" y="545" text-anchor="middle" font-family="serif" font-size="6.5" fill="#C4A87C" opacity="0.3" letter-spacing="2">DAAWA · PARCHEMIN</text>
 </svg>

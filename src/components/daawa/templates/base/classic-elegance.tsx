@@ -13,7 +13,25 @@ export function ClassicElegance({ event }: InvitationTemplateProps) {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--tpl-bg)' }}>
-      <Section className="min-h-[85vh] flex flex-col items-center justify-center px-6 text-center">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full anim-petal"
+            style={{
+              width: 8 + i * 2,
+              height: 14 + i * 2,
+              backgroundColor: 'var(--tpl-accent)',
+              opacity: 0.15,
+              left: `${15 + i * 15}%`,
+              top: `${10 + (i % 3) * 30}%`,
+              borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
+              animationDelay: `${i * 0.7}s`,
+            }}
+          />
+        ))}
+      </div>
+      <Section className="min-h-[85vh] flex flex-col items-center justify-center px-6 text-center relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="space-y-6 max-w-lg">
           <OrnamentalDivider variant="classic" className="text-[var(--tpl-accent)]" />
           <p className="text-xs uppercase tracking-[0.3em]" style={{ color: 'var(--tpl-text)', opacity: 0.6 }}>Vous sont cordialement invites</p>

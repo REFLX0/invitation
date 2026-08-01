@@ -1,16 +1,95 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="400" height="560">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#FAE8DA"/>
+      <stop offset="100%" stop-color="#F0D5C0"/>
+    </linearGradient>
+    <radialGradient id="desertSun" cx="70%" cy="15%" r="40%">
+      <stop offset="0%" stop-color="#F5C090" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="560" fill="url(#bg)"/>
+  <rect width="400" height="560" fill="url(#desertSun)"/>
 
-  <rect width="400" height="300" fill="#F5E0D0"/>
-  <!-- Desert dunes -->
-  <path d="M0,260 Q100,230 200,250 Q300,270 400,245 L400,300 L0,300Z" fill="#D4956A" opacity="0.08"/>
-  <path d="M0,275 Q133,255 266,270 Q333,285 400,265 L400,300 L0,300Z" fill="#D4956A" opacity="0.06"/>
-  <!-- Sun -->
-  <circle cx="330" cy="55" r="20" fill="#D4956A" opacity="0.12"/>
-  <circle cx="330" cy="55" r="14" fill="#D4956A" opacity="0.08"/>
-  <!-- Names -->
-  <text x="200" y="125" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#A0604A">Ahmed</text>
-  <text x="200" y="150" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#D4956A">&amp;</text>
-  <text x="200" y="175" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#A0604A">Fatima</text>
+  <!-- Sand dune waves -->
+  <path d="M0 420 Q100 395 200 415 Q300 435 400 405 L400 560 L0 560 Z" fill="#E8C9A0" opacity="0.3"/>
+  <path d="M0 445 Q120 420 240 440 Q320 455 400 430 L400 560 L0 560 Z" fill="#D4956A" opacity="0.2"/>
+  <path d="M0 475 Q80 455 200 470 Q300 485 400 460 L400 560 L0 560 Z" fill="#C0804A" opacity="0.15"/>
+
+  <!-- Desert sun rays top right -->
+  <g transform="translate(340, 40)" opacity="0.2" stroke="#F5A050" stroke-width="0.8" fill="none">
+    <line x1="0" y1="0" x2="30" y2="-15"/>
+    <line x1="0" y1="0" x2="35" y2="0"/>
+    <line x1="0" y1="0" x2="30" y2="15"/>
+    <line x1="0" y1="0" x2="20" y2="25"/>
+    <line x1="0" y1="0" x2="-5" y2="30"/>
+    <circle cx="0" cy="0" r="12" fill="#F5C060" opacity="0.3" stroke="none"/>
+  </g>
+
+  <!-- Ornate border -->
+  <rect x="18" y="18" width="364" height="524" fill="none" stroke="#D4956A" stroke-width="0.8" opacity="0.4"/>
+  <!-- Inner scalloped feel -->
+  <rect x="28" y="28" width="344" height="504" fill="none" stroke="#D4956A" stroke-width="0.3" opacity="0.2"/>
+
+  <!-- Corner ornaments sand rose -->
+  <g fill="#D4956A" opacity="0.4">
+    <circle cx="18" cy="18" r="6"/>
+    <circle cx="382" cy="18" r="6"/>
+    <circle cx="18" cy="542" r="6"/>
+    <circle cx="382" cy="542" r="6"/>
+    <path d="M14 22 Q20 18 26 22 Q20 28 14 22Z"/>
+    <path d="M378 22 Q384 18 390 22 Q384 28 378 22Z"/>
+    <path d="M14 538 Q20 542 26 538 Q20 532 14 538Z"/>
+    <path d="M378 538 Q384 542 390 538 Q384 532 378 538Z"/>
+  </g>
+
+  <!-- Palm leaf silhouettes -->
+  <g opacity="0.15" fill="#8B5E30">
+    <path d="M55 120 Q30 80 20 50 Q40 60 60 85 Q65 100 55 120Z"/>
+    <path d="M55 120 Q20 110 10 90 Q30 95 50 105 Q55 115 55 120Z"/>
+    <path d="M345 120 Q370 80 380 50 Q360 60 340 85 Q335 100 345 120Z"/>
+    <path d="M345 120 Q380 110 390 90 Q370 95 350 105 Q345 115 345 120Z"/>
+  </g>
+
+  <!-- Invitation label -->
+  <text x="200" y="155" text-anchor="middle" font-family="Georgia,serif" font-size="7.5" fill="#A0604A" opacity="0.55" letter-spacing="3">SAHARA ROSE</text>
+
+  <!-- Names warm tones -->
+  <text x="200" y="210" text-anchor="middle" font-family="Georgia,serif" font-size="32" fill="#7A3820" font-weight="300" font-style="italic" opacity="0.85">Fatma</text>
+  <text x="200" y="237" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#D4956A" opacity="0.6" letter-spacing="4">&amp;</text>
+  <text x="200" y="274" text-anchor="middle" font-family="Georgia,serif" font-size="32" fill="#7A3820" font-weight="300" font-style="italic" opacity="0.85">Tarek</text>
+
+  <!-- Divider camel motif -->
+  <line x1="80" y1="296" x2="160" y2="296" stroke="#D4956A" stroke-width="0.7" opacity="0.4"/>
+  <polygon points="200,292 205,296 200,300 195,296" fill="#D4956A" opacity="0.5"/>
+  <line x1="240" y1="296" x2="320" y2="296" stroke="#D4956A" stroke-width="0.7" opacity="0.4"/>
+
   <!-- Date -->
-  <text x="200" y="210" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#A0604A" opacity="0.4">15 Juin 2025</text>
+  <text x="200" y="326" text-anchor="middle" font-family="Georgia,serif" font-size="10.5" fill="#7A3820" opacity="0.65" letter-spacing="1">Samedi 2 Août 2025</text>
+  <text x="200" y="349" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#A0604A" opacity="0.45">Dar Sahara, Douz</text>
+
+  <!-- Dotted line desert path -->
+  <line x1="60" y1="375" x2="340" y2="375" stroke="#D4956A" stroke-width="0.5" stroke-dasharray="3,5" opacity="0.3"/>
+
+  <!-- Countdown warm -->
+  <g transform="translate(200,418)" opacity="0.75">
+    <rect x="-110" y="-18" width="48" height="36" rx="8" fill="#D4956A" opacity="0.18"/>
+    <rect x="-55" y="-18" width="48" height="36" rx="8" fill="#C07040" opacity="0.15"/>
+    <rect x="7" y="-18" width="48" height="36" rx="8" fill="#D4956A" opacity="0.18"/>
+    <rect x="62" y="-18" width="48" height="36" rx="8" fill="#C07040" opacity="0.15"/>
+    <text x="-86" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#7A3820" opacity="0.8">18</text>
+    <text x="-31" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#7A3820" opacity="0.8">03</text>
+    <text x="31" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#7A3820" opacity="0.8">22</text>
+    <text x="86" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#7A3820" opacity="0.8">47</text>
+    <text x="-86" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#A0604A" opacity="0.45">J</text>
+    <text x="-31" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#A0604A" opacity="0.45">H</text>
+    <text x="31" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#A0604A" opacity="0.45">M</text>
+    <text x="86" y="17" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#A0604A" opacity="0.45">S</text>
+  </g>
+
+  <rect x="130" y="476" width="140" height="32" rx="16" fill="#D4956A" opacity="0.85"/>
+  <text x="200" y="496" text-anchor="middle" font-family="sans-serif" font-size="9.5" fill="white" letter-spacing="2">RSVP</text>
+
+  <text x="200" y="545" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#A0604A" opacity="0.3" letter-spacing="2">DAAWA · SAHARA ROSE</text>
 </svg>
