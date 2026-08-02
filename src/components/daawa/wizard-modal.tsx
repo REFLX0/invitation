@@ -9,13 +9,14 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import {
   ChevronLeft, ChevronRight, Check, Sparkles,
-  Palette, LayoutTemplate, User, Gift, Eye, PartyPopper,
+  Palette, LayoutTemplate, User, Gift, Eye, PartyPopper, ArrowRight
 } from 'lucide-react'
 import {
   type Tier, type TierConfig, type Template, type PremiumTierConfig, type LuxeTierConfig,
   TEMPLATES, TIER_META, getDefaultConfig,
 } from './wizard/tier-config-types'
 import { TEMPLATE_REGISTRY } from './templates/template-registry'
+import { InvitationTemplate } from './templates/invitation-template'
 import { ClassicForm } from './wizard/tier-forms/classic-form'
 import { PremiumForm } from './wizard/tier-forms/premium-form'
 import { LuxeForm } from './wizard/tier-forms/luxe-form'
@@ -141,9 +142,23 @@ export function WizardModal({ open, onOpenChange, initialTemplateId }: WizardMod
   const StepIcon = STEP_ICONS[step]
   const meta = TIER_META[currentTier]
 
+  const previewEvent = useMemo(() => ({
+    id: 'preview',
+    slug: 'preview',
+    templateId: selectedTemplate?.id || 'cl-1',
+    partner1Name: partner1Name || 'Ahmed',
+    partner2Name: partner2Name || 'Fatima',
+    eventDate: eventDate || '2025-08-15',
+    venueName: venueName || 'Dar El Bey',
+    venueAddress: venueAddress || 'Tunis',
+    tier: currentTier,
+    tierConfig: JSON.stringify(tierConfig),
+  }), [selectedTemplate, partner1Name, partner2Name, eventDate, venueName, venueAddress, currentTier, tierConfig])
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent showCloseButton={step === 4} className="flex flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl h-[85vh] max-h-[700px] rounded-xl">
+      <DialogContent showCloseButton={step === 4} className="flex flex-row gap-0 overflow-hidden p-0 max-w-5xl lg:max-w-6xl w-[95vw] h-[85vh] max-h-[750px] rounded-xl">
+        <div className="flex flex-col flex-1 h-full overflow-hidden relative">
         <DialogTitle className="sr-only">Creation d invitation Daawa</DialogTitle>
         <DialogDescription className="sr-only">Assistant de creation d invitation de mariage</DialogDescription>
 
@@ -313,6 +328,23 @@ export function WizardModal({ open, onOpenChange, initialTemplateId }: WizardMod
               )}
             </div>
             {error && <p className="text-xs text-red-500 text-center">{error}</p>}
+          </div>
+          </div>
+        )}
+        </div>
+
+        {/* Right Side: Live Preview (Hidden on mobile, only shows after step 0 and before completion) */}
+        {selectedTemplate && step > 0 && step < 4 && (
+          <div className="hidden md:flex w-[400px] lg:w-[460px] border-l border-border bg-muted/10 items-center justify-center p-6 shrink-0 relative overflow-hidden">
+            {/* Phone Frame */}
+            <div className="w-[320px] h-[640px] bg-black rounded-[3rem] p-3 shadow-2xl relative overflow-hidden border-4 border-gray-900 ring-1 ring-white/10 ring-inset flex shrink-0 scale-[0.9] lg:scale-100 origin-center">
+              {/* Fake Notch */}
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-b-2xl z-50"></div>
+              {/* Screen */}
+              <div className="w-full h-full bg-white rounded-[2.25rem] overflow-hidden overflow-y-auto relative no-scrollbar">
+                <InvitationTemplate event={previewEvent} />
+              </div>
+            </div>
           </div>
         )}
       </DialogContent>

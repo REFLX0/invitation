@@ -242,7 +242,7 @@
 
 /* ── Theme Backgrounds ───────────────────────────── */
 .bg-theme-watercolor {
-  background-image: url('/images/bg-watercolor.png');
+  background-image: url('/images/bg.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

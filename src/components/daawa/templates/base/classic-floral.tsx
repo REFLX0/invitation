@@ -86,6 +86,21 @@ export function ClassicFloral({ event }: InvitationTemplateProps) {
         </div>
       </Section>
 
+      {event.rsvps && event.rsvps.filter((r) => r.attending).length > 0 && (
+        <Section className="py-12 px-8" delay={0.4} style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}>
+          <div className="max-w-md mx-auto text-center space-y-6">
+            <p className="text-xs uppercase tracking-[0.3em]" style={{ color: 'var(--tpl-text)', opacity: 0.5 }}>Ils seront presents</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {event.rsvps.filter((r) => r.attending).map((rsvp, i) => (
+                <span key={i} className="text-sm px-4 py-1.5 rounded-full border border-current/20 bg-white/30 shadow-sm" style={{ color: 'var(--tpl-text)' }}>
+                  {rsvp.guestName}
+                </span>
+              ))}
+            </div>
+          </div>
+        </Section>
+      )}
+
       <footer className="py-6 px-8 text-center">
         <p className="text-[10px]" style={{ color: 'var(--tpl-text)', opacity: 0.25 }}>Daawa — Invitations de mariage</p>
       </footer>

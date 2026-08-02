@@ -11,7 +11,7 @@ import { SpecializedLellaBeya } from './specialized/lella-beya'
 import { SpecializedCarthageOr } from './specialized/carthage-or'
 
 export interface InvitationTemplateProps {
-  event: { id: string; slug: string; templateId: string; partner1Name: string; partner2Name: string; eventDate: string; venueName: string; venueAddress: string; tier: string; tierConfig: string }
+  event: { id: string; slug: string; templateId: string; partner1Name: string; partner2Name: string; eventDate: string; venueName: string; venueAddress: string; tier: string; tierConfig: string; rsvps?: { guestName: string; attending: boolean; meal: string; plusOne: string }[] }
 }
 
 const COMPONENT_MAP: Record<string, React.ComponentType<InvitationTemplateProps>> = {

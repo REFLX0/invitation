@@ -96,6 +96,21 @@ export function ClassicElegance({ event }: InvitationTemplateProps) {
         </div>
       </Section>
 
+      {event.rsvps && event.rsvps.filter((r) => r.attending).length > 0 && (
+        <Section className="py-12 px-6" delay={0.5} style={{ backgroundColor: 'rgba(255,255,255,0.3)' }}>
+          <div className="max-w-md mx-auto text-center space-y-6">
+            <p className="text-xs uppercase tracking-[0.3em]" style={{ color: 'var(--tpl-text)', opacity: 0.6 }}>Ils seront presents</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {event.rsvps.filter((r) => r.attending).map((rsvp, i) => (
+                <span key={i} className="text-sm px-4 py-1.5 rounded-full border border-current/20 bg-white/20 shadow-sm" style={{ color: 'var(--tpl-text)' }}>
+                  {rsvp.guestName}
+                </span>
+              ))}
+            </div>
+          </div>
+        </Section>
+      )}
+
       <footer className="py-8 px-6 text-center">
         <OrnamentalDivider variant="minimal" className="mb-4" style={{ color: 'var(--tpl-text)', opacity: 0.2 }} />
         <p className="text-[10px]" style={{ color: 'var(--tpl-text)', opacity: 0.3 }}>Daawa — Invitations de mariage</p>

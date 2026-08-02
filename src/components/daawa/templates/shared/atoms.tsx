@@ -32,7 +32,7 @@ export function CountdownDisplay({ days, hours, minutes, seconds }: { days: numb
     <div className="grid grid-cols-4 gap-3">
       {items.map((item) => (
         <div key={item.label} className="text-center">
-          <div className="text-3xl sm:text-4xl font-light tabular-nums" style={{ fontFamily: 'var(--tpl-heading-font)' }}>{String(item.value).padStart(2, '0')}</div>
+          <div suppressHydrationWarning className="text-3xl sm:text-4xl font-light tabular-nums" style={{ fontFamily: 'var(--tpl-heading-font)' }}>{String(item.value).padStart(2, '0')}</div>
           <div className="text-[10px] uppercase tracking-wider mt-1 opacity-50">{item.label}</div>
         </div>
       ))}

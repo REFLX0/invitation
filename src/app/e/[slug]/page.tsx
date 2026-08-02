@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function InvitationPage({ params }: PageProps) {
   const { slug } = await params
   let event: any = null
-  try { const { db } = await import('@/lib/db'); event = await db.event.findUnique({ where: { slug } }) } catch { event = null }
+  try { const { db } = await import('@/lib/db'); event = await db.event.findUnique({ where: { slug }, include: { rsvps: true } }) } catch { event = null }
   if (!event) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -29,6 +29,6 @@ export default async function InvitationPage({ params }: PageProps) {
       </div>
     )
   }
-  const serializedEvent = { id: event.id, slug: event.slug, templateId: event.templateId, partner1Name: event.partner1Name, partner2Name: event.partner2Name, eventDate: event.eventDate, venueName: event.venueName, venueAddress: event.venueAddress, tier: event.tier, tierConfig: event.tierConfig }
+  const serializedEvent = { id: event.id, slug: event.slug, templateId: event.templateId, partner1Name: event.partner1Name, partner2Name: event.partner2Name, eventDate: event.eventDate, venueName: event.venueName, venueAddress: event.venueAddress, tier: event.tier, tierConfig: event.tierConfig, rsvps: event.rsvps?.map((r: any) => ({ guestName: r.guestName, attending: r.attending, meal: r.meal, plusOne: r.plusOne })) || [] }
   return <InvitationTemplate event={serializedEvent} />
 }
