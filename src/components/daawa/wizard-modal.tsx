@@ -329,7 +329,6 @@ export function WizardModal({ open, onOpenChange, initialTemplateId }: WizardMod
             </div>
             {error && <p className="text-xs text-red-500 text-center">{error}</p>}
           </div>
-          </div>
         )}
         </div>
 
